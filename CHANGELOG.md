@@ -8,6 +8,33 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J3)
+
+- `HfcxClient` (`sdk-java/hfcx-sdk-client`) — builder-constructed
+  high-level sender API. Required fields: `gatewayUrl`,
+  `participantCode`, `privateKeyPath`, `keycloak`. Five typed sender
+  methods: `checkEligibility`, `submitPreauth`, `submitClaim`,
+  `sendCommunication`, `notifyPayment`. Each accepts a typed request
+  record and returns `HfcxResponse(correlationId, status)`.
+- Sealed `HfcxRequest` interface and five record types
+  (`CheckEligibilityRequest`, `SubmitPreauthRequest`,
+  `SubmitClaimRequest`, `SendCommunicationRequest`,
+  `NotifyPaymentRequest`) — each with a fluent builder.
+- `ProtocolHeaders` helper — emits the five protocol headers per
+  Integration Guide §24.5 in deterministic order
+  (`x-hcx-sender_code`, `x-hcx-recipient_code`, `x-hcx-correlation_id`,
+  `x-hcx-timestamp`, `x-hcx-api-call-id`). Header names are pinned
+  with byte-level tests so cross-SDK comparisons stay byte-identical.
+- Correlation-ID semantics: every method auto-generates a UUID4 if the
+  caller passed `null`, propagates it on the response, and emits all
+  log lines for that transaction with the correlation ID in SLF4J MDC
+  under the cross-SDK-invariant key `correlationId`.
+- `MdcPropagationTest` uses logback-classic's `ListAppender` to assert
+  every emitted event for a transaction carries the correlation ID,
+  and that MDC is cleaned up on every exit path.
+- Test logging swapped from `slf4j-simple` to `logback-classic` so
+  MDC and structured logging assertions are possible.
+
 ### Added (Sprint J2)
 
 - `KeycloakTokenClient` (`sdk-java/hfcx-sdk-client`) — fetches and caches

@@ -16,29 +16,19 @@ Egypt's open protocol for decentralised health-claims data exchange.
 (Currently published as a snapshot on Sonatype OSSRH. The 1.0.0 GA release
 on Maven Central is gated on Sprint J7.)
 
-## Quickstart — what works today (Sprint J1)
+## Quickstart — what works today (Sprint J3)
 
-The current snapshot only exposes the artifact wiring and the build-resolved
-version constant. Use it to confirm dependency resolution works before
-later sprints land the real client.
+The builder, all five sender methods, the Keycloak token client, and the
+correlation-ID + MDC plumbing compile and execute. The methods return
+`HfcxResponse` with `Status.STUBBED` because the outbound HTTP path
+(registry lookup → JWE encrypt → POST to gateway) lands in Sprint J4.
 
 ```java
 import eg.gov.healthflow.hfcx.sdk.client.HfcxClient;
-import eg.gov.healthflow.hfcx.sdk.core.HfcxSdkVersion;
-import eg.gov.healthflow.hfcx.sdk.core.crypto.JweAlgorithms;
+import eg.gov.healthflow.hfcx.sdk.client.HfcxResponse;
+import eg.gov.healthflow.hfcx.sdk.client.auth.KeycloakTokenClient;
+import eg.gov.healthflow.hfcx.sdk.client.request.SubmitClaimRequest;
 
-System.out.println("SDK version: " + HfcxClient.sdkVersion());
-System.out.println("Pinned JWE alg: " + JweAlgorithms.ALG + " / " + JweAlgorithms.ENC);
-System.out.println("Compatible platform: " + HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION);
-```
-
-## Quickstart — sender (preview, Sprint J3+)
-
-> **Preview.** The builder API and the five sender methods below land in
-> Sprint J3 (`HfcxClient` skeleton) and Sprint J4 (outbound encryption).
-> The snippet does **not** compile against the current snapshot.
-
-```java
 HfcxClient client = HfcxClient.builder()
     .gatewayUrl("https://healthflow.gov.eg")
     .participantCode("myhospital@hcx-egypt")
@@ -50,14 +40,19 @@ HfcxClient client = HfcxClient.builder()
         .build())
     .build();
 
-ClaimSubmissionResponse response = client.submitClaim(
-    SubmitClaimRequest.builder()
-        .recipientCode("payerco@hcx-egypt")
-        .claimBundle(myFhirBundle)
-        .build());
+HfcxResponse response = client.submitClaim(SubmitClaimRequest.builder()
+    .recipientCode("payerco@hcx-egypt")
+    .claimBundle(myFhirBundleJson)            // String for now; J5 adds typed FHIR Bundle support
+    // .correlationId(existingId)              // optional; SDK auto-generates a UUID4 if omitted
+    .build());
 
+// response.status() == Status.STUBBED until Sprint J4 lands the HTTP path.
 log.info("correlationId={} status={}", response.correlationId(), response.status());
 ```
+
+Every log line emitted during the call carries the correlation ID in
+SLF4J MDC under the `correlationId` key — wire your logback/log4j
+pattern to `%X{correlationId}` to surface it.
 
 ## Quickstart — recipient (preview, Sprint J5)
 
@@ -84,18 +79,16 @@ gateway is encryption-transparent and never runs the SDK.
 
 ## Status
 
-| Capability               | Status      |
-|--------------------------|-------------|
-| Keycloak token client    | ✅ Sprint J2 |
-| Eligibility check        | ⏳ Sprint J3 |
-| Preauth submit           | ⏳ Sprint J3 |
-| Claim submit             | ⏳ Sprint J3 |
-| Communication            | ⏳ Sprint J3 |
-| Payment notice           | ⏳ Sprint J3 |
-| Outbound encryption      | ⏳ Sprint J4 |
-| Inbound decryption       | ⏳ Sprint J5 |
-| Error taxonomy           | 🚧 Sprint J6 (J1 ships base hierarchy + AuthenticationException) |
-| 1.0.0 GA on Maven Central | ⏳ Sprint J7 |
+| Capability                       | Status      |
+|----------------------------------|-------------|
+| Keycloak token client            | ✅ Sprint J2 |
+| `HfcxClient` builder + 5 methods | 🚧 Sprint J3 (stubs return `Status.STUBBED`) |
+| Correlation-ID + MDC propagation | ✅ Sprint J3 |
+| Protocol headers (§24.5)         | ✅ Sprint J3 |
+| Outbound encryption + HTTP POST  | ⏳ Sprint J4 |
+| Inbound decryption + recipient   | ⏳ Sprint J5 |
+| Full error-code taxonomy         | 🚧 Sprint J6 (J1 ships base hierarchy; J2 adds `AuthenticationException`) |
+| 1.0.0 GA on Maven Central        | ⏳ Sprint J7 |
 
 ## Versioning
 

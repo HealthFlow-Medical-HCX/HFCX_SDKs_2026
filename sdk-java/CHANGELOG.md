@@ -5,6 +5,44 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J3 — `HfcxClient` skeleton + correlation-ID handling)
+
+- `eg.gov.healthflow.hfcx.sdk.client.HfcxClient` — builder API requiring
+  `gatewayUrl`, `participantCode`, `privateKeyPath`, and `keycloak`.
+  Five typed sender methods (`checkEligibility`, `submitPreauth`,
+  `submitClaim`, `sendCommunication`, `notifyPayment`) construct the
+  protocol header set, propagate or auto-generate (UUID4) the
+  correlation ID, and emit log lines with the correlation ID in
+  SLF4J MDC under the key `correlationId`. Methods currently return
+  `HfcxResponse` with `Status.STUBBED`; Sprint J4 wires the registry
+  lookup, JWE encryption, and outbound HTTP path.
+- `eg.gov.healthflow.hfcx.sdk.client.HfcxResponse` (record) and
+  `Status` (enum: `ACCEPTED`, `REJECTED`, `STUBBED`) — common shape
+  returned by every sender method.
+- `eg.gov.healthflow.hfcx.sdk.client.request.HfcxRequest` (sealed
+  interface) and five typed records:
+  `CheckEligibilityRequest`, `SubmitPreauthRequest`,
+  `SubmitClaimRequest`, `SendCommunicationRequest`,
+  `NotifyPaymentRequest`. Each has a fluent builder; canonical
+  constructors fail-fast on missing required fields.
+- `eg.gov.healthflow.hfcx.sdk.client.protocol.ProtocolHeaders` —
+  Static helper exposing the five header names as constants and a
+  `build(...)` method that returns an unmodifiable, deterministically-
+  ordered map. Header names ship in the Gap 7 mixed
+  hyphen-and-underscore form the platform currently accepts.
+- 18 new test cases: 6 `ProtocolHeadersTest` byte-format guards,
+  4 `MdcPropagationTest` assertions on log-event MDC, and 8
+  `HfcxClientTest` cases covering builder validation, UUID4 auto-
+  generation, correlation-ID propagation, request-record fail-fast,
+  and reachability of all five sender methods.
+
+### Build / dev infrastructure
+
+- `slf4j-simple` test dep replaced with `logback-classic` 1.5.7 so
+  MDC and structured-logging assertions can be made via
+  `ch.qos.logback.core.read.ListAppender`. A quiet `logback-test.xml`
+  is committed under `src/test/resources/`.
+
 ### Added (Sprint J2 — Keycloak token client)
 
 - `eg.gov.healthflow.hfcx.sdk.client.auth.KeycloakTokenClient`: builder-
