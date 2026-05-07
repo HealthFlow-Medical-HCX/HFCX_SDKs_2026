@@ -1,0 +1,60 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.project
+.classpath
+.settings/
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / runtime
+*.log
+hs_err_pid*
+replay_pid*
+
+# Python (forward-looking, sdk-python/)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Node.js (forward-looking, sdk-javascript/)
+node_modules/
+*.tgz
+.pnpm-store/
+.npm/
+
+# .NET (forward-looking, sdk-dotnet/)
+bin/
+obj/
+*.user
+
+# Local secrets — must never be committed
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+!fhir-ig/**/*.pem
+!**/test/**/*.pem
+!**/tests/**/*.pem
