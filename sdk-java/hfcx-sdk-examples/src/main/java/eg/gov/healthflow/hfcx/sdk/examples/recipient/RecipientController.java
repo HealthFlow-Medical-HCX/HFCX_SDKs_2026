@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import static java.util.Map.entry;
+
 /**
  * Spring {@code @RestController} that exposes the five HFCX inbound
  * endpoints and dispatches each to {@link RecipientHandler}.
@@ -73,26 +75,37 @@ public class RecipientController {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, String>> onAuthentication(AuthenticationException ex) {
+    public ResponseEntity<Map<String, Object>> onAuthentication(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error.code", ex.getCode(), "error.message", ex.getMessage()));
+                .body(errorBody(ex));
     }
 
     @ExceptionHandler(ProtocolException.class)
-    public ResponseEntity<Map<String, String>> onProtocol(ProtocolException ex) {
+    public ResponseEntity<Map<String, Object>> onProtocol(ProtocolException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error.code", ex.getCode(), "error.message", ex.getMessage()));
+                .body(errorBody(ex));
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Map<String, String>> onBusiness(BusinessException ex) {
+    public ResponseEntity<Map<String, Object>> onBusiness(BusinessException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(Map.of("error.code", ex.getCode(), "error.message", ex.getMessage()));
+                .body(errorBody(ex));
     }
 
     @ExceptionHandler(HfcxException.class)
-    public ResponseEntity<Map<String, String>> onTechnical(HfcxException ex) {
+    public ResponseEntity<Map<String, Object>> onTechnical(HfcxException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error.code", ex.getCode(), "error.message", ex.getMessage()));
+                .body(errorBody(ex));
+    }
+
+    /**
+     * Wire format the gateway uses, as parsed by {@code HfcxClient}:
+     * {@code {"error": {"code": "ERR-X-NNN", "message": "..."}}}.
+     */
+    private static Map<String, Object> errorBody(HfcxException ex) {
+        return Map.of("error",
+                Map.ofEntries(
+                        entry("code", ex.getCode()),
+                        entry("message", ex.getMessage() != null ? ex.getMessage() : "")));
     }
 }

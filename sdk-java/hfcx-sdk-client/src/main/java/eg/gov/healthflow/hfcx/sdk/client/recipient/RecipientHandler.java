@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eg.gov.healthflow.hfcx.sdk.client.HfcxClient;
 import eg.gov.healthflow.hfcx.sdk.client.protocol.ProtocolHeaders;
-import eg.gov.healthflow.hfcx.sdk.core.exception.BusinessException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.EnvelopeMalformedJsonException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.EnvelopeMissingPayloadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -147,12 +148,12 @@ public final class RecipientHandler {
             JsonNode root = JSON.readTree(requestBody);
             JsonNode payload = root.path("payload");
             if (payload.isMissingNode() || payload.isNull() || payload.asText().isEmpty()) {
-                throw new BusinessException("ERR-B-ENV-001",
+                throw new EnvelopeMissingPayloadException(
                         "Request body envelope missing required 'payload' field");
             }
             return payload.asText();
         } catch (JsonProcessingException e) {
-            throw new BusinessException("ERR-B-ENV-002",
+            throw new EnvelopeMalformedJsonException(
                     "Request body is not valid JSON: " + e.getMessage());
         }
     }

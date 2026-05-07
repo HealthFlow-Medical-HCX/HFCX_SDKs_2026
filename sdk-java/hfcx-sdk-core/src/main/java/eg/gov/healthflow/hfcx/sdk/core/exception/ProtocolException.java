@@ -15,4 +15,12 @@ public class ProtocolException extends HfcxException {
     public ProtocolException(String code, String message, Throwable cause) {
         super(code, message, cause);
     }
+
+    public ProtocolException(ErrorCode code, String message) {
+        super(code, message);
+    }
+
+    public ProtocolException(ErrorCode code, String message, Throwable cause) {
+        super(code, message, cause);
+    }
 }

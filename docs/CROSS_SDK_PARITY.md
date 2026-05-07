@@ -24,16 +24,17 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | Validate Egyptian phone          | ✅ `EgyptianPhoneValidator.isValid` | `egyptian_phone.is_valid`               | `EgyptianPhoneValidator.IsValid`      | `isValidEgyptianPhone`              |
 | Validate Egyptian IBAN           | ✅ `EgyptianIBANValidator.isValid`  | `egyptian_iban.is_valid`                | `EgyptianIbanValidator.IsValid`       | `isValidEgyptianIban`               |
 | Egyptian governorate enum        | ✅ `EgyptianGovernorate` (27)       | `EgyptianGovernorate` IntEnum           | `EgyptianGovernorate` enum            | `EgyptianGovernorate` literal type  |
-| Exception: protocol error        | `ProtocolException`                 | `ProtocolError`                         | `ProtocolException`                   | `ProtocolError`                     |
-| Exception: business error        | `BusinessException`                 | `BusinessError`                         | `BusinessException`                   | `BusinessError`                     |
-| Exception: technical error       | ✅ `TechnicalException`             | `TechnicalError`                        | `TechnicalException`                  | `TechnicalError`                    |
+| Exception: protocol error        | ✅ `ProtocolException` + 9 typed subclasses | `ProtocolError` + subtypes      | `ProtocolException` + subtypes        | `ProtocolError` + subtypes          |
+| Exception: business error        | ✅ `BusinessException` + 12 typed subclasses | `BusinessError` + subtypes     | `BusinessException` + subtypes        | `BusinessError` + subtypes          |
+| Exception: technical error       | ✅ `TechnicalException` + 6 typed subclasses | `TechnicalError` + subtypes    | `TechnicalException` + subtypes       | `TechnicalError` + subtypes         |
 | Exception: authentication error  | ✅ `AuthenticationException` (`ERR-T-002`) | `AuthenticationError`           | `AuthenticationException`             | `AuthenticationError`               |
+| Error-code catalog               | ✅ `ErrorCode` enum (27 entries)    | `ErrorCode` IntEnum                     | `ErrorCode` enum                      | `ErrorCode` literal type            |
 
 ## Implementation status
 
 | SDK        | Status     | Version | Released |
 |------------|------------|---------|----------|
-| Java       | 🚧 Sprint J5 | 1.0.0-SNAPSHOT | — |
+| Java       | 🚧 Sprint J6 | 1.0.0-SNAPSHOT | — |
 | Python     | ⏳ Planned  | —       | —        |
 | .NET       | ⏳ Planned  | —       | —        |
 | JavaScript | ⏳ Planned  | —       | —        |

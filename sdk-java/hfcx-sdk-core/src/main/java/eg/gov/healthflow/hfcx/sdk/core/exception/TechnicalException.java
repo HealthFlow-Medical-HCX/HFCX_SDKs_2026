@@ -16,4 +16,12 @@ public class TechnicalException extends HfcxException {
     public TechnicalException(String code, String message, Throwable cause) {
         super(code, message, cause);
     }
+
+    public TechnicalException(ErrorCode code, String message) {
+        super(code, message);
+    }
+
+    public TechnicalException(ErrorCode code, String message, Throwable cause) {
+        super(code, message, cause);
+    }
 }

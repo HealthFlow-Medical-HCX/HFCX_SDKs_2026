@@ -8,7 +8,9 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import eg.gov.healthflow.hfcx.sdk.core.exception.BusinessException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.ParticipantNotFoundException;
 import eg.gov.healthflow.hfcx.sdk.core.exception.TechnicalException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.TransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +69,7 @@ public final class RegistryClient implements RecipientCertResolver {
     private static final Duration DEFAULT_STATS_LOG_INTERVAL = Duration.ofSeconds(60);
 
     /** Wire-format error code for "participant not found in the registry". */
-    public static final String CODE_PARTICIPANT_NOT_FOUND = "ERR-B-NF";
+    public static final String CODE_PARTICIPANT_NOT_FOUND = ParticipantNotFoundException.CODE;
 
     private final URI registryBaseUrl;
     private final HttpClient httpClient;
@@ -141,11 +143,11 @@ public final class RegistryClient implements RecipientCertResolver {
         int status = response.statusCode();
 
         if (status == 404) {
-            throw new BusinessException(CODE_PARTICIPANT_NOT_FOUND,
+            throw new ParticipantNotFoundException(
                     "Participant '" + participantCode + "' not found in registry");
         }
         if (status < 200 || status >= 300) {
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     "Registry search returned HTTP " + status);
         }
 
@@ -161,7 +163,7 @@ public final class RegistryClient implements RecipientCertResolver {
                 .build();
         HttpResponse<String> certResponse = sendOrThrow(certRequest, "encryption_cert fetch");
         if (certResponse.statusCode() != 200) {
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     "encryption_cert fetch returned HTTP " + certResponse.statusCode()
                             + " for " + certUrl);
         }
@@ -172,11 +174,11 @@ public final class RegistryClient implements RecipientCertResolver {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (java.io.IOException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     description + " failed: " + e.getMessage(), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     description + " interrupted", e);
         }
     }
@@ -186,18 +188,18 @@ public final class RegistryClient implements RecipientCertResolver {
             JsonNode root = JSON.readTree(responseBody);
             JsonNode entries = root.isArray() ? root : root.get("entity");
             if (entries == null || !entries.isArray() || entries.isEmpty()) {
-                throw new BusinessException(CODE_PARTICIPANT_NOT_FOUND,
+                throw new ParticipantNotFoundException(
                         "Registry response had no entry for '" + participantCode + "'");
             }
             JsonNode first = entries.get(0);
             JsonNode cert = first.get("encryption_cert");
             if (cert == null || cert.isNull() || cert.asText().isEmpty()) {
-                throw new TechnicalException("ERR-T-001",
+                throw new TransportException(
                         "Registry entry for '" + participantCode + "' has no encryption_cert");
             }
             return cert.asText();
         } catch (JsonProcessingException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     "Registry response for '" + participantCode + "' was not valid JSON", e);
         }
     }
@@ -208,14 +210,14 @@ public final class RegistryClient implements RecipientCertResolver {
             X509Certificate cert = (X509Certificate) cf.generateCertificate(
                     new ByteArrayInputStream(pemOrDer.getBytes(StandardCharsets.UTF_8)));
             if (!(cert.getPublicKey() instanceof RSAPublicKey rsaPublicKey)) {
-                throw new TechnicalException("ERR-T-001",
+                throw new TransportException(
                         "encryption_cert for '" + participantCode + "' is not RSA: "
                                 + cert.getPublicKey().getAlgorithm());
             }
             Instant notAfter = cert.getNotAfter().toInstant();
             return new ParticipantCert(participantCode, rsaPublicKey, notAfter);
         } catch (CertificateException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     "Failed to parse encryption_cert PEM for '" + participantCode + "'", e);
         }
     }

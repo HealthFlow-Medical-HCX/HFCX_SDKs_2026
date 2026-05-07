@@ -3,7 +3,10 @@ package eg.gov.healthflow.hfcx.sdk.client.recipient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eg.gov.healthflow.hfcx.sdk.core.exception.BusinessException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.BadFhirJsonException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.IbanInvalidException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.NationalIdInvalidException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.PhoneInvalidException;
 import eg.gov.healthflow.hfcx.sdk.core.validators.EgyptianIBANValidator;
 import eg.gov.healthflow.hfcx.sdk.core.validators.EgyptianNationalIDValidator;
 import eg.gov.healthflow.hfcx.sdk.core.validators.EgyptianPhoneValidator;
@@ -18,9 +21,9 @@ import eg.gov.healthflow.hfcx.sdk.core.validators.EgyptianPhoneValidator;
  */
 public final class EgyptianBundleValidator {
 
-    public static final String CODE_BAD_NATIONAL_ID = "ERR-B-EG-001";
-    public static final String CODE_BAD_PHONE = "ERR-B-EG-002";
-    public static final String CODE_BAD_IBAN = "ERR-B-EG-003";
+    public static final String CODE_BAD_NATIONAL_ID = NationalIdInvalidException.CODE;
+    public static final String CODE_BAD_PHONE = PhoneInvalidException.CODE;
+    public static final String CODE_BAD_IBAN = IbanInvalidException.CODE;
 
     private static final ObjectMapper JSON = new ObjectMapper();
 
@@ -34,7 +37,7 @@ public final class EgyptianBundleValidator {
         } catch (JsonProcessingException e) {
             // FhirValidator runs first and catches malformed JSON; if we
             // somehow got here, fail-secure.
-            throw new BusinessException("ERR-B-FHIR-005",
+            throw new BadFhirJsonException(
                     "FHIR payload is not valid JSON: " + e.getMessage());
         }
 
@@ -60,7 +63,7 @@ public final class EgyptianBundleValidator {
                 if (FhirValidator.NATIONAL_ID_SYSTEM.equals(textOrNull(id, "system"))) {
                     String value = textOrNull(id, "value");
                     if (!EgyptianNationalIDValidator.isValid(value)) {
-                        throw new BusinessException(CODE_BAD_NATIONAL_ID,
+                        throw new NationalIdInvalidException(
                                 "Patient National-ID identifier value '" + value
                                         + "' is not a valid Egyptian National ID");
                     }
@@ -73,7 +76,7 @@ public final class EgyptianBundleValidator {
                 if ("phone".equals(textOrNull(contact, "system"))) {
                     String value = textOrNull(contact, "value");
                     if (!EgyptianPhoneValidator.isValid(value)) {
-                        throw new BusinessException(CODE_BAD_PHONE,
+                        throw new PhoneInvalidException(
                                 "Patient phone '" + value
                                         + "' is not a valid Egyptian mobile number");
                     }
@@ -95,7 +98,7 @@ public final class EgyptianBundleValidator {
             if (system != null && system.contains("iban")) {
                 String value = textOrNull(id, "value");
                 if (!EgyptianIBANValidator.isValid(value)) {
-                    throw new BusinessException(CODE_BAD_IBAN,
+                    throw new IbanInvalidException(
                             "Organization IBAN '" + value + "' is not a valid Egyptian IBAN");
                 }
             }

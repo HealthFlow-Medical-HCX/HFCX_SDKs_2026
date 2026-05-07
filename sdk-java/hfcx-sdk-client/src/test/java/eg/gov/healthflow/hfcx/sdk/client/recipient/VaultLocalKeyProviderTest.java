@@ -94,7 +94,7 @@ class VaultLocalKeyProviderTest {
                 .willReturn(aResponse().withStatus(403)));
         VaultLocalKeyProvider provider = build();
         TechnicalException ex = assertThrows(TechnicalException.class, provider::getPrivateKey);
-        assertEquals("ERR-T-001", ex.getCode());
+        assertEquals("ERR-T-004", ex.getCode());
     }
 
     @Test
@@ -112,7 +112,7 @@ class VaultLocalKeyProviderTest {
                         .withBody("{\"data\":{\"data\":{\"other\":\"x\"}}}")));
         VaultLocalKeyProvider provider = build();
         TechnicalException ex = assertThrows(TechnicalException.class, provider::getPrivateKey);
-        assertEquals("ERR-T-001", ex.getCode());
+        assertEquals("ERR-T-004", ex.getCode());
     }
 
     @Test

@@ -15,9 +15,12 @@ import eg.gov.healthflow.hfcx.sdk.client.request.SubmitPreauthRequest;
 import eg.gov.healthflow.hfcx.sdk.core.HfcxSdkVersion;
 import eg.gov.healthflow.hfcx.sdk.core.exception.AuthenticationException;
 import eg.gov.healthflow.hfcx.sdk.core.exception.BusinessException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.Gateway5xxException;
 import eg.gov.healthflow.hfcx.sdk.core.exception.HfcxException;
 import eg.gov.healthflow.hfcx.sdk.core.exception.ProtocolException;
 import eg.gov.healthflow.hfcx.sdk.core.exception.TechnicalException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.TransportException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.UnknownBusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -205,7 +208,7 @@ public final class HfcxClient {
                         sleepFor(retryDelays.get(attempt));
                         continue;
                     }
-                    throw new TechnicalException("ERR-T-001",
+                    throw new Gateway5xxException(
                             "Gateway returned HTTP " + status + " after "
                                     + (retryDelays.size() + 1) + " attempts");
                 }
@@ -217,11 +220,11 @@ public final class HfcxClient {
                     sleepFor(retryDelays.get(attempt));
                     continue;
                 }
-                throw new TechnicalException("ERR-T-001",
+                throw new TransportException(
                         "Gateway request failed after " + (retryDelays.size() + 1) + " attempts", e);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new TechnicalException("ERR-T-001", "Gateway request interrupted", e);
+                throw new TransportException("Gateway request interrupted", e);
             }
         }
     }
@@ -245,7 +248,7 @@ public final class HfcxClient {
             throw ex;
         }
         // 1xx, 2xx other than 202, 3xx redirects.
-        throw new TechnicalException("ERR-T-001",
+        throw new TransportException(
                 "Gateway returned unexpected HTTP " + status + " for " + operation);
     }
 
@@ -254,7 +257,7 @@ public final class HfcxClient {
      * exception tiers based on the {@code error.code} prefix.
      */
     private static HfcxException parseTypedError(String body, int status, Operation operation) {
-        String code = "ERR-B-UNKNOWN";
+        String code = UnknownBusinessException.CODE;
         String message = "HTTP " + status + " from gateway for " + operation;
         if (body != null && !body.isBlank()) {
             try {
@@ -274,14 +277,9 @@ public final class HfcxClient {
                 // Fall through with default code/message.
             }
         }
-        if (code.startsWith("ERR-P-")) {
-            return new ProtocolException(code, message);
-        }
-        if (code.startsWith("ERR-T-")) {
-            return new TechnicalException(code, message);
-        }
-        // Default branch covers ERR-B-* and any unexpected prefix.
-        return new BusinessException(code, message);
+        // Route the wire code through the catalog so callers see the typed
+        // subclass (e.g. NationalIdInvalidException) and can catch by type.
+        return HfcxException.fromWireCode(code, message);
     }
 
     private void sleepFor(Duration d) {
@@ -289,7 +287,7 @@ public final class HfcxClient {
             sleeper.sleep(d.toMillis());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     "Interrupted while waiting to retry gateway request", e);
         }
     }

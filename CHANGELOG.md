@@ -8,6 +8,56 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J6 — error taxonomy + integration test pass)
+
+- `eg.gov.healthflow.hfcx.sdk.core.exception.ErrorCode` — single-source-
+  of-truth catalog enum with 27 entries (9 protocol, 12 business, 6
+  technical) covering every error code the SDK currently raises. Each
+  entry pins a wire-format code, a tier, and a human-readable
+  description.
+- 26 typed exception subclasses (one file each under
+  `eg.gov.healthflow.hfcx.sdk.core.exception`), one per
+  `ErrorCode`. Callers can now `catch` specific failures by type
+  (e.g. `catch (NationalIdInvalidException e)`) instead of
+  string-matching on the wire code.
+- `HfcxException.of(ErrorCode, String)` and
+  `HfcxException.fromWireCode(String, String)` factories return the
+  most-specific typed subclass for a given code. Wire codes the SDK
+  hasn't yet synced from the platform's catalog fall back to the
+  bare tier exception based on the `ERR-[PBT]-` prefix, preserving
+  the platform's reported value.
+- All J1–J5 ad-hoc wire codes (`ERR-B-NF`, `ERR-B-FHIR-001..005`,
+  `ERR-B-EG-001..003`, `ERR-B-ENV-001..002`, `ERR-B-UNKNOWN`) have
+  been migrated to canonical catalog entries:
+  - `ERR-B-NF` → `ERR-B-001` (`ParticipantNotFoundException`)
+  - `ERR-B-FHIR-001..005` → `ERR-B-002..005, 009` (typed)
+  - `ERR-B-EG-001..003` → `ERR-B-006..008` (typed)
+  - `ERR-B-ENV-001..002` → `ERR-B-010..011` (typed)
+  - `ERR-B-UNKNOWN` → `ERR-B-012` (`UnknownBusinessException`)
+- `HfcxClient.parseTypedError` now routes inbound 4xx codes through
+  `HfcxException.fromWireCode`, so callers receive typed exceptions
+  (e.g. `PatientMissingNationalIdException`) for everything in the
+  catalog rather than a bare tier exception.
+- `RecipientController` (Spring Boot example) now serialises
+  `HfcxException`s into the platform's wire format
+  ({@code "error": {"code": ..., "message": ...}}) so the `HfcxClient`
+  on the other end of a round trip can reconstruct the typed
+  subclass from the response body.
+- `SdkRoundTripCyclesTest` (examples module) — in-process
+  equivalent of the platform's §31 cycle suite. The full SDK is on
+  both ends of the wire: `HfcxClient` sends, the Spring Boot
+  example app receives via `RecipientHandler`, and the typed-
+  exception round trip is asserted end-to-end. 5 positive cycles
+  (eligibility, preauth, claim, communication, payment notice) +
+  3 negative cycles (typed FHIR + Egyptian rejections).
+- `PlatformMockPayerIntegrationTest` expanded from a single
+  `@Disabled` placeholder to nine — one per §31 cycle, plus four
+  for the SDK-as-recipient path. Still `@Disabled`; activates when
+  the platform-integration CI job lands.
+- New tests: 11-case `ErrorCodeCatalogTest` (uniqueness, format,
+  tier-prefix consistency, factory dispatch, full
+  catalog↔subclass coverage), 8 `SdkRoundTripCyclesTest` cycles.
+
 ### Added (Sprint J5 — inbound decryption + validation pipeline)
 
 - `eg.gov.healthflow.hfcx.sdk.core.validators` — four Egyptian field

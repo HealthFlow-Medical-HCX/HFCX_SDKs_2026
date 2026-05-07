@@ -5,6 +5,62 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J6 — error taxonomy + integration test pass)
+
+- `eg.gov.healthflow.hfcx.sdk.core.exception.ErrorCode` — single-source-
+  of-truth catalog enum. 27 entries: 9 protocol, 12 business, 6
+  technical. Each pins a wire-format code, a {@link
+  ErrorCode.Tier}, and a description. Adding / removing entries is a
+  cross-SDK breaking change.
+- 26 typed exception subclasses, one per `ErrorCode`, under the
+  same `eg.gov.healthflow.hfcx.sdk.core.exception` package. Each
+  has a public static `CODE` constant equal to its wire-format
+  code. Callers can `catch` a specific failure by type. The bare
+  tier exceptions (`ProtocolException`, `BusinessException`,
+  `TechnicalException`) remain non-final, non-abstract — ad-hoc
+  wire codes still work for forward compatibility.
+- `HfcxException.of(ErrorCode, ...)` and
+  `HfcxException.fromWireCode(String, ...)` factories return the
+  most-specific typed subclass; unknown codes fall back to the
+  tier exception based on the `ERR-[PBT]-` prefix.
+- `HfcxClient.parseTypedError` now routes through the catalog, so
+  any 4xx response with a known wire code surfaces as the typed
+  subclass on the caller side.
+- All previously ad-hoc wire codes are migrated to canonical
+  catalog entries (see top-level CHANGELOG for the mapping).
+
+### Refactored
+
+- `FhirValidator`, `EgyptianBundleValidator`, `RecipientHandler`,
+  `HeaderValidator`, `RegistryClient`, `KeycloakTokenClient`,
+  `JweEncryption`, `FileLocalKeyProvider`, `VaultLocalKeyProvider`,
+  and `HfcxClient` all now raise typed subclasses instead of bare
+  `BusinessException(code, msg)` / `TechnicalException(code, msg)`.
+  Public {@code CODE_*} constants on the validators continue to
+  exist for backwards compatibility but now point at the canonical
+  catalog code (e.g. `EgyptianBundleValidator.CODE_BAD_NATIONAL_ID
+  = "ERR-B-006"` rather than `"ERR-B-EG-001"`).
+
+### Added — tests (19 new cases)
+
+- `ErrorCodeCatalogTest` (11): wire-code uniqueness, canonical
+  format check, tier-prefix consistency, non-empty descriptions,
+  fromWire round-trip, factory dispatch, cause preservation,
+  per-tier counts pinned, full catalog↔subclass coverage.
+- `SdkRoundTripCyclesTest` (8): five positive cycles (eligibility,
+  preauth, claim, communication, payment notice) plus three
+  negative (FHIR / Egyptian rejection paths surface the typed
+  subclass on the sender side).
+
+### Added — platform-integration scaffold
+
+- `PlatformMockPayerIntegrationTest` expanded from one `@Disabled`
+  placeholder to nine. Five forward §31 cycles (SDK as sender) +
+  four backward (SDK as recipient via the Spring Boot example).
+  Still skipped by default; activated when the platform-
+  integration CI job brings up the platform's
+  `tests/integration/` stack.
+
 ### Added (Sprint J5 — inbound decryption + validation pipeline)
 
 - `eg.gov.healthflow.hfcx.sdk.core.validators` package: four

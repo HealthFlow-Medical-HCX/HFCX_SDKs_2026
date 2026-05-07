@@ -255,7 +255,7 @@ class HfcxClientTest {
 
         BusinessException ex = assertThrows(BusinessException.class,
                 () -> client.submitClaim(claim()));
-        assertEquals("ERR-B-UNKNOWN", ex.getCode());
+        assertEquals("ERR-B-012", ex.getCode());
     }
 
     @Test
@@ -283,7 +283,7 @@ class HfcxClientTest {
 
         TechnicalException ex = assertThrows(TechnicalException.class,
                 () -> client.submitClaim(claim()));
-        assertEquals("ERR-T-001", ex.getCode());
+        assertEquals("ERR-T-006", ex.getCode());  // Gateway5xxException
         // 1 initial + 3 retries = 4 attempts (matches the configured retry-delay length).
         wm.verify(4, postRequestedFor(urlEqualTo(CLAIM_PATH)));
     }
@@ -293,14 +293,14 @@ class HfcxClientTest {
         wm.stubFor(post(urlEqualTo(CLAIM_PATH)).willReturn(aResponse().withStatus(202)));
         HfcxClient client = validBuilder()
                 .encryptor(new OutboundEncryptor(code -> {
-                    throw new BusinessException("ERR-B-NF",
+                    throw new BusinessException("ERR-B-001",
                             "Participant '" + code + "' not found");
                 }))
                 .build();
 
         BusinessException ex = assertThrows(BusinessException.class,
                 () -> client.submitClaim(claim()));
-        assertEquals("ERR-B-NF", ex.getCode());
+        assertEquals("ERR-B-001", ex.getCode());
         wm.verify(0, postRequestedFor(urlEqualTo(CLAIM_PATH)));
     }
 

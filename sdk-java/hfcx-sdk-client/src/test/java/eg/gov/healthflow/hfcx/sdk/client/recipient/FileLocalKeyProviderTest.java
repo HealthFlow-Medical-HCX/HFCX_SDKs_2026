@@ -47,7 +47,7 @@ class FileLocalKeyProviderTest {
     void missingFileRaisesTechnicalException() {
         FileLocalKeyProvider provider = new FileLocalKeyProvider("/no/such/file.pem");
         TechnicalException ex = assertThrows(TechnicalException.class, provider::getPrivateKey);
-        assertEquals("ERR-T-001", ex.getCode());
+        assertEquals("ERR-T-004", ex.getCode());
     }
 
     @Test
@@ -56,7 +56,7 @@ class FileLocalKeyProviderTest {
         Files.writeString(keyFile, "not a real pem");
         FileLocalKeyProvider provider = new FileLocalKeyProvider(keyFile);
         TechnicalException ex = assertThrows(TechnicalException.class, provider::getPrivateKey);
-        assertEquals("ERR-T-001", ex.getCode());
+        assertEquals("ERR-T-004", ex.getCode());
     }
 
     private static String pkcs8Pem(RSAPrivateKey key) {

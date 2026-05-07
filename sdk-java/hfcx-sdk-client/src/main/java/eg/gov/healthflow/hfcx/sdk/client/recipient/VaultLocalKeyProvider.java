@@ -2,7 +2,7 @@ package eg.gov.healthflow.hfcx.sdk.client.recipient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eg.gov.healthflow.hfcx.sdk.core.exception.TechnicalException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.KeyUnavailableException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -90,22 +90,22 @@ public final class VaultLocalKeyProvider implements LocalKeyProvider {
         try {
             response = httpClient.send(reqBuilder.build(), HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new KeyUnavailableException(
                     "Vault request failed: " + e.getMessage(), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new TechnicalException("ERR-T-001", "Vault request interrupted", e);
+            throw new KeyUnavailableException( "Vault request interrupted", e);
         }
         if (response.statusCode() == 403) {
-            throw new TechnicalException("ERR-T-001",
+            throw new KeyUnavailableException(
                     "Vault token rejected (HTTP 403) for " + endpoint);
         }
         if (response.statusCode() == 404) {
-            throw new TechnicalException("ERR-T-001",
+            throw new KeyUnavailableException(
                     "Vault secret not found at " + endpoint);
         }
         if (response.statusCode() != 200) {
-            throw new TechnicalException("ERR-T-001",
+            throw new KeyUnavailableException(
                     "Vault returned HTTP " + response.statusCode() + " for " + endpoint);
         }
         return parsePem(extractField(response.body()));
@@ -116,12 +116,12 @@ public final class VaultLocalKeyProvider implements LocalKeyProvider {
             JsonNode root = JSON.readTree(body);
             JsonNode data = root.path("data").path("data").path(secretField);
             if (data.isMissingNode() || data.isNull() || data.asText().isEmpty()) {
-                throw new TechnicalException("ERR-T-001",
+                throw new KeyUnavailableException(
                         "Vault response missing field 'data.data." + secretField + "'");
             }
             return data.asText();
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new KeyUnavailableException(
                     "Vault response was not valid JSON", e);
         }
     }
@@ -136,7 +136,7 @@ public final class VaultLocalKeyProvider implements LocalKeyProvider {
             KeyFactory kf = KeyFactory.getInstance("RSA");
             return (RSAPrivateKey) kf.generatePrivate(new PKCS8EncodedKeySpec(der));
         } catch (IllegalArgumentException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new KeyUnavailableException(
                     "Failed to parse PKCS#8 PEM from Vault secret", e);
         }
     }

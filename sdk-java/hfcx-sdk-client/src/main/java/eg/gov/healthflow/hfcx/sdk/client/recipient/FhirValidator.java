@@ -3,7 +3,11 @@ package eg.gov.healthflow.hfcx.sdk.client.recipient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eg.gov.healthflow.hfcx.sdk.core.exception.BusinessException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.BadFhirJsonException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.BundleMissingTypeException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.NotABundleException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.PatientMissingNationalIdException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.PatientNonEgyptianException;
 
 /**
  * Validates the structural shape of a FHIR Bundle against the Egyptian
@@ -34,12 +38,17 @@ import eg.gov.healthflow.hfcx.sdk.core.exception.BusinessException;
  */
 public final class FhirValidator {
 
-    /** Wire-format error codes raised on profile violations. */
-    public static final String CODE_NOT_A_BUNDLE = "ERR-B-FHIR-001";
-    public static final String CODE_BUNDLE_MISSING_TYPE = "ERR-B-FHIR-002";
-    public static final String CODE_PATIENT_MISSING_NATIONAL_ID = "ERR-B-FHIR-003";
-    public static final String CODE_PATIENT_NON_EGYPTIAN = "ERR-B-FHIR-004";
-    public static final String CODE_INVALID_JSON = "ERR-B-FHIR-005";
+    /**
+     * Wire-format error codes raised on profile violations. These now point
+     * at the canonical {@link eg.gov.healthflow.hfcx.sdk.core.exception.ErrorCode}
+     * catalog entries; the constants are kept for backwards compatibility
+     * with callers that previously imported them directly.
+     */
+    public static final String CODE_NOT_A_BUNDLE = NotABundleException.CODE;
+    public static final String CODE_BUNDLE_MISSING_TYPE = BundleMissingTypeException.CODE;
+    public static final String CODE_PATIENT_MISSING_NATIONAL_ID = PatientMissingNationalIdException.CODE;
+    public static final String CODE_PATIENT_NON_EGYPTIAN = PatientNonEgyptianException.CODE;
+    public static final String CODE_INVALID_JSON = BadFhirJsonException.CODE;
 
     /** System URI declared by the Egyptian IG for the National-ID identifier slice. */
     public static final String NATIONAL_ID_SYSTEM = "http://hcx-egypt.gov.eg/identifiers/national-id";
@@ -48,23 +57,23 @@ public final class FhirValidator {
 
     public void validate(String bundleJson) {
         if (bundleJson == null || bundleJson.isBlank()) {
-            throw new BusinessException(CODE_INVALID_JSON, "FHIR Bundle payload is empty");
+            throw new BadFhirJsonException("FHIR Bundle payload is empty");
         }
         JsonNode root;
         try {
             root = JSON.readTree(bundleJson);
         } catch (JsonProcessingException e) {
-            throw new BusinessException(CODE_INVALID_JSON,
+            throw new BadFhirJsonException(
                     "FHIR payload is not valid JSON: " + e.getMessage());
         }
 
         if (!"Bundle".equals(text(root, "resourceType"))) {
-            throw new BusinessException(CODE_NOT_A_BUNDLE,
+            throw new NotABundleException(
                     "Top-level resource must be Bundle (got '"
                             + text(root, "resourceType") + "')");
         }
         if (text(root, "type") == null) {
-            throw new BusinessException(CODE_BUNDLE_MISSING_TYPE,
+            throw new BundleMissingTypeException(
                     "Bundle.type is required by the Egyptian IG");
         }
 
@@ -93,19 +102,19 @@ public final class FhirValidator {
             }
         }
         if (!hasNationalId) {
-            throw new BusinessException(CODE_PATIENT_MISSING_NATIONAL_ID,
+            throw new PatientMissingNationalIdException(
                     "Patient is missing an identifier with system "
                             + NATIONAL_ID_SYSTEM);
         }
 
         JsonNode addresses = patient.path("address");
         if (!addresses.isArray() || addresses.isEmpty()) {
-            throw new BusinessException(CODE_PATIENT_NON_EGYPTIAN,
+            throw new PatientNonEgyptianException(
                     "Patient.address[0] is required by the Egyptian IG");
         }
         String country = text(addresses.get(0), "country");
         if (!"EG".equals(country)) {
-            throw new BusinessException(CODE_PATIENT_NON_EGYPTIAN,
+            throw new PatientNonEgyptianException(
                     "Patient.address[0].country must be 'EG' (got '" + country + "')");
         }
     }

@@ -8,6 +8,8 @@ import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import eg.gov.healthflow.hfcx.sdk.core.exception.CryptographicFailureException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.JweAlgorithmRejectedException;
 import eg.gov.healthflow.hfcx.sdk.core.exception.ProtocolException;
 import eg.gov.healthflow.hfcx.sdk.core.exception.TechnicalException;
 
@@ -65,7 +67,7 @@ public final class JweEncryption {
         try {
             jwe.encrypt(new RSAEncrypter(recipientPublicKey));
         } catch (JOSEException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new CryptographicFailureException(
                     "JWE encryption failed: " + e.getMessage(), e);
         }
         return jwe.serialize();
@@ -93,18 +95,18 @@ public final class JweEncryption {
         try {
             jwe = JWEObject.parse(jweCompact);
         } catch (ParseException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new CryptographicFailureException(
                     "JWE compact serialization is malformed: " + e.getMessage(), e);
         }
 
         JWEHeader header = jwe.getHeader();
         if (!JWEAlgorithm.RSA_OAEP_256.equals(header.getAlgorithm())) {
-            throw new ProtocolException("ERR-P-002",
+            throw new JweAlgorithmRejectedException(
                     "JWE alg " + header.getAlgorithm()
                             + " rejected; only " + JweAlgorithms.ALG + " is permitted");
         }
         if (!EncryptionMethod.A256GCM.equals(header.getEncryptionMethod())) {
-            throw new ProtocolException("ERR-P-002",
+            throw new JweAlgorithmRejectedException(
                     "JWE enc " + header.getEncryptionMethod()
                             + " rejected; only " + JweAlgorithms.ENC + " is permitted");
         }
@@ -112,7 +114,7 @@ public final class JweEncryption {
         try {
             jwe.decrypt(new RSADecrypter(recipientPrivateKey));
         } catch (JOSEException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new CryptographicFailureException(
                     "JWE decryption failed: " + e.getMessage(), e);
         }
         return jwe.getPayload().toBytes();

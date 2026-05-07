@@ -297,7 +297,7 @@ class RecipientHandlerTest {
                 handler.handle("Bearer x",
                         validHeaders(UUID.randomUUID().toString(), Instant.now()),
                         "{\"other\":\"x\"}"));
-        assertEquals("ERR-B-ENV-001", ex.getCode());
+        assertEquals("ERR-B-010", ex.getCode());
     }
 
     @Test
@@ -307,6 +307,6 @@ class RecipientHandlerTest {
                 handler.handle("Bearer x",
                         validHeaders(UUID.randomUUID().toString(), Instant.now()),
                         "not json"));
-        assertEquals("ERR-B-ENV-002", ex.getCode());
+        assertEquals("ERR-B-011", ex.getCode());
     }
 }

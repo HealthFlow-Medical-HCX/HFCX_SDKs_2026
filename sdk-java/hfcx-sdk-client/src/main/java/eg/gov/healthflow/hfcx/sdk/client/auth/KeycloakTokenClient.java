@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eg.gov.healthflow.hfcx.sdk.core.exception.AuthenticationException;
 import eg.gov.healthflow.hfcx.sdk.core.exception.TechnicalException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.TransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,11 +166,11 @@ public final class KeycloakTokenClient {
                         sleepFor(backoff);
                         continue;
                     }
-                    throw new TechnicalException("ERR-T-001",
+                    throw new TransportException(
                             "Keycloak returned HTTP " + status
                                     + " after " + (retryDelays.size() + 1) + " attempts");
                 }
-                throw new TechnicalException("ERR-T-001",
+                throw new TransportException(
                         "Keycloak returned unexpected HTTP " + status + ": "
                                 + truncate(response.body(), 200));
             } catch (java.io.IOException e) {
@@ -180,11 +181,11 @@ public final class KeycloakTokenClient {
                     sleepFor(backoff);
                     continue;
                 }
-                throw new TechnicalException("ERR-T-001",
+                throw new TransportException(
                         "Keycloak request failed after " + (retryDelays.size() + 1) + " attempts", e);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new TechnicalException("ERR-T-001",
+                throw new TransportException(
                         "Keycloak request interrupted", e);
             }
         }
@@ -202,7 +203,7 @@ public final class KeycloakTokenClient {
             JsonNode access = node.get("access_token");
             JsonNode expires = node.get("expires_in");
             if (access == null || access.isNull() || access.asText().isEmpty()) {
-                throw new TechnicalException("ERR-T-001",
+                throw new TransportException(
                         "Keycloak response missing 'access_token': " + truncate(body, 200));
             }
             long expiresInSeconds = expires != null && expires.isIntegralNumber()
@@ -210,7 +211,7 @@ public final class KeycloakTokenClient {
                     : 60L;
             return new CachedToken(access.asText(), clock.instant().plusSeconds(expiresInSeconds));
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     "Keycloak response was not valid JSON: " + truncate(body, 200), e);
         }
     }
@@ -220,7 +221,7 @@ public final class KeycloakTokenClient {
             sleeper.sleep(d.toMillis());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new TechnicalException("ERR-T-001",
+            throw new TransportException(
                     "Interrupted while waiting to retry Keycloak request", e);
         }
     }

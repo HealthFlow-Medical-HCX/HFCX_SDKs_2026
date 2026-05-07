@@ -1,6 +1,6 @@
 package eg.gov.healthflow.hfcx.sdk.client.recipient;
 
-import eg.gov.healthflow.hfcx.sdk.core.exception.TechnicalException;
+import eg.gov.healthflow.hfcx.sdk.core.exception.KeyUnavailableException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +39,7 @@ public final class FileLocalKeyProvider implements LocalKeyProvider {
             String pem = Files.readString(path, StandardCharsets.UTF_8);
             return parsePkcs8(pem);
         } catch (IOException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new KeyUnavailableException(
                     "Failed to read private key file: " + path, e);
         }
     }
@@ -55,7 +55,7 @@ public final class FileLocalKeyProvider implements LocalKeyProvider {
             return (java.security.interfaces.RSAPrivateKey)
                     kf.generatePrivate(new PKCS8EncodedKeySpec(der));
         } catch (IllegalArgumentException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new TechnicalException("ERR-T-001",
+            throw new KeyUnavailableException(
                     "Failed to parse PKCS#8 PEM private key", e);
         }
     }

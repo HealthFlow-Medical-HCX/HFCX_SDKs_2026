@@ -95,7 +95,7 @@ gateway is encryption-transparent and never runs the SDK.
 | Inbound decryption + recipient   | ✅ Sprint J5 |
 | FHIR + Egyptian validation       | ✅ Sprint J5 (hand-rolled IG profile; full HAPI-FHIR deferred) |
 | Spring Boot recipient example    | ✅ Sprint J5 |
-| Full error-code taxonomy         | 🚧 Sprint J6 (J1 ships base hierarchy; J2 adds `AuthenticationException`; J4 adds gateway response mapping) |
+| Full error-code taxonomy         | ✅ Sprint J6 (`ErrorCode` catalog with 27 entries, 26 typed subclasses, factory dispatch) |
 | Platform mock-payer integration test | 🚧 Sprint J4 placeholder; live job follows |
 | 1.0.0 GA on Maven Central        | ⏳ Sprint J7 |
 
