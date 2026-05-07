@@ -17,7 +17,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | JWE encrypt                      | `OutboundEncryptor.encrypt`         | `crypto.encrypt`                        | `OutboundEncryptor.Encrypt`           | `encrypt()`                         |
 | JWE decrypt                      | `InboundDecryptor.decrypt`          | `crypto.decrypt`                        | `InboundDecryptor.Decrypt`            | `decrypt()`                         |
 | Recipient pipeline               | `RecipientHandler`                  | `RecipientHandler`                      | `RecipientHandler`                    | `RecipientHandler`                  |
-| Get bearer token                 | `KeycloakTokenClient.getToken`      | `KeycloakTokenClient.get_token`         | `KeycloakTokenClient.GetTokenAsync`   | `KeycloakTokenClient.getToken`      |
+| Get bearer token                 | ✅ `KeycloakTokenClient.getToken`   | `KeycloakTokenClient.get_token`         | `KeycloakTokenClient.GetTokenAsync`   | `KeycloakTokenClient.getToken`      |
 | Fetch recipient cert             | `RegistryClient.getRecipientCert`   | `RegistryClient.get_recipient_cert`     | `RegistryClient.GetRecipientCertAsync`| `RegistryClient.getRecipientCert`   |
 | Validate FHIR Bundle             | `FhirValidationService.validate`    | `fhir.validate`                         | `FhirValidator.Validate`              | `validateFhir()`                    |
 | Validate Egyptian National-ID    | `EgyptianNationalIDValidator.isValid` | `egyptian_national_id.is_valid`        | `EgyptianNationalIdValidator.IsValid` | `isValidEgyptianNationalId`         |
@@ -26,13 +26,14 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | Egyptian governorate enum        | `EgyptianGovernorate` (27)          | `EgyptianGovernorate` IntEnum           | `EgyptianGovernorate` enum            | `EgyptianGovernorate` literal type  |
 | Exception: protocol error        | `ProtocolException`                 | `ProtocolError`                         | `ProtocolException`                   | `ProtocolError`                     |
 | Exception: business error        | `BusinessException`                 | `BusinessError`                         | `BusinessException`                   | `BusinessError`                     |
-| Exception: technical error       | `TechnicalException`                | `TechnicalError`                        | `TechnicalException`                  | `TechnicalError`                    |
+| Exception: technical error       | ✅ `TechnicalException`             | `TechnicalError`                        | `TechnicalException`                  | `TechnicalError`                    |
+| Exception: authentication error  | ✅ `AuthenticationException` (`ERR-T-002`) | `AuthenticationError`           | `AuthenticationException`             | `AuthenticationError`               |
 
 ## Implementation status
 
 | SDK        | Status     | Version | Released |
 |------------|------------|---------|----------|
-| Java       | 🚧 Sprint J1 | 1.0.0-SNAPSHOT | — |
+| Java       | 🚧 Sprint J2 | 1.0.0-SNAPSHOT | — |
 | Python     | ⏳ Planned  | —       | —        |
 | .NET       | ⏳ Planned  | —       | —        |
 | JavaScript | ⏳ Planned  | —       | —        |

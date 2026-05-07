@@ -86,14 +86,15 @@ gateway is encryption-transparent and never runs the SDK.
 
 | Capability               | Status      |
 |--------------------------|-------------|
-| Eligibility check        | 🚧 Sprint J3 |
-| Preauth submit           | 🚧 Sprint J3 |
-| Claim submit             | 🚧 Sprint J3 |
-| Communication            | 🚧 Sprint J3 |
-| Payment notice           | 🚧 Sprint J3 |
+| Keycloak token client    | ✅ Sprint J2 |
+| Eligibility check        | ⏳ Sprint J3 |
+| Preauth submit           | ⏳ Sprint J3 |
+| Claim submit             | ⏳ Sprint J3 |
+| Communication            | ⏳ Sprint J3 |
+| Payment notice           | ⏳ Sprint J3 |
 | Outbound encryption      | ⏳ Sprint J4 |
 | Inbound decryption       | ⏳ Sprint J5 |
-| Error taxonomy           | ⏳ Sprint J6 |
+| Error taxonomy           | 🚧 Sprint J6 (J1 ships base hierarchy + AuthenticationException) |
 | 1.0.0 GA on Maven Central | ⏳ Sprint J7 |
 
 ## Versioning

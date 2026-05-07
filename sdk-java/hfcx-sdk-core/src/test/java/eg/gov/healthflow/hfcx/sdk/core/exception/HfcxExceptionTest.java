@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HfcxExceptionTest {
 
@@ -26,5 +27,14 @@ class HfcxExceptionTest {
         TechnicalException ex = new TechnicalException("ERR-T-001", "registry unreachable", cause);
         assertEquals("ERR-T-001", ex.getCode());
         assertSame(cause, ex.getCause());
+    }
+
+    @Test
+    void authenticationExceptionIsTechnicalSubtypeWithFixedCode() {
+        AuthenticationException ex = new AuthenticationException("bad credentials");
+        assertEquals(AuthenticationException.CODE, ex.getCode());
+        assertEquals("ERR-T-002", ex.getCode());
+        // Catching TechnicalException must pick this up.
+        assertTrue(ex instanceof TechnicalException);
     }
 }

@@ -8,6 +8,27 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J2)
+
+- `KeycloakTokenClient` (`sdk-java/hfcx-sdk-client`) — fetches and caches
+  bearer tokens for the configured `clientId`/`clientSecret`. Refreshes
+  60s before expiry by default. Retries 5xx with `1s/2s/4s` exponential
+  backoff (3 retries → 4 attempts max). 401 surfaces immediately as
+  `AuthenticationException` (no retry). Network errors and non-200/401
+  statuses surface as `TechnicalException(ERR-T-001)`.
+- `AuthenticationException` in `sdk-java/hfcx-sdk-core` — subtype of
+  `TechnicalException` carrying wire-format code `ERR-T-002`.
+- `KeycloakTokenClientTest` — 12 WireMock cases covering happy path,
+  cache hit, refresh, 401 propagation, 503 retry-then-success, 503
+  exhaustion, connection-refused timeout, 16-thread concurrent fetch
+  (collapses to one HTTP call), invalidation, malformed response, and
+  builder fail-fast on missing required fields.
+- Hard structural assertion that `KeycloakTokenClient` holds no
+  filesystem references — guarantees "tokens never persisted to disk"
+  at build time.
+- `jackson-databind` (compile, via `jackson-bom`) and `wiremock` (test)
+  added to parent POM dependency management.
+
 ### Added
 - Monorepo bootstrap with Apache 2.0 license, contributing guide, and
   cross-SDK parity tracker.

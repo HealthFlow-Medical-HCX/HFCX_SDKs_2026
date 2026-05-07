@@ -5,6 +5,26 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J2 — Keycloak token client)
+
+- `eg.gov.healthflow.hfcx.sdk.client.auth.KeycloakTokenClient`: builder-
+  constructed bearer-token client with in-memory caching, proactive
+  refresh (60s lead time by default), and exponential-backoff retry on
+  5xx (default `1s/2s/4s`, max 4 attempts). Exposes `getToken()` and
+  `invalidate()`. Thread-safe via double-checked locking on a single
+  `volatile CachedToken` reference; concurrent callers collapse to one
+  HTTP fetch.
+- `eg.gov.healthflow.hfcx.sdk.core.exception.AuthenticationException`:
+  `TechnicalException` subtype with wire-format code `ERR-T-002`, raised
+  on Keycloak HTTP 401 (never retried). Catching `TechnicalException`
+  picks up both `ERR-T-001` and `ERR-T-002`.
+- 12 WireMock-backed test cases for `KeycloakTokenClient`. The on-disk-
+  persistence guard is a static structural check on the class's fields,
+  not a runtime test, so it cannot be defeated by mocking.
+- New compile dependency: `com.fasterxml.jackson.core:jackson-databind`
+  (via `jackson-bom` in parent dependency management) for parsing the
+  Keycloak token response.
+
 ### Added (Sprint J1 — Repository bootstrap)
 
 - Three-module Maven build:
