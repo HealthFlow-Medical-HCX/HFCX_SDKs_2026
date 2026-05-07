@@ -41,6 +41,7 @@ build/
 # Node.js (forward-looking, sdk-javascript/)
 node_modules/
 *.tgz
+!sdk-*/fhir-ig/egyptian-ig.tgz
 .pnpm-store/
 .npm/
 
@@ -49,12 +50,16 @@ bin/
 obj/
 *.user
 
-# Local secrets — must never be committed
+# Local secrets — must never be committed.
+# PEM/key files are blocked everywhere and only un-ignored in narrow,
+# explicitly test-only fixture paths so a real key dropped into a random
+# directory cannot slip past .gitignore.
 .env
 .env.*
 !.env.example
 *.pem
 *.key
-!fhir-ig/**/*.pem
-!**/test/**/*.pem
-!**/tests/**/*.pem
+!sdk-*/**/src/test/resources/**/*.pem
+!sdk-*/**/src/test/resources/**/*.key
+!sdk-*/tests/**/fixtures/**/*.pem
+!sdk-*/tests/**/fixtures/**/*.key

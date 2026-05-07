@@ -32,11 +32,14 @@ jobs:
           cache: maven
 
       - name: Build and verify SDK modules
-        run: mvn -B -ntp verify
+        run: ./mvnw -B -ntp verify
 
       - name: Install SDK to local Maven repo
-        run: mvn -B -ntp install -DskipTests
+        run: ./mvnw -B -ntp install -DskipTests
 
       - name: Run consumer smoke test
         working-directory: sdk-java/tests/integration/consumer-smoketest
+        # Use system mvn here: this project has no parent pom and lives
+        # outside the wrapper's scope. Both system mvn and the wrapper
+        # resolve identical artifacts from the local Maven repo.
         run: mvn -B -ntp verify

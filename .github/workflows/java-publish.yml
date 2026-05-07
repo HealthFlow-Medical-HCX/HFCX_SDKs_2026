@@ -4,11 +4,12 @@ name: java-publish
 #
 # Triggered by tags of the form `sdk-java/vX.Y.Z`. Activates the `release`
 # profile in sdk-java/pom.xml, which signs artifacts with GPG and publishes
-# via the Sonatype Central publishing plugin.
+# via the Sonatype Central publishing plugin (Sonatype migrated from OSSRH
+# to the new Central Portal in 2024 — naming reflects the new portal).
 #
 # Required GitHub Secrets (set before the first publish; not present yet):
-#   - OSSRH_USERNAME            Sonatype Central portal username
-#   - OSSRH_PASSWORD            Sonatype Central portal token
+#   - CENTRAL_USERNAME          Sonatype Central portal username
+#   - CENTRAL_TOKEN             Sonatype Central portal access token
 #   - GPG_PRIVATE_KEY           Armoured GPG private key (`gpg --armor --export-secret-keys`)
 #   - GPG_PASSPHRASE            Passphrase for the above key
 #
@@ -40,24 +41,28 @@ jobs:
           distribution: temurin
           java-version: "17"
           cache: maven
+          # The setup-java action writes ~/.m2/settings.xml mapping the
+          # `central` server-id to the env vars below. The
+          # central-publishing-maven-plugin in the parent pom looks up
+          # `central` from settings.xml at deploy time.
           server-id: central
-          server-username: OSSRH_USERNAME
-          server-password: OSSRH_PASSWORD
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_TOKEN
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
-      - name: Verify with release profile (no deploy)
+      - name: Verify or deploy with release profile
         # Asserts the release profile assembles sources/javadoc and the GPG
-        # plugin is wired correctly. Skips the actual upload until OSSRH
-        # credentials are configured (see header comment).
+        # plugin is wired correctly. Skips the actual upload until Central
+        # Portal credentials are configured (see header comment).
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          if [[ -z "${OSSRH_USERNAME:-}" || -z "${OSSRH_PASSWORD:-}" || -z "${GPG_PASSPHRASE:-}" ]]; then
-            echo "::warning::OSSRH/GPG secrets not configured — running release-profile verify only."
-            mvn -B -ntp -P release -DskipTests verify -Dgpg.skip=true
+          if [[ -z "${CENTRAL_USERNAME:-}" || -z "${CENTRAL_TOKEN:-}" || -z "${GPG_PASSPHRASE:-}" ]]; then
+            echo "::warning::CENTRAL_USERNAME/CENTRAL_TOKEN/GPG_PASSPHRASE not configured — running release-profile verify only."
+            ./mvnw -B -ntp -P release -DskipTests verify -Dgpg.skip=true
           else
-            mvn -B -ntp -P release -DskipTests deploy
+            ./mvnw -B -ntp -P release -DskipTests deploy
           fi

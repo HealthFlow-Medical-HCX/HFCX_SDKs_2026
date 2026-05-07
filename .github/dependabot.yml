@@ -1,0 +1,57 @@
+version: 2
+
+updates:
+  # Maven dependencies for the Java SDK.
+  - package-ecosystem: maven
+    directory: /sdk-java
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Africa/Cairo
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - sdk-java
+    commit-message:
+      prefix: chore(java)
+      include: scope
+    groups:
+      junit:
+        patterns:
+          - "org.junit*"
+          - "org.junit.jupiter*"
+      maven-plugins:
+        patterns:
+          - "org.apache.maven.plugins:*"
+
+  - package-ecosystem: maven
+    directory: /sdk-java/tests/integration/consumer-smoketest
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Africa/Cairo
+    open-pull-requests-limit: 2
+    labels:
+      - dependencies
+      - sdk-java
+    commit-message:
+      prefix: chore(java-smoketest)
+      include: scope
+
+  # GitHub Actions versions across all workflows.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Africa/Cairo
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - ci
+    commit-message:
+      prefix: chore(ci)
+      include: scope

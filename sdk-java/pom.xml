@@ -68,11 +68,22 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
 
+        <!--
+          Version of the HFCX platform release this SDK was built and
+          integration-tested against. Updated in lockstep with
+          fhir-ig/PLATFORM_VERSION by fhir-ig/sync.sh. The value is
+          filtered into hfcx-sdk-core/src/main/resources/version.properties
+          so HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION reflects it at
+          runtime.
+        -->
+        <platform.version>unbundled</platform.version>
+
         <junit.version>5.10.2</junit.version>
         <slf4j.version>2.0.13</slf4j.version>
 
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.7.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
@@ -113,6 +124,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

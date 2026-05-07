@@ -16,7 +16,27 @@ Egypt's open protocol for decentralised health-claims data exchange.
 (Currently published as a snapshot on Sonatype OSSRH. The 1.0.0 GA release
 on Maven Central is gated on Sprint J7.)
 
-## Quickstart — sender
+## Quickstart — what works today (Sprint J1)
+
+The current snapshot only exposes the artifact wiring and the build-resolved
+version constant. Use it to confirm dependency resolution works before
+later sprints land the real client.
+
+```java
+import eg.gov.healthflow.hfcx.sdk.client.HfcxClient;
+import eg.gov.healthflow.hfcx.sdk.core.HfcxSdkVersion;
+import eg.gov.healthflow.hfcx.sdk.core.crypto.JweAlgorithms;
+
+System.out.println("SDK version: " + HfcxClient.sdkVersion());
+System.out.println("Pinned JWE alg: " + JweAlgorithms.ALG + " / " + JweAlgorithms.ENC);
+System.out.println("Compatible platform: " + HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION);
+```
+
+## Quickstart — sender (preview, Sprint J3+)
+
+> **Preview.** The builder API and the five sender methods below land in
+> Sprint J3 (`HfcxClient` skeleton) and Sprint J4 (outbound encryption).
+> The snippet does **not** compile against the current snapshot.
 
 ```java
 HfcxClient client = HfcxClient.builder()
@@ -39,12 +59,14 @@ ClaimSubmissionResponse response = client.submitClaim(
 log.info("correlationId={} status={}", response.correlationId(), response.status());
 ```
 
-## Quickstart — recipient
+## Quickstart — recipient (preview, Sprint J5)
 
-See `sdk-java/hfcx-sdk-examples/recipient-spring-boot-example/`. The example
-wires `RecipientHandler` into a Spring Boot `@RestController` chain that
-verifies bearer tokens, validates protocol headers, decrypts JWE payloads,
-and runs FHIR + Egyptian field validation.
+> **Preview.** `RecipientHandler` and the example app land in Sprint J5.
+
+See `sdk-java/hfcx-sdk-examples/recipient-spring-boot-example/` once it
+exists. The example will wire `RecipientHandler` into a Spring Boot
+`@RestController` chain that verifies bearer tokens, validates protocol
+headers, decrypts JWE payloads, and runs FHIR + Egyptian field validation.
 
 ## Architecture
 

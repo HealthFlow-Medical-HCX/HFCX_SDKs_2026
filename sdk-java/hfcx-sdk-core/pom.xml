@@ -35,4 +35,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <!--
+          Filter version.properties at build time so HfcxSdkVersion picks
+          up project.version (from this pom) and platform.version (from
+          the parent pom; updated in lockstep with fhir-ig/PLATFORM_VERSION
+          by fhir-ig/sync.sh) instead of hardcoded literals drifting from
+          the build.
+        -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>
