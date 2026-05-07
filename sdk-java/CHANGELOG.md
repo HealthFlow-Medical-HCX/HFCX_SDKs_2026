@@ -5,6 +5,52 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J4 — outbound encryption path)
+
+- `eg.gov.healthflow.hfcx.sdk.core.crypto.JweEncryption`
+  — JWE compact-form encrypt/decrypt with hard-pinned
+  `RSA-OAEP-256` + `A256GCM`. Header-validation downgrade-attack
+  guard mirrors the platform's `JWEHelper`: a payload claiming
+  any other algorithm pair is rejected as
+  `ProtocolException(ERR-P-002)` BEFORE the recipient's private
+  key is touched.
+- `eg.gov.healthflow.hfcx.sdk.client.registry.RegistryClient`
+  — Caffeine-cached Sunbird-RC participant lookup. Per-entry TTL
+  is the cert's `notAfter` minus a configurable buffer (default
+  1 hour). Cache size capped at 10 000. Hit / miss / eviction
+  stats logged at INFO no more than every 60s.
+- `eg.gov.healthflow.hfcx.sdk.client.registry.ParticipantCert`
+  (record) and `RecipientCertResolver`
+  (`@FunctionalInterface`) — abstraction for tests / alternative
+  registries.
+- `eg.gov.healthflow.hfcx.sdk.client.OutboundEncryptor`
+  — composes the resolver and the JWE primitive; this is the
+  cross-SDK-parity public surface for "JWE encrypt".
+- `HfcxClient.dispatch` rewritten: now genuinely encrypts and
+  POSTs. Per-operation endpoint paths default to those documented
+  in Integration Guide §22 and are overridable on the builder.
+  Adds `User-Agent: hfcx-sdk-java/<version>` and the bearer token
+  on every request. Maps response codes to the SDK's typed
+  exception hierarchy as documented in the class Javadoc.
+- New compile dependencies: `com.nimbusds:nimbus-jose-jwt`
+  9.41.2 (core) and `com.github.ben-manes.caffeine:caffeine`
+  3.1.8 (client). New test dependency:
+  `org.bouncycastle:bcpkix-jdk18on` 1.78.1 (client) for fixture
+  cert generation.
+- 30 new test cases. JWE: 8 cases including round-trip,
+  utf-8, distinct-ciphertexts (GCM nonce uniqueness), and four
+  algorithm-downgrade rejections. Registry: 12 cases including
+  cache hit, cache invalidation, 404→`BusinessException(ERR-B-NF)`,
+  5xx propagation, malformed PEM, malformed registry JSON,
+  cert-fetch failure, and capacity. OutboundEncryptor: 4 cases.
+  HfcxClientTest: rewritten to 18 cases covering builder
+  validation, end-to-end encryption, all five endpoints,
+  byte-level header presence, JWE round-trip on the recorded
+  request, retry semantics, and full error-code mapping.
+- `PlatformMockPayerIntegrationTest` — `@Disabled` placeholder
+  with full reproduction instructions for when the platform-
+  integration CI job lands.
+
 ### Added (Sprint J3 — `HfcxClient` skeleton + correlation-ID handling)
 
 - `eg.gov.healthflow.hfcx.sdk.client.HfcxClient` — builder API requiring

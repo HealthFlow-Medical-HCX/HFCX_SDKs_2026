@@ -9,16 +9,16 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| Submit a claim                   | 🚧 `HfcxClient.submitClaim` (J3 stub) | `HfcxClient.submit_claim`             | `HfcxClient.SubmitClaim`              | `HfcxClient.submitClaim`            |
-| Submit a preauth                 | 🚧 `HfcxClient.submitPreauth` (J3 stub) | `HfcxClient.submit_preauth`         | `HfcxClient.SubmitPreauth`            | `HfcxClient.submitPreauth`          |
-| Check eligibility                | 🚧 `HfcxClient.checkEligibility` (J3 stub) | `HfcxClient.check_eligibility`   | `HfcxClient.CheckEligibility`         | `HfcxClient.checkEligibility`       |
-| Send communication               | 🚧 `HfcxClient.sendCommunication` (J3 stub) | `HfcxClient.send_communication` | `HfcxClient.SendCommunication`        | `HfcxClient.sendCommunication`      |
-| Notify payment                   | 🚧 `HfcxClient.notifyPayment` (J3 stub) | `HfcxClient.notify_payment`         | `HfcxClient.NotifyPayment`            | `HfcxClient.notifyPayment`          |
-| JWE encrypt                      | `OutboundEncryptor.encrypt`         | `crypto.encrypt`                        | `OutboundEncryptor.Encrypt`           | `encrypt()`                         |
-| JWE decrypt                      | `InboundDecryptor.decrypt`          | `crypto.decrypt`                        | `InboundDecryptor.Decrypt`            | `decrypt()`                         |
+| Submit a claim                   | ✅ `HfcxClient.submitClaim`         | `HfcxClient.submit_claim`               | `HfcxClient.SubmitClaim`              | `HfcxClient.submitClaim`            |
+| Submit a preauth                 | ✅ `HfcxClient.submitPreauth`       | `HfcxClient.submit_preauth`             | `HfcxClient.SubmitPreauth`            | `HfcxClient.submitPreauth`          |
+| Check eligibility                | ✅ `HfcxClient.checkEligibility`    | `HfcxClient.check_eligibility`          | `HfcxClient.CheckEligibility`         | `HfcxClient.checkEligibility`       |
+| Send communication               | ✅ `HfcxClient.sendCommunication`   | `HfcxClient.send_communication`         | `HfcxClient.SendCommunication`        | `HfcxClient.sendCommunication`      |
+| Notify payment                   | ✅ `HfcxClient.notifyPayment`       | `HfcxClient.notify_payment`             | `HfcxClient.NotifyPayment`            | `HfcxClient.notifyPayment`          |
+| JWE encrypt                      | ✅ `OutboundEncryptor.encrypt`      | `crypto.encrypt`                        | `OutboundEncryptor.Encrypt`           | `encrypt()`                         |
+| JWE decrypt                      | ⏳ `InboundDecryptor.decrypt` (J5)  | `crypto.decrypt`                        | `InboundDecryptor.Decrypt`            | `decrypt()`                         |
 | Recipient pipeline               | `RecipientHandler`                  | `RecipientHandler`                      | `RecipientHandler`                    | `RecipientHandler`                  |
 | Get bearer token                 | ✅ `KeycloakTokenClient.getToken`   | `KeycloakTokenClient.get_token`         | `KeycloakTokenClient.GetTokenAsync`   | `KeycloakTokenClient.getToken`      |
-| Fetch recipient cert             | `RegistryClient.getRecipientCert`   | `RegistryClient.get_recipient_cert`     | `RegistryClient.GetRecipientCertAsync`| `RegistryClient.getRecipientCert`   |
+| Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert` | `RegistryClient.get_recipient_cert`    | `RegistryClient.GetRecipientCertAsync`| `RegistryClient.getRecipientCert`   |
 | Validate FHIR Bundle             | `FhirValidationService.validate`    | `fhir.validate`                         | `FhirValidator.Validate`              | `validateFhir()`                    |
 | Validate Egyptian National-ID    | `EgyptianNationalIDValidator.isValid` | `egyptian_national_id.is_valid`        | `EgyptianNationalIdValidator.IsValid` | `isValidEgyptianNationalId`         |
 | Validate Egyptian phone          | `EgyptianPhoneValidator.isValid`    | `egyptian_phone.is_valid`               | `EgyptianPhoneValidator.IsValid`      | `isValidEgyptianPhone`              |
@@ -33,7 +33,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | SDK        | Status     | Version | Released |
 |------------|------------|---------|----------|
-| Java       | 🚧 Sprint J3 | 1.0.0-SNAPSHOT | — |
+| Java       | 🚧 Sprint J4 | 1.0.0-SNAPSHOT | — |
 | Python     | ⏳ Planned  | —       | —        |
 | .NET       | ⏳ Planned  | —       | —        |
 | JavaScript | ⏳ Planned  | —       | —        |

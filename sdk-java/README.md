@@ -16,17 +16,19 @@ Egypt's open protocol for decentralised health-claims data exchange.
 (Currently published as a snapshot on Sonatype OSSRH. The 1.0.0 GA release
 on Maven Central is gated on Sprint J7.)
 
-## Quickstart — what works today (Sprint J3)
+## Quickstart — what works today (Sprint J4)
 
-The builder, all five sender methods, the Keycloak token client, and the
-correlation-ID + MDC plumbing compile and execute. The methods return
-`HfcxResponse` with `Status.STUBBED` because the outbound HTTP path
-(registry lookup → JWE encrypt → POST to gateway) lands in Sprint J4.
+The full sender path is wired: registry lookup, JWE encryption with
+`RSA-OAEP-256` + `A256GCM`, Keycloak bearer auth, protocol-header
+construction, and POST to the gateway. The methods return
+`HfcxResponse` with `Status.ACCEPTED` on HTTP 202, or throw the
+appropriate `HfcxException` subtype on a 4xx error code.
 
 ```java
 import eg.gov.healthflow.hfcx.sdk.client.HfcxClient;
 import eg.gov.healthflow.hfcx.sdk.client.HfcxResponse;
 import eg.gov.healthflow.hfcx.sdk.client.auth.KeycloakTokenClient;
+import eg.gov.healthflow.hfcx.sdk.client.registry.RegistryClient;
 import eg.gov.healthflow.hfcx.sdk.client.request.SubmitClaimRequest;
 
 HfcxClient client = HfcxClient.builder()
@@ -38,15 +40,17 @@ HfcxClient client = HfcxClient.builder()
         .clientId(System.getenv("KEYCLOAK_CLIENT_ID"))
         .clientSecret(System.getenv("KEYCLOAK_CLIENT_SECRET"))
         .build())
+    .registryClient(RegistryClient.builder()
+        .registryBaseUrl("https://registry.healthflow.gov.eg")
+        .build())
     .build();
 
 HfcxResponse response = client.submitClaim(SubmitClaimRequest.builder()
     .recipientCode("payerco@hcx-egypt")
-    .claimBundle(myFhirBundleJson)            // String for now; J5 adds typed FHIR Bundle support
-    // .correlationId(existingId)              // optional; SDK auto-generates a UUID4 if omitted
+    .claimBundle(myFhirBundleJson)         // String for now; J5 adds typed FHIR Bundle support
+    // .correlationId(existingId)           // optional; SDK auto-generates a UUID4 if omitted
     .build());
 
-// response.status() == Status.STUBBED until Sprint J4 lands the HTTP path.
 log.info("correlationId={} status={}", response.correlationId(), response.status());
 ```
 
@@ -82,12 +86,16 @@ gateway is encryption-transparent and never runs the SDK.
 | Capability                       | Status      |
 |----------------------------------|-------------|
 | Keycloak token client            | ✅ Sprint J2 |
-| `HfcxClient` builder + 5 methods | 🚧 Sprint J3 (stubs return `Status.STUBBED`) |
+| `HfcxClient` builder + 5 methods | ✅ Sprint J4 (real outbound HTTP) |
 | Correlation-ID + MDC propagation | ✅ Sprint J3 |
 | Protocol headers (§24.5)         | ✅ Sprint J3 |
-| Outbound encryption + HTTP POST  | ⏳ Sprint J4 |
+| JWE encryption (RSA-OAEP-256 + A256GCM, downgrade guard) | ✅ Sprint J4 |
+| Sunbird-RC registry lookup + Caffeine cache | ✅ Sprint J4 |
+| Outbound encryption + HTTP POST  | ✅ Sprint J4 |
 | Inbound decryption + recipient   | ⏳ Sprint J5 |
-| Full error-code taxonomy         | 🚧 Sprint J6 (J1 ships base hierarchy; J2 adds `AuthenticationException`) |
+| FHIR + Egyptian validation       | ⏳ Sprint J5/J6 |
+| Full error-code taxonomy         | 🚧 Sprint J6 (J1 ships base hierarchy; J2 adds `AuthenticationException`; J4 adds gateway response mapping) |
+| Platform mock-payer integration test | 🚧 Sprint J4 placeholder; live job follows |
 | 1.0.0 GA on Maven Central        | ⏳ Sprint J7 |
 
 ## Versioning

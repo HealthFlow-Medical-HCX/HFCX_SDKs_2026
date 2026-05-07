@@ -8,6 +8,45 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J4 — outbound encryption path)
+
+- `eg.gov.healthflow.hfcx.sdk.core.crypto.JweEncryption` — JWE compact-
+  form encrypt/decrypt with hard-pinned `RSA-OAEP-256` + `A256GCM`. The
+  decrypt path inspects the JOSE protected header BEFORE any
+  cryptographic operation and rejects every other algorithm pair
+  (`RSA1_5`, `RSA-OAEP` (SHA-1), `A128GCM`, `A256CBC-HS512`, etc.).
+- `eg.gov.healthflow.hfcx.sdk.client.registry.RegistryClient` —
+  Caffeine-cached lookup against the platform's Sunbird-RC participant
+  registry; per-entry TTL = cert `notAfter` − 1 hour, `maxEntries`
+  default 10 000, hit/miss/eviction stats logged at INFO at most every
+  60s. `RecipientCertResolver` `@FunctionalInterface` lets tests
+  substitute lambdas.
+- `eg.gov.healthflow.hfcx.sdk.client.OutboundEncryptor` — composes the
+  resolver and the JWE primitive; cross-SDK parity row "JWE encrypt".
+- `HfcxClient.dispatch` rewritten end-to-end: encrypt → wrap in
+  `{"payload": "<jwe>"}` envelope → attach all five protocol headers
+  + `Authorization: Bearer …` + `User-Agent` → POST to the
+  per-operation gateway endpoint → map response. Default endpoints
+  follow Integration Guide §22; override via `Builder#endpoints(...)`
+  for non-default deployments. Retry policy: 5xx and transport
+  failures retry up to 3 times with `1s/2s/4s` backoff, then surface
+  `TechnicalException(ERR-T-001)`.
+- Error mapping: 202 → `Status.ACCEPTED`; 401 → `AuthenticationException`
+  + bearer cache invalidation; 4xx with parseable `error.code` body →
+  routed to `ProtocolException` / `BusinessException` /
+  `TechnicalException` by code prefix; 4xx with unparseable body →
+  `BusinessException(ERR-B-UNKNOWN)`.
+- New compile dependencies (parent BOM): `com.nimbusds:nimbus-jose-jwt`
+  (in core), `com.github.ben-manes.caffeine:caffeine` (in client).
+- New test dependency: `org.bouncycastle:bcpkix-jdk18on` (test scope,
+  client) for self-signed cert generation in fixtures — no PEM keys
+  are committed.
+- `PlatformMockPayerIntegrationTest` — `@Disabled` placeholder with
+  full instructions for running against the platform's
+  `tests/integration/mock-payer` stack. Tagged
+  `platform-integration` so a future CI job can deactivate
+  `DisabledCondition` for this tag only.
+
 ### Added (Sprint J3)
 
 - `HfcxClient` (`sdk-java/hfcx-sdk-client`) — builder-constructed

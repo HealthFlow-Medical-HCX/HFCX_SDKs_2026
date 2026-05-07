@@ -4,16 +4,28 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import eg.gov.healthflow.hfcx.sdk.client.auth.KeycloakTokenClient;
+import eg.gov.healthflow.hfcx.sdk.client.registry.ParticipantCert;
+import eg.gov.healthflow.hfcx.sdk.client.registry.RecipientCertResolver;
 import eg.gov.healthflow.hfcx.sdk.client.request.SubmitClaimRequest;
+import eg.gov.healthflow.hfcx.sdk.client.testsupport.TestCerts;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -27,11 +39,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class MdcPropagationTest {
 
+    private static final String CLAIM_PATH = "/v1/claim/submit";
+    private static final String TOKEN_PATH = "/auth/realms/hcx/protocol/openid-connect/token";
+
+    @RegisterExtension
+    static WireMockExtension wm = WireMockExtension.newInstance()
+            .options(wireMockConfig().dynamicPort()).build();
+
+    private static TestCerts.GeneratedCert recipient;
     private ListAppender<ILoggingEvent> appender;
     private Logger sdkLogger;
 
+    @BeforeAll
+    static void generateCert() throws Exception {
+        recipient = TestCerts.generate("payerco@hcx-egypt", Duration.ofDays(3650));
+    }
+
     @BeforeEach
     void setUp() {
+        wm.resetAll();
+        wm.stubFor(post(urlEqualTo(TOKEN_PATH)).willReturn(aResponse().withStatus(200).withBody(
+                "{\"access_token\":\"test-bearer\",\"expires_in\":300,\"token_type\":\"Bearer\"}")));
+        wm.stubFor(post(urlEqualTo(CLAIM_PATH)).willReturn(aResponse().withStatus(202)));
+
         LoggerContext ctx = (LoggerContext) LoggerFactory.getILoggerFactory();
         sdkLogger = ctx.getLogger(HfcxClient.class);
         appender = new ListAppender<>();
@@ -48,12 +78,22 @@ class MdcPropagationTest {
 
     private HfcxClient.Builder validBuilder() {
         return HfcxClient.builder()
-                .gatewayUrl("https://healthflow.gov.eg")
+                .gatewayUrl(wm.baseUrl())
                 .participantCode("myhospital@hcx-egypt")
                 .privateKeyPath("/run/secrets/hfcx-private-key.pem")
                 .keycloak(KeycloakTokenClient.builder()
-                        .tokenEndpoint("http://placeholder/token")
-                        .clientId("c").clientSecret("s").build());
+                        .tokenEndpoint(wm.baseUrl() + TOKEN_PATH)
+                        .clientId("c").clientSecret("s")
+                        .retryDelays(List.of(Duration.ZERO, Duration.ZERO, Duration.ZERO))
+                        .build())
+                .encryptor(stubEncryptor())
+                .retryDelays(List.of(Duration.ZERO, Duration.ZERO, Duration.ZERO));
+    }
+
+    private OutboundEncryptor stubEncryptor() {
+        RecipientCertResolver resolver = code -> new ParticipantCert(
+                code, recipient.publicKey(), Instant.now().plusSeconds(3600));
+        return new OutboundEncryptor(resolver);
     }
 
     @Test
@@ -85,9 +125,6 @@ class MdcPropagationTest {
         client.submitClaim(SubmitClaimRequest.builder()
                 .recipientCode("r").claimBundle("{}").correlationId("abc").build());
 
-        // After the call returns, the calling thread's MDC must not retain
-        // the correlation ID — otherwise unrelated logging on this thread
-        // would inherit it.
         assertNull(MDC.get(HfcxClient.MDC_CORRELATION_ID),
                 "MDC must be cleaned up after dispatch returns");
     }

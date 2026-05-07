@@ -78,9 +78,12 @@
         -->
         <platform.version>unbundled</platform.version>
 
+        <bouncycastle.version>1.78.1</bouncycastle.version>
+        <caffeine.version>3.1.8</caffeine.version>
         <jackson.version>2.17.2</jackson.version>
         <junit.version>5.10.2</junit.version>
         <logback.version>1.5.7</logback.version>
+        <nimbus-jose-jwt.version>9.41.2</nimbus-jose-jwt.version>
         <slf4j.version>2.0.13</slf4j.version>
         <wiremock.version>3.10.0</wiremock.version>
 
@@ -111,6 +114,22 @@
                 <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>nimbus-jose-jwt</artifactId>
+                <version>${nimbus-jose-jwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
