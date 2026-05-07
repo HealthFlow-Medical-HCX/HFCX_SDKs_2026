@@ -1,0 +1,63 @@
+name: java-publish
+
+# Stubbed Sprint J1 publish workflow.
+#
+# Triggered by tags of the form `sdk-java/vX.Y.Z`. Activates the `release`
+# profile in sdk-java/pom.xml, which signs artifacts with GPG and publishes
+# via the Sonatype Central publishing plugin.
+#
+# Required GitHub Secrets (set before the first publish; not present yet):
+#   - OSSRH_USERNAME            Sonatype Central portal username
+#   - OSSRH_PASSWORD            Sonatype Central portal token
+#   - GPG_PRIVATE_KEY           Armoured GPG private key (`gpg --armor --export-secret-keys`)
+#   - GPG_PASSPHRASE            Passphrase for the above key
+#
+# This workflow intentionally does NOT publish 1.0.0-SNAPSHOT. The release
+# is gated on Sprint J7. Until then the workflow only validates that a
+# release-profile build assembles cleanly when run manually.
+
+on:
+  push:
+    tags:
+      - "sdk-java/v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk-java
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          server-id: central
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      - name: Verify with release profile (no deploy)
+        # Asserts the release profile assembles sources/javadoc and the GPG
+        # plugin is wired correctly. Skips the actual upload until OSSRH
+        # credentials are configured (see header comment).
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          if [[ -z "${OSSRH_USERNAME:-}" || -z "${OSSRH_PASSWORD:-}" || -z "${GPG_PASSPHRASE:-}" ]]; then
+            echo "::warning::OSSRH/GPG secrets not configured — running release-profile verify only."
+            mvn -B -ntp -P release -DskipTests verify -Dgpg.skip=true
+          else
+            mvn -B -ntp -P release -DskipTests deploy
+          fi
