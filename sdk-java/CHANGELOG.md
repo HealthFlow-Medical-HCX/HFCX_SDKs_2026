@@ -5,6 +5,59 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J5 — inbound decryption + validation pipeline)
+
+- `eg.gov.healthflow.hfcx.sdk.core.validators` package: four
+  validators plus a 27-entry governorate enum.
+  - `EgyptianGovernorate` exposes the two-digit National-ID prefix
+    code, English name, and Arabic name for each governorate, plus a
+    {@code fromCode(...)} lookup.
+  - `EgyptianNationalIDValidator` checks digit count, century digit,
+    Gregorian date validity, and governorate code. Returns a
+    `Result` record with the decoded date of birth, governorate, and
+    gender. Closing checksum digit is intentionally not verified
+    (no single authoritative public algorithm; documented in the
+    Javadoc).
+  - `EgyptianPhoneValidator` accepts the four canonical mobile forms
+    ({@code +201XXXXXXXXX}, {@code 00201XXXXXXXXX},
+    {@code 201XXXXXXXXX}, {@code 01XXXXXXXXX}), strips
+    whitespace/hyphens, returns the canonical form.
+  - `EgyptianIBANValidator` checks the 29-char structure plus ISO
+    13616 mod-97.
+- `eg.gov.healthflow.hfcx.sdk.client.recipient` package: full
+  inbound pipeline.
+  - `LocalKeyProvider` `@FunctionalInterface`.
+  - `FileLocalKeyProvider` reads PKCS#8 PEM from disk on every call.
+  - `VaultLocalKeyProvider` reads from HashiCorp Vault KV v2 via
+    `java.net.http.HttpClient`. Supports namespace + custom field
+    name. Token-auth only by design; AppRole / Vault Agent /
+    namespaces beyond the namespace header are out of scope and
+    handled at the deployment layer.
+  - `InboundDecryptor` composes `LocalKeyProvider` with
+    `JweEncryption.decrypt`.
+  - `RecipientHandler` orchestrates the chain with four
+    independently-toggleable layers:
+    `BEARER → HEADERS → FHIR → EGYPTIAN`. Pushes the correlation
+    ID into MDC for the duration of the call.
+  - `BearerTokenValidator` interface. No default
+    trust-everything implementation by design — enabling the layer
+    without supplying one fails at `build()`.
+  - `HeaderValidator` checks header presence, recipient match,
+    UUID format on correlation/api-call IDs, and ISO-8601 timestamp
+    within ±5 min (configurable).
+  - `FhirValidator` is hand-rolled (avoids pulling ~30 MB of
+    HAPI-FHIR transitive deps; the public surface stays stable when
+    we swap to HAPI later). Rejects non-Bundle, missing
+    `Bundle.type`, Patient without the National-ID identifier, and
+    Patient with non-Egyptian address country.
+  - `EgyptianBundleValidator` walks the Bundle and runs the four
+    Egyptian field validators against identifier / telecom / IBAN
+    fields.
+- 49 new test cases across the new packages.
+- The HAPI-FHIR full-IG-validation switch is staged but not yet
+  pulled — committing it depends on `fhir-ig/egyptian-ig.tgz` being
+  synced from a real platform release.
+
 ### Added (Sprint J4 — outbound encryption path)
 
 - `eg.gov.healthflow.hfcx.sdk.core.crypto.JweEncryption`

@@ -8,6 +8,61 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J5 — inbound decryption + validation pipeline)
+
+- `eg.gov.healthflow.hfcx.sdk.core.validators` — four Egyptian field
+  validators plus the 27-entry `EgyptianGovernorate` enum:
+  `EgyptianNationalIDValidator` (14-digit structural check + decoded
+  date / governorate / gender), `EgyptianPhoneValidator` (accepts the
+  four canonical mobile forms, normalises to `+201XXXXXXXXX`), and
+  `EgyptianIBANValidator` (29-char structural check + ISO 13616 mod-97).
+- `eg.gov.healthflow.hfcx.sdk.client.recipient` — full receipient
+  pipeline:
+  - `LocalKeyProvider` `@FunctionalInterface`, with two reference
+    implementations: `FileLocalKeyProvider` (PKCS#8 PEM from disk;
+    re-reads on every call so rotations take effect immediately) and
+    `VaultLocalKeyProvider` (HashiCorp Vault KV v2, token auth, with
+    namespace and custom-field support).
+  - `InboundDecryptor` — composes `LocalKeyProvider` with
+    `JweEncryption.decrypt`. Cross-SDK parity row "JWE decrypt".
+  - `RecipientHandler` — orchestrates the four-layer chain
+    (`BEARER → HEADERS → FHIR → EGYPTIAN`) with each layer
+    independently toggleable via `Builder#enable(Layer, boolean)`.
+    Pushes the correlation ID into MDC for the duration of the call.
+  - `BearerTokenValidator` `@FunctionalInterface`. The SDK does NOT
+    ship a default trust-everything validator — enabling
+    `Layer.BEARER` without configuring one fails at construction.
+  - `HeaderValidator` — required-header presence,
+    recipient-code match, UUID format on correlation/api-call IDs,
+    ISO-8601 timestamp within ±5 min (configurable).
+  - `FhirValidator` — hand-rolled Egyptian-IG profile validator that
+    rejects non-Bundle root, missing `Bundle.type`, Patient without
+    the National-ID identifier slice, and Patient with
+    `address[0].country != "EG"`. HAPI-FHIR-based full IG validation
+    deferred until `fhir-ig/egyptian-ig.tgz` is synced from a real
+    platform release; the public surface stays stable across that
+    swap.
+  - `EgyptianBundleValidator` — walks the Bundle and applies the four
+    Egyptian field validators to Patient identifiers / telecom and
+    Organization IBAN identifiers.
+- `hfcx-sdk-examples` Spring Boot recipient app — `RecipientApplication`
+  + `RecipientConfig` + `RecipientController` exposing the five
+  `/v1/...` endpoints and routing every inbound POST through
+  `RecipientHandler`. `@SpringBootTest` integration test boots the
+  full app on a random port, posts a real JWE-encrypted claim, and
+  asserts HTTP 202 + correlation-ID echo (and HTTP 401 on missing
+  bearer).
+- New compile dependency: `spring-boot-starter-web` (in
+  `hfcx-sdk-examples` only — the published artifacts in `core` and
+  `client` do NOT take Spring Boot as a transitive).
+- WireMock dependency switched from `org.wiremock:wiremock` to
+  `org.wiremock:wiremock-standalone` so Spring Boot's BOM cannot
+  perturb the Jetty version that WireMock's internal HTTP server SPI
+  resolves.
+- 49 new test cases. Validators: 17. Recipient pipeline: 4 + 6 + 19 =
+  29. Spring Boot integration: 2. (Plus 1 was already-skipped
+  platform-integration.) Total 121 tests pass across the reactor.
+
 ### Added (Sprint J4 — outbound encryption path)
 
 - `eg.gov.healthflow.hfcx.sdk.core.crypto.JweEncryption` — JWE compact-

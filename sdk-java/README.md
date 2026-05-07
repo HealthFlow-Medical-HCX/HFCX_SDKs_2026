@@ -92,8 +92,9 @@ gateway is encryption-transparent and never runs the SDK.
 | JWE encryption (RSA-OAEP-256 + A256GCM, downgrade guard) | ✅ Sprint J4 |
 | Sunbird-RC registry lookup + Caffeine cache | ✅ Sprint J4 |
 | Outbound encryption + HTTP POST  | ✅ Sprint J4 |
-| Inbound decryption + recipient   | ⏳ Sprint J5 |
-| FHIR + Egyptian validation       | ⏳ Sprint J5/J6 |
+| Inbound decryption + recipient   | ✅ Sprint J5 |
+| FHIR + Egyptian validation       | ✅ Sprint J5 (hand-rolled IG profile; full HAPI-FHIR deferred) |
+| Spring Boot recipient example    | ✅ Sprint J5 |
 | Full error-code taxonomy         | 🚧 Sprint J6 (J1 ships base hierarchy; J2 adds `AuthenticationException`; J4 adds gateway response mapping) |
 | Platform mock-payer integration test | 🚧 Sprint J4 placeholder; live job follows |
 | 1.0.0 GA on Maven Central        | ⏳ Sprint J7 |
