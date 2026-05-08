@@ -5,6 +5,59 @@ Versions follow [Semantic Versioning](https://semver.org/) and PEP 440.
 
 ## [Unreleased]
 
+### Added (Sprint P4 — `HfcxClient` outbound flow)
+
+- `hfcx_sdk.client` ships real sync (`HfcxClient`) and async
+  (`AsyncHfcxClient`) sender clients. Both perform the full
+  outbound flow: registry lookup → JWE encryption → bearer-token
+  auth → POST to the gateway, with 1s/2s/4s exponential backoff on
+  5xx (max 4 attempts) and typed-exception mapping for 4xx error
+  codes via `HfcxError.from_wire_code`. Behaviour matches the Java
+  SDK exactly.
+- Five typed sender methods on each client (`check_eligibility`,
+  `submit_preauth`, `submit_claim`, `send_communication`,
+  `notify_payment`), each accepting a typed request dataclass
+  (`CheckEligibilityRequest`, `SubmitPreauthRequest`,
+  `SubmitClaimRequest`, `SendCommunicationRequest`,
+  `NotifyPaymentRequest`) and returning `HfcxResponse`.
+- `Operation` enum closes the set of supported operations;
+  `DEFAULT_ENDPOINTS` mirrors the Java defaults (per Integration
+  Guide §22) and is overridable via the `endpoints=` kwarg.
+- `hfcx_sdk.protocol` ships `protocol.build(...)` with the five
+  pinned header names in deterministic order — byte-identical to
+  the Java SDK's `ProtocolHeaders.build`.
+- `hfcx_sdk.encryptor` ships `OutboundEncryptor` and
+  `AsyncOutboundEncryptor` (composes the cert resolver with
+  `crypto.encrypt_utf8`).
+- `hfcx_sdk._logging` ships the Python equivalent of Java's MDC:
+  `CORRELATION_ID` ContextVar, `CorrelationIdFilter` (auto-
+  installed on the `hfcx_sdk` logger tree), and a
+  `correlation_id_scope(...)` context manager. Every log line
+  emitted during dispatch carries the correlation ID via
+  `record.correlation_id`. Cross-task ContextVar isolation
+  verified by `test_async_concurrent_dispatches_keep_correlation_ids_isolated`.
+- 43 new test cases:
+    * `test_protocol.py` (8): byte-level cross-SDK parity on
+      header names, ordering, ISO-8601 timestamp format,
+      immutability, null guards.
+    * `test_encryptor.py` (9): sync + async round-trip with stub
+      cert resolver.
+    * `test_client.py` (18): respx-mocked sync + async dispatch
+      across all five endpoints, byte-shape on the JWE envelope,
+      every protocol header + Authorization + User-Agent on the
+      wire, full 4xx/5xx mapping matrix (401, ERR-P-* / ERR-B-* /
+      ERR-T-* typed subclasses, ERR-B-UNKNOWN fallback,
+      retry-then-success, retry exhaustion → Gateway5xxError),
+      decryption verification of the recorded JWE,
+      registry-failure short-circuit.
+    * `test_correlation_id.py` (8): scope enter/exit/exception,
+      filter behaviour, end-to-end propagation through both
+      clients, post-dispatch cleanup, async-task isolation.
+- 5 `tests/integration/test_platform_mock_payer.py` placeholders
+  tagged `pytest.mark.platform_integration` and `pytest.mark.skip`,
+  one per §31 cycle. Activated when the platform's
+  `tests/integration/` Docker stack is wired into a CI job.
+
 ### Added (Sprint P3 — Keycloak token client + registry)
 
 - `hfcx_sdk.keycloak` — sync (`KeycloakTokenClient`) and async

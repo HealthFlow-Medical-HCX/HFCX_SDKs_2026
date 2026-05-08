@@ -8,6 +8,31 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint P4 — Python `HfcxClient` outbound flow)
+
+- `hfcx_sdk.client` ships sync (`HfcxClient`) and async
+  (`AsyncHfcxClient`) sender clients with five typed sender methods
+  each. Full outbound flow: registry lookup → JWE encryption →
+  bearer-token auth → POST to the gateway, with 1s/2s/4s retries
+  on 5xx and typed-exception mapping for 4xx via
+  `HfcxError.from_wire_code`. Behaviour byte-identical to the
+  Java SDK.
+- `hfcx_sdk.protocol` ships `protocol.build(...)` with the five
+  pinned header names in deterministic order — sister to Java's
+  `ProtocolHeaders.build`.
+- `hfcx_sdk.encryptor` ships `OutboundEncryptor` and
+  `AsyncOutboundEncryptor`.
+- `hfcx_sdk._logging` is the Python equivalent of Java's MDC:
+  `ContextVar` + `CorrelationIdFilter` auto-installed on the SDK
+  logger tree. Every log line during dispatch carries
+  `record.correlation_id`; ContextVar isolation across asyncio
+  tasks verified by test.
+- 43 new Python test cases (8 protocol + 9 encryptor + 18 client
+  + 8 correlation-id) with respx-mocked HTTP.
+- 5 `tests/integration/test_platform_mock_payer.py` placeholders
+  tagged `pytest.mark.platform_integration` for the future CI job
+  that brings up the platform's Docker stack.
+
 ### Added (Sprint P3 — Python Keycloak token client + registry)
 
 - `hfcx_sdk.keycloak` ships sync (`KeycloakTokenClient`) and async

@@ -12,7 +12,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | SDK        | Status         | Version          | Released |
 |------------|----------------|------------------|----------|
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
-| Python     | 🚧 Sprint P3   | 0.1.0a0          | gated on PyPI Trusted Publisher |
+| Python     | 🚧 Sprint P4   | 0.1.0a0          | gated on PyPI Trusted Publisher |
 | .NET       | ⏳ Planned     | —                | —        |
 | JavaScript | ⏳ Planned     | —                | —        |
 
@@ -41,13 +41,13 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | # | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |---|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 1 | Submit a claim                   | ✅ `HfcxClient.submitClaim`         | `HfcxClient.submit_claim`               | `HfcxClient.SubmitClaim`              | `HfcxClient.submitClaim`            |
-| 2 | Submit a preauth                 | ✅ `HfcxClient.submitPreauth`       | `HfcxClient.submit_preauth`             | `HfcxClient.SubmitPreauth`            | `HfcxClient.submitPreauth`          |
-| 3 | Check eligibility                | ✅ `HfcxClient.checkEligibility`    | `HfcxClient.check_eligibility`          | `HfcxClient.CheckEligibility`         | `HfcxClient.checkEligibility`       |
-| 4 | Send communication               | ✅ `HfcxClient.sendCommunication`   | `HfcxClient.send_communication`         | `HfcxClient.SendCommunication`        | `HfcxClient.sendCommunication`      |
-| 5 | Notify payment                   | ✅ `HfcxClient.notifyPayment`       | `HfcxClient.notify_payment`             | `HfcxClient.NotifyPayment`            | `HfcxClient.notifyPayment`          |
-| 6 | Sender client builder            | ✅ `HfcxClient.builder()`           | `HfcxClient(...)` / `HfcxClient.create` | `HfcxClient` ctor / `HfcxClientBuilder`| `new HfcxClient({...})`            |
-| 7 | SDK version constant             | ✅ `HfcxClient.sdkVersion()`        | `hfcx_sdk.__version__`                  | `HfcxClient.SdkVersion`               | `HfcxClient.SDK_VERSION`            |
+| 1 | Submit a claim                   | ✅ `HfcxClient.submitClaim`         | ✅ `HfcxClient.submit_claim` + async    | `HfcxClient.SubmitClaim`              | `HfcxClient.submitClaim`            |
+| 2 | Submit a preauth                 | ✅ `HfcxClient.submitPreauth`       | ✅ `HfcxClient.submit_preauth` + async  | `HfcxClient.SubmitPreauth`            | `HfcxClient.submitPreauth`          |
+| 3 | Check eligibility                | ✅ `HfcxClient.checkEligibility`    | ✅ `HfcxClient.check_eligibility` + async | `HfcxClient.CheckEligibility`       | `HfcxClient.checkEligibility`       |
+| 4 | Send communication               | ✅ `HfcxClient.sendCommunication`   | ✅ `HfcxClient.send_communication` + async | `HfcxClient.SendCommunication`     | `HfcxClient.sendCommunication`      |
+| 5 | Notify payment                   | ✅ `HfcxClient.notifyPayment`       | ✅ `HfcxClient.notify_payment` + async  | `HfcxClient.NotifyPayment`            | `HfcxClient.notifyPayment`          |
+| 6 | Sender client builder            | ✅ `HfcxClient.builder()`           | ✅ `HfcxClient(...)` / `AsyncHfcxClient(...)` kwargs | `HfcxClient` ctor / `HfcxClientBuilder`| `new HfcxClient({...})`         |
+| 7 | SDK version constant             | ✅ `HfcxClient.sdkVersion()`        | ✅ `hfcx_sdk.__version__`               | `HfcxClient.SdkVersion`               | `HfcxClient.SDK_VERSION`            |
 
 ## Crypto and registry
 
@@ -56,7 +56,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 8  | JWE encrypt (low-level)          | ✅ `JweEncryption.encryptUtf8`      | ✅ `crypto.encrypt_utf8`                | `JweEncryption.EncryptUtf8`           | `encryptJwe()`                      |
 | 9  | JWE decrypt (low-level)          | ✅ `JweEncryption.decryptUtf8`      | ✅ `crypto.decrypt_utf8`                | `JweEncryption.DecryptUtf8`           | `decryptJwe()`                      |
 | 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | `JweAlgorithms.Alg` / `Enc`           | `JWE_ALG` / `JWE_ENC`               |
-| 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | `OutboundEncryptor.encrypt`             | `OutboundEncryptor.Encrypt`           | `OutboundEncryptor.encrypt`         |
+| 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | ✅ `OutboundEncryptor.encrypt` + `AsyncOutboundEncryptor.encrypt` | `OutboundEncryptor.Encrypt`           | `OutboundEncryptor.encrypt`         |
 | 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | `InboundDecryptor.decrypt`              | `InboundDecryptor.Decrypt`            | `InboundDecryptor.decrypt`          |
 | 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert`| ✅ `RegistryClient.get_recipient_cert` + async | `RegistryClient.GetRecipientCertAsync`| `RegistryClient.getRecipientCert`   |
 | 14 | Cert-resolver abstraction        | ✅ `RecipientCertResolver`          | ✅ `RecipientCertResolver` Protocol     | `IRecipientCertResolver`              | `RecipientCertResolver` interface   |
@@ -71,8 +71,8 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 18 | Get bearer token                 | ✅ `KeycloakTokenClient.getToken`   | ✅ `KeycloakTokenClient.get_token` (sync) + `AsyncKeycloakTokenClient.get_token` | `KeycloakTokenClient.GetTokenAsync`   | `KeycloakTokenClient.getToken`      |
 | 19 | Invalidate cached token          | ✅ `KeycloakTokenClient.invalidate` | ✅ `KeycloakTokenClient.invalidate` + async | `KeycloakTokenClient.Invalidate`      | `KeycloakTokenClient.invalidate`    |
 | 20 | Bearer-validator interface       | ✅ `BearerTokenValidator`           | `BearerTokenValidator` Protocol         | `IBearerTokenValidator`               | `BearerTokenValidator` interface    |
-| 21 | Protocol-header builder          | ✅ `ProtocolHeaders.build`          | `protocol.build_headers`                | `ProtocolHeaders.Build`               | `buildProtocolHeaders`              |
-| 22 | Header-name constants            | ✅ `ProtocolHeaders.{SENDER_CODE,…}`| `protocol.HEADER_*`                     | `ProtocolHeaders.{SenderCode,…}`      | `PROTOCOL_HEADER_*`                 |
+| 21 | Protocol-header builder          | ✅ `ProtocolHeaders.build`          | ✅ `protocol.build`                     | `ProtocolHeaders.Build`               | `buildProtocolHeaders`              |
+| 22 | Header-name constants            | ✅ `ProtocolHeaders.{SENDER_CODE,…}`| ✅ `protocol.{SENDER_CODE,…}`           | `ProtocolHeaders.{SenderCode,…}`      | `PROTOCOL_HEADER_*`                 |
 
 ## Recipient pipeline
 

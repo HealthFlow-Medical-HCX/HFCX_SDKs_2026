@@ -27,7 +27,8 @@ the target shape.
 | JWE encrypt / decrypt + cross-SDK round-trip | P2 | ✅          |
 | Keycloak token client (sync + async) | P3 | ✅                  |
 | Registry lookup + cache (sync + async) | P3 | ✅                |
-| HfcxClient sender flow           | P4     | ⏳              |
+| `HfcxClient` sender flow (sync + async) | P4 | ✅                 |
+| Correlation-ID propagation via ContextVar | P4 | ✅              |
 | RecipientHandler pipeline        | P5     | ⏳              |
 | FHIR + Egyptian validators       | P6     | ⏳              |
 | 1.0.0 GA on PyPI                 | P7     | ⏳              |
