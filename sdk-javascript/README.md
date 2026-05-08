@@ -28,7 +28,7 @@ target shape.
 | JWE encrypt / decrypt + cross-SDK round-trip | S2  | ✅      |
 | Keycloak token client                     | S3     | ✅      |
 | Registry lookup + cache                   | S3     | ✅      |
-| `HfcxClient` sender flow                  | S4     | ⏳      |
+| `HfcxClient` sender flow + correlation-ID propagation | S4 | ✅  |
 | `RecipientHandler` pipeline (4 layers)    | S5     | ⏳      |
 | Egyptian validators                       | S5     | ⏳      |
 | Validator hardening + Express/Fastify example | S6 | ⏳     |

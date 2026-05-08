@@ -8,6 +8,32 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint S4 — JavaScript `HfcxClient` outbound flow)
+
+- `HfcxClient` async sender with 5 typed methods, each running the
+  full outbound flow (registry → JWE → bearer → POST → typed mapping)
+  with byte-identical behaviour to Java + Python + .NET: 1s/2s/4s
+  retry on 5xx (max 4 attempts), 401 invalidates bearer + raises
+  `AuthenticationError`, unparseable 4xx → `UnknownBusinessError`,
+  retry exhaustion → `Gateway5xxError`.
+- `HfcxRequest` union + 5 typed request types (`CheckEligibility`,
+  `SubmitPreauth`, `SubmitClaim`, `SendCommunication`,
+  `NotifyPayment`); `HfcxResponse` interface; `Status` and
+  `Operation` const-typed enums; `DEFAULT_ENDPOINTS` map.
+- `OutboundEncryptor` composes `RecipientCertResolver` + the JWE
+  encrypt path (parity row 11).
+- `buildProtocolHeaders` + `formatInstant` — deterministic-order
+  ISO-8601 UTC headers byte-identical to the other SDKs.
+- `runWithCorrelationId` / `currentCorrelationId` over Node's
+  `AsyncLocalStorage`; cross-SDK MDC key `correlation_id`.
+- 40 new vitest cases (7 protocol + 6 correlation + 5 OutboundEncryptor
+  + 22 HfcxClient). 234 JS tests pass (was 194); 421 Python + 555
+  .NET + Java reactor still green.
+- Cross-SDK parity rows 1-6 (sender methods + builder), 11
+  (encrypt-for-recipient), 21 (header builder), 36-43 (request /
+  response types), 54 (`Operation`) promoted to ✅ JavaScript;
+  status bumped to "🚧 Sprint S4".
+
 ### Added (Sprint S3 — JavaScript Keycloak token client + Sunbird-RC registry)
 
 - `KeycloakTokenClient` (async) caches and refreshes Keycloak bearer

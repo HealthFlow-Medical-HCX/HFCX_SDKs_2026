@@ -6,6 +6,47 @@ semver rules.
 
 ## [Unreleased]
 
+### Added (Sprint S4 — `HfcxClient` outbound flow)
+
+- `src/client/HfcxClient.ts` — async-only sender client with five
+  typed sender methods (`checkEligibility`, `submitPreauth`,
+  `submitClaim`, `sendCommunication`, `notifyPayment`). Each runs
+  the full outbound flow: registry lookup → JWE encryption →
+  bearer-token auth → POST → typed-error mapping. 1s/2s/4s
+  exponential backoff on 5xx (max 4 attempts) and typed-exception
+  mapping for 4xx via `HfcxError.fromWireCode`. Behaviour
+  byte-identical to the Java + Python + .NET SDKs: HTTP 202 →
+  `Status.ACCEPTED`, HTTP 401 invalidates the cached bearer and
+  raises `AuthenticationError`, unparseable 4xx →
+  `UnknownBusinessError` (`ERR-B-012`), retry exhaustion →
+  `Gateway5xxError` (`ERR-T-006`).
+- `src/client/HfcxRequests.ts` — `HfcxRequest` union + 5 typed
+  request types (`CheckEligibilityRequest`,
+  `SubmitPreauthRequest`, `SubmitClaimRequest`,
+  `SendCommunicationRequest`, `NotifyPaymentRequest`). `Status` and
+  `Operation` const-typed enums (3 / 5 values). `HfcxResponse`
+  interface. `DEFAULT_ENDPOINTS` mirrors Integration Guide §22.
+- `src/client/OutboundEncryptor.ts` — composes
+  `RecipientCertResolver` with the JWE encrypt path (parity row 11).
+- `src/protocol/ProtocolHeaders.ts` gains `buildProtocolHeaders` +
+  `formatInstant` — emits the five HFCX protocol headers in
+  deterministic order with ISO-8601 UTC timestamp formatting
+  (`yyyy-MM-ddTHH:mm:ss.SSSZ`), byte-identical to the other SDKs.
+- `src/logging/CorrelationId.ts` — `runWithCorrelationId(id, fn)` +
+  `currentCorrelationId()` backed by Node's `AsyncLocalStorage`.
+  Cross-SDK MDC key `correlation_id` matches Java + Python + .NET.
+- 40 new vitest cases (7 protocol + 6 correlation + 5
+  OutboundEncryptor + 22 HfcxClient): every endpoint, every retry
+  path, 401 → invalidate-then-throw, typed 4xx mapping (known +
+  unknown codes + unparseable bodies), envelope shape (5-segment
+  JWE compact inside `{"payload":...}`), every protocol header on
+  the wire, Authorization + User-Agent, AsyncLocalStorage
+  isolation across 16 concurrent tasks.
+- 234 vitest tests pass (was 194); biome + tsc --noEmit clean.
+- Cross-SDK parity rows 1–6 (sender methods + builder), 11
+  (encrypt-for-recipient), 21 (header builder), 36–43 (request /
+  response types), 54 (`Operation` enum) promoted to ✅ JavaScript.
+
 ### Added (Sprint S3 — Keycloak token client + Sunbird-RC registry)
 
 - `src/auth/KeycloakTokenClient.ts` — async bearer-token client with

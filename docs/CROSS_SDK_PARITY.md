@@ -14,7 +14,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
 | Python     | 🚧 Sprint P6   | 0.1.0a0          | gated on PyPI Trusted Publisher |
 | .NET       | 🚀 Sprint D7   | 0.1.0-alpha.0    | gated on nuget.org Trusted Publisher |
-| JavaScript | 🚧 Sprint S3   | 0.1.0-alpha.0    | gated on npm Trusted Publisher |
+| JavaScript | 🚧 Sprint S4   | 0.1.0-alpha.0    | gated on npm Trusted Publisher |
 
 ## Allowed divergence
 
@@ -41,12 +41,12 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | # | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |---|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 1 | Submit a claim                   | ✅ `HfcxClient.submitClaim`         | ✅ `HfcxClient.submit_claim` + async    | ✅ `HfcxClient.SubmitClaimAsync`     | `HfcxClient.submitClaim`            |
-| 2 | Submit a preauth                 | ✅ `HfcxClient.submitPreauth`       | ✅ `HfcxClient.submit_preauth` + async  | ✅ `HfcxClient.SubmitPreauthAsync`   | `HfcxClient.submitPreauth`          |
-| 3 | Check eligibility                | ✅ `HfcxClient.checkEligibility`    | ✅ `HfcxClient.check_eligibility` + async | ✅ `HfcxClient.CheckEligibilityAsync` | `HfcxClient.checkEligibility`       |
-| 4 | Send communication               | ✅ `HfcxClient.sendCommunication`   | ✅ `HfcxClient.send_communication` + async | ✅ `HfcxClient.SendCommunicationAsync` | `HfcxClient.sendCommunication`      |
-| 5 | Notify payment                   | ✅ `HfcxClient.notifyPayment`       | ✅ `HfcxClient.notify_payment` + async  | ✅ `HfcxClient.NotifyPaymentAsync`    | `HfcxClient.notifyPayment`          |
-| 6 | Sender client builder            | ✅ `HfcxClient.builder()`           | ✅ `HfcxClient(...)` / `AsyncHfcxClient(...)` kwargs | ✅ `HfcxClient` ctor (named args)     | `new HfcxClient({...})`         |
+| 1 | Submit a claim                   | ✅ `HfcxClient.submitClaim`         | ✅ `HfcxClient.submit_claim` + async    | ✅ `HfcxClient.SubmitClaimAsync`     | ✅ `HfcxClient.submitClaim`          |
+| 2 | Submit a preauth                 | ✅ `HfcxClient.submitPreauth`       | ✅ `HfcxClient.submit_preauth` + async  | ✅ `HfcxClient.SubmitPreauthAsync`   | ✅ `HfcxClient.submitPreauth`        |
+| 3 | Check eligibility                | ✅ `HfcxClient.checkEligibility`    | ✅ `HfcxClient.check_eligibility` + async | ✅ `HfcxClient.CheckEligibilityAsync` | ✅ `HfcxClient.checkEligibility`     |
+| 4 | Send communication               | ✅ `HfcxClient.sendCommunication`   | ✅ `HfcxClient.send_communication` + async | ✅ `HfcxClient.SendCommunicationAsync` | ✅ `HfcxClient.sendCommunication`    |
+| 5 | Notify payment                   | ✅ `HfcxClient.notifyPayment`       | ✅ `HfcxClient.notify_payment` + async  | ✅ `HfcxClient.NotifyPaymentAsync`    | ✅ `HfcxClient.notifyPayment`        |
+| 6 | Sender client builder            | ✅ `HfcxClient.builder()`           | ✅ `HfcxClient(...)` / `AsyncHfcxClient(...)` kwargs | ✅ `HfcxClient` ctor (named args)     | ✅ `new HfcxClient({...})`           |
 | 7 | SDK version constant             | ✅ `HfcxClient.sdkVersion()`        | ✅ `hfcx_sdk.__version__`               | ✅ `HfcxSdk.Version`                  | ✅ `SDK_VERSION`                      |
 
 ## Crypto and registry
@@ -56,7 +56,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 8  | JWE encrypt (low-level)          | ✅ `JweEncryption.encryptUtf8`      | ✅ `crypto.encrypt_utf8`                | ✅ `JweEncryption.EncryptUtf8`        | ✅ `encryptUtf8` / `decryptUtf8`     |
 | 9  | JWE decrypt (low-level)          | ✅ `JweEncryption.decryptUtf8`      | ✅ `crypto.decrypt_utf8`                | ✅ `JweEncryption.DecryptUtf8`        | ✅ `encryptUtf8` / `decryptUtf8`     |
 | 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | ✅ `JweAlgorithms.Alg` / `Enc`        | ✅ `JWE_ALG` / `JWE_ENC`              |
-| 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | ✅ `OutboundEncryptor.encrypt` + `AsyncOutboundEncryptor.encrypt` | ✅ `OutboundEncryptor.EncryptAsync`   | `OutboundEncryptor.encrypt`         |
+| 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | ✅ `OutboundEncryptor.encrypt` + `AsyncOutboundEncryptor.encrypt` | ✅ `OutboundEncryptor.EncryptAsync`   | ✅ `OutboundEncryptor.encrypt`       |
 | 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | ✅ `InboundDecryptor.decrypt`           | ✅ `InboundDecryptor.Decrypt`         | `InboundDecryptor.decrypt`          |
 | 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert` + `ParticipantCert` record | ✅ `RegistryClient.get_recipient_cert` + `AsyncRegistryClient` + `ParticipantCert` dataclass | ✅ `RegistryClient.GetRecipientCertAsync` + `ParticipantCert` record | ✅ `RegistryClient.getRecipientCert` + `ParticipantCert`    |
 | 14 | Cert-resolver abstraction        | ✅ `RecipientCertResolver`          | ✅ `RecipientCertResolver` Protocol     | ✅ `IRecipientCertResolver`           | ✅ `RecipientCertResolver`           |
@@ -71,7 +71,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 18 | Get bearer token                 | ✅ `KeycloakTokenClient.getToken`   | ✅ `KeycloakTokenClient.get_token` (sync) + `AsyncKeycloakTokenClient.get_token` | ✅ `KeycloakTokenClient.GetTokenAsync` | ✅ `KeycloakTokenClient.getToken`   |
 | 19 | Invalidate cached token          | ✅ `KeycloakTokenClient.invalidate` | ✅ `KeycloakTokenClient.invalidate` + async | ✅ `KeycloakTokenClient.Invalidate`   | ✅ `KeycloakTokenClient.invalidate`  |
 | 20 | Bearer-validator interface       | ✅ `BearerTokenValidator`           | ✅ `BearerTokenValidator` Protocol      | ✅ `IBearerTokenValidator`            | ✅ `BearerTokenValidator`            |
-| 21 | Protocol-header builder          | ✅ `ProtocolHeaders.build`          | ✅ `protocol.build`                     | ✅ `ProtocolHeaders.Build`           | `buildProtocolHeaders`              |
+| 21 | Protocol-header builder          | ✅ `ProtocolHeaders.build`          | ✅ `protocol.build`                     | ✅ `ProtocolHeaders.Build`           | ✅ `buildProtocolHeaders`            |
 | 22 | Header-name constants            | ✅ `ProtocolHeaders.{SENDER_CODE,…}`| ✅ `protocol.{SENDER_CODE,…}`           | ✅ `ProtocolHeaders.{SenderCode,…}`   | ✅ `PROTOCOL_HEADER_*`                |
 
 ## Recipient pipeline
@@ -101,14 +101,14 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 36 | Sealed `HfcxRequest` interface   | ✅ `HfcxRequest` sealed             | ✅ `HfcxRequest` Protocol / Union       | ✅ `IHfcxRequest`                     | `HfcxRequest` union type            |
-| 37 | Submit-claim request type        | ✅ `SubmitClaimRequest` record      | ✅ `SubmitClaimRequest` dataclass       | ✅ `SubmitClaimRequest` record        | `SubmitClaimRequest` type           |
-| 38 | Submit-preauth request type      | ✅ `SubmitPreauthRequest`           | ✅ `SubmitPreauthRequest`               | ✅ `SubmitPreauthRequest`             | `SubmitPreauthRequest`              |
-| 39 | Eligibility request type         | ✅ `CheckEligibilityRequest`        | ✅ `CheckEligibilityRequest`            | ✅ `CheckEligibilityRequest`          | `CheckEligibilityRequest`           |
-| 40 | Communication request type       | ✅ `SendCommunicationRequest`       | ✅ `SendCommunicationRequest`           | ✅ `SendCommunicationRequest`         | `SendCommunicationRequest`          |
-| 41 | Payment-notice request type      | ✅ `NotifyPaymentRequest`           | ✅ `NotifyPaymentRequest`               | ✅ `NotifyPaymentRequest`             | `NotifyPaymentRequest`              |
-| 42 | Outbound response                | ✅ `HfcxResponse` record            | ✅ `HfcxResponse` dataclass             | ✅ `HfcxResponse` record              | `HfcxResponse` type                 |
-| 43 | Status enum                      | ✅ `Status` (3 values)              | ✅ `Status` Enum (3 values)             | ✅ `Status` enum                      | `Status` literal type               |
+| 36 | Sealed `HfcxRequest` interface   | ✅ `HfcxRequest` sealed             | ✅ `HfcxRequest` Protocol / Union       | ✅ `IHfcxRequest`                     | ✅ `HfcxRequest` union type          |
+| 37 | Submit-claim request type        | ✅ `SubmitClaimRequest` record      | ✅ `SubmitClaimRequest` dataclass       | ✅ `SubmitClaimRequest` record        | ✅ `SubmitClaimRequest`              |
+| 38 | Submit-preauth request type      | ✅ `SubmitPreauthRequest`           | ✅ `SubmitPreauthRequest`               | ✅ `SubmitPreauthRequest`             | ✅ `SubmitPreauthRequest`            |
+| 39 | Eligibility request type         | ✅ `CheckEligibilityRequest`        | ✅ `CheckEligibilityRequest`            | ✅ `CheckEligibilityRequest`          | ✅ `CheckEligibilityRequest`         |
+| 40 | Communication request type       | ✅ `SendCommunicationRequest`       | ✅ `SendCommunicationRequest`           | ✅ `SendCommunicationRequest`         | ✅ `SendCommunicationRequest`        |
+| 41 | Payment-notice request type      | ✅ `NotifyPaymentRequest`           | ✅ `NotifyPaymentRequest`               | ✅ `NotifyPaymentRequest`             | ✅ `NotifyPaymentRequest`            |
+| 42 | Outbound response                | ✅ `HfcxResponse` record            | ✅ `HfcxResponse` dataclass             | ✅ `HfcxResponse` record              | ✅ `HfcxResponse`                    |
+| 43 | Status enum                      | ✅ `Status` (3 values)              | ✅ `Status` Enum (3 values)             | ✅ `Status` enum                      | ✅ `Status` const (3 values)         |
 
 ## Error taxonomy
 
@@ -129,7 +129,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
 | 53 | Bundled IG version               | ✅ `HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION` (build-time) | ✅ `bundled_ig_version()` (runtime, reads `fhir-ig/PLATFORM_VERSION`) | ✅ `HfcxSdk.BundledIgVersion`         | ✅ `bundledIgVersion()`              |
-| 54 | Operation enum (5 values)        | ✅ `Operation` (5 values)           | ✅ `Operation` Enum (5 values)          | ✅ `Operation` enum (5 values)        | `Operation` literal type            |
+| 54 | Operation enum (5 values)        | ✅ `Operation` (5 values)           | ✅ `Operation` Enum (5 values)          | ✅ `Operation` enum (5 values)        | ✅ `Operation` const (5 values)      |
 
 ## Total: **54** rows.
 

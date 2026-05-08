@@ -70,7 +70,26 @@ export {
   PROTOCOL_HEADER_CORRELATION_ID,
   PROTOCOL_HEADER_TIMESTAMP,
   PROTOCOL_HEADER_API_CALL_ID,
+  buildProtocolHeaders,
+  formatInstant,
 } from './protocol/ProtocolHeaders.js';
+
+export { MDC_KEY, currentCorrelationId, runWithCorrelationId } from './logging/CorrelationId.js';
+
+export { OutboundEncryptor } from './client/OutboundEncryptor.js';
+export { HfcxClient, type HfcxClientOptions } from './client/HfcxClient.js';
+export {
+  DEFAULT_ENDPOINTS,
+  Operation,
+  Status,
+  type HfcxRequest,
+  type HfcxResponse,
+  type CheckEligibilityRequest,
+  type SubmitPreauthRequest,
+  type SubmitClaimRequest,
+  type SendCommunicationRequest,
+  type NotifyPaymentRequest,
+} from './client/HfcxRequests.js';
 
 export {
   KeycloakTokenClient,
