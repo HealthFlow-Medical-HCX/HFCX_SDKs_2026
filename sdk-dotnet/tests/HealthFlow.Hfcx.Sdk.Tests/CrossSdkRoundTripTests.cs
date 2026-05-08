@@ -30,6 +30,18 @@ public class CrossSdkRoundTripTests
     }
 
     [Fact]
+    public void Decrypts_JavaScriptProducedJwe_BackToFixturePlaintext()
+    {
+        using var priv = CrossSdkFixtures.LoadPrivateKey();
+        var jwe = CrossSdkFixtures.LoadJavaScriptProducedJwe();
+        var expected = CrossSdkFixtures.LoadPlaintext();
+
+        var decrypted = JweEncryption.DecryptUtf8(jwe, priv);
+
+        AssertJsonEquivalent(expected, decrypted);
+    }
+
+    [Fact]
     public void Decrypts_PythonProducedJwe_BackToFixturePlaintext()
     {
         using var priv = CrossSdkFixtures.LoadPrivateKey();

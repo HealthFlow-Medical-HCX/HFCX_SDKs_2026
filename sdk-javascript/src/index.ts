@@ -63,6 +63,7 @@ export {
 } from './exceptions/HfcxError.js';
 
 export { JWE_ALG, JWE_ENC } from './crypto/JweAlgorithms.js';
+export { encryptUtf8, decryptUtf8 } from './crypto/JweEncryption.js';
 export {
   PROTOCOL_HEADER_SENDER_CODE,
   PROTOCOL_HEADER_RECIPIENT_CODE,

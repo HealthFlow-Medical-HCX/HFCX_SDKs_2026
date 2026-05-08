@@ -6,6 +6,48 @@ semver rules.
 
 ## [Unreleased]
 
+### Added (Sprint S2 — JWE encrypt / decrypt with cross-SDK round-trip)
+
+- `src/crypto/JweEncryption.ts` ships real `encryptUtf8` and
+  `decryptUtf8` over `jose 5.10`. Algorithm pair is hard-pinned to
+  `RSA-OAEP-256` + `A256GCM`. The encrypt path bakes it into the
+  protected header, and the decrypt path inspects the header BEFORE
+  any cryptographic operation runs — a downgrade attempt
+  (`RSA1_5`, `RSA-OAEP`, `RSA-OAEP-384`, `RSA-OAEP-512`,
+  `A128GCM`, `A192GCM`, `A128CBC-HS256`, `A192CBC-HS384`,
+  `A256CBC-HS512`, `alg=none`, garbage tokens) raises
+  `JweAlgorithmRejectedError` (`ERR-P-002`) without touching the
+  recipient's private key.
+- New runtime dependency: `jose ^5.10.0`. Sister libraries on the
+  other sides: Nimbus JOSE+JWT (Java), `jwcrypto` (Python),
+  `jose-jwt` (.NET).
+- Cross-SDK fixture infrastructure:
+  - `tests/fixtures/cross-sdk/` mirrors the canonical fixtures
+    (RSA-2048 PKCS#8 key pair, `plaintext.json`,
+    `java-produced.jwe`, `python-produced.jwe`,
+    `dotnet-produced.jwe`).
+  - `tools/regenerate-cross-sdk-jwe.ts` — produces
+    `javascript-produced.jwe` against the shared key pair. Run from
+    the repo root with
+    `npm --prefix sdk-javascript run regenerate-cross-sdk-jwe -- ../sdk-python/tests/fixtures/cross-sdk`.
+- 31 new vitest cases (24 `jweEncryption` + 7 `crossSdkRoundTrip`):
+  round-trip ASCII / unicode / 100 KB payload (under 500 ms),
+  distinct-ciphertext-per-call (GCM nonce sanity), pinned-header
+  advertisement, the 9 downgrade-rejection theories, the
+  `alg=none` forge, malformed token, null-guards, wrong-key,
+  fixture round-trip; this SDK decrypts `java-produced.jwe`,
+  `python-produced.jwe`, and `dotnet-produced.jwe` back to the
+  fixture plaintext, plus `javascript-produced` round-trip.
+- 162 vitest tests pass (was 131); biome + tsc --noEmit clean.
+- The Python and .NET cross-SDK suites gain a
+  `*_javascript_produced_jwe_decrypts_*` test each so all four
+  halves of the cross-SDK round-trip are pinned. The shared fixture
+  directory now ships all four producer artefacts:
+  `java-produced.jwe`, `python-produced.jwe`, `dotnet-produced.jwe`,
+  `javascript-produced.jwe`.
+- Cross-SDK parity rows 8 (JWE encrypt) and 9 (JWE decrypt) promoted
+  to ✅ JavaScript.
+
 ### Added (Sprint S1 — repository bootstrap)
 
 - `sdk-javascript/` subtree with TypeScript-first npm package layout:

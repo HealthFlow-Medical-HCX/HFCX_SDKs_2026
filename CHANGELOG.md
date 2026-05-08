@@ -8,6 +8,28 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint S2 — JavaScript JWE + cross-SDK round-trip)
+
+- `@healthflow/hfcx-sdk` ships real `encryptUtf8` / `decryptUtf8`
+  over `jose 5.10`. Algorithm pair hard-pinned to `RSA-OAEP-256` +
+  `A256GCM`; downgrade attempts (RSA1_5, weaker GCM/CBC variants,
+  `alg=none`, malformed tokens) raise `JweAlgorithmRejectedError`
+  (`ERR-P-002`) BEFORE any cryptographic operation runs. Cross-SDK
+  invariant: bytes produced by .js decrypt cleanly under Java +
+  Python + .NET and vice-versa.
+- `tools/regenerate-cross-sdk-jwe.ts` produces
+  `javascript-produced.jwe` against the shared cross-SDK fixture key
+  pair; the fixture is now mirrored into all four SDKs.
+- 31 new vitest cases (24 JWE + 7 cross-SDK), all green. Sister of
+  the Java SDK's `JweEncryptionTest` + `CrossSdkRoundTripTest`,
+  Python's `test_crypto.py` + `test_cross_sdk_round_trip.py`, and
+  .NET's `JweEncryptionTests` + `CrossSdkRoundTripTests`.
+- Cross-SDK parity rows 8-9 promoted to ✅ JavaScript; status
+  bumped to "🚧 Sprint S2". Python + .NET cross-SDK suites each
+  gain a `*_javascript_produced_jwe_decrypts_*` case so all four
+  halves of the cross-SDK round-trip are pinned (162 JS + 421
+  Python + 555 .NET tests pass; Java reactor still green).
+
 ### Added (Sprint S1 — JavaScript / TypeScript SDK bootstrap)
 
 - New `sdk-javascript/` subtree: TypeScript-first npm package layout

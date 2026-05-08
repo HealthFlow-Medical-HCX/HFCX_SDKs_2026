@@ -52,4 +52,7 @@ internal static class CrossSdkFixtures
 
     public static string LoadPythonProducedJwe()
         => File.ReadAllText(Path.Combine(FixtureDir, "python-produced.jwe")).Trim();
+
+    public static string LoadJavaScriptProducedJwe()
+        => File.ReadAllText(Path.Combine(FixtureDir, "javascript-produced.jwe")).Trim();
 }
