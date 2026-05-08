@@ -8,6 +8,31 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint P3 — Python Keycloak token client + registry)
+
+- `hfcx_sdk.keycloak` ships sync (`KeycloakTokenClient`) and async
+  (`AsyncKeycloakTokenClient`) variants with identical behaviour.
+  Cross-SDK invariants match the Java equivalents: 60s refresh
+  lead time, 401 → `AuthenticationError` (no retry), 5xx → 1s/2s/4s
+  exponential backoff (max 4 attempts), thread / coroutine-safe
+  via double-checked locking, tokens never persisted to disk.
+- `hfcx_sdk.registry` ships sync (`RegistryClient`) and async
+  (`AsyncRegistryClient`) variants over `httpx`. Per-entry TTL =
+  cert `not_after` minus a configurable buffer (default 1 hour),
+  bounded by `cachetools.LRUCache` (default 10 000 entries).
+  Hit / miss / eviction stats logged at INFO. 404 →
+  `ParticipantNotFoundError`, malformed JSON / PEM / non-RSA cert
+  → `TransportError`, network failures →
+  `RegistryUnavailableError`.
+- `ParticipantCert` and the `RecipientCertResolver` Protocol are
+  now real (lifted from the P1 stub).
+- 35 new Python test cases (17 keycloak + 18 registry) with
+  respx-mocked HTTP, sync + async surfaces, including a 16-
+  coroutine concurrent-fetch test that verifies double-checked
+  locking collapses to one HTTP call.
+- New compile deps: `httpx>=0.27`, `cachetools>=5.3`. Test deps:
+  `respx>=0.21`, `pytest-asyncio>=0.23`.
+
 ### Added (Sprint P2 — Python crypto module)
 
 - `hfcx_sdk.crypto` lands real `encrypt`/`decrypt` over `jwcrypto`

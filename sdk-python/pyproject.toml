@@ -36,12 +36,17 @@ dependencies = [
     # Sprint P2 — JWE encrypt / decrypt with hard-pinned RSA-OAEP-256 + A256GCM.
     "jwcrypto>=1.5.6",
     "cryptography>=42.0",
+    # Sprint P3 — Keycloak token client + Sunbird-RC registry over httpx.
+    "httpx>=0.27",
+    "cachetools>=5.3",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",
+    "pytest-asyncio>=0.23",
+    "respx>=0.21",
     "ruff>=0.6",
     "mypy>=1.11",
     "pre-commit>=3.8",
@@ -105,6 +110,8 @@ module = [
     "cryptography.*",
     "jwcrypto.*",
     "cachetools.*",
+    "httpx.*",
+    "respx.*",
     "pytest.*",
     "_pytest.*",
 ]
@@ -129,6 +136,7 @@ addopts = [
 markers = [
     "platform_integration: requires the platform's tests/integration/ stack (mock-payer, mock-provider). Skipped by default.",
 ]
+asyncio_mode = "auto"
 
 [tool.coverage.run]
 source = ["src/hfcx_sdk"]

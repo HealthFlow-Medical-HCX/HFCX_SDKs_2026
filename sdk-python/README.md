@@ -25,8 +25,8 @@ the target shape.
 |----------------------------------|--------|----------------|
 | Package + version + error catalog | P1    | ✅              |
 | JWE encrypt / decrypt + cross-SDK round-trip | P2 | ✅          |
-| Keycloak token client            | P3     | ⏳              |
-| Registry lookup + cache          | P3     | ⏳              |
+| Keycloak token client (sync + async) | P3 | ✅                  |
+| Registry lookup + cache (sync + async) | P3 | ✅                |
 | HfcxClient sender flow           | P4     | ⏳              |
 | RecipientHandler pipeline        | P5     | ⏳              |
 | FHIR + Egyptian validators       | P6     | ⏳              |

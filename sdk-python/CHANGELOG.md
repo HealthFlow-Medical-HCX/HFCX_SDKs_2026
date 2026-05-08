@@ -5,6 +5,33 @@ Versions follow [Semantic Versioning](https://semver.org/) and PEP 440.
 
 ## [Unreleased]
 
+### Added (Sprint P3 — Keycloak token client + registry)
+
+- `hfcx_sdk.keycloak` — sync (`KeycloakTokenClient`) and async
+  (`AsyncKeycloakTokenClient`) variants with identical
+  behaviour. Caching semantics match the Java SDK exactly: tokens
+  cached for `expires_in - refresh_lead_time` seconds (default
+  60s), 401 propagates as `AuthenticationError` and is never
+  retried, 5xx retries `1s/2s/4s` with `TransportError` on
+  exhaustion. Concurrent waiters collapse to a single HTTP fetch
+  via `threading.Lock` (sync) or `asyncio.Lock` (async). Tokens
+  never persist to disk.
+- `hfcx_sdk.registry` — sync (`RegistryClient`) and async
+  (`AsyncRegistryClient`) variants. Variable per-entry TTL = cert
+  `not_after` minus a configurable buffer (default 1 hour),
+  bounded by `cachetools.LRUCache` (default 10 000 entries). 404
+  → `ParticipantNotFoundError`, network failures →
+  `RegistryUnavailableError`, malformed JSON / PEM /
+  non-RSA cert → `TransportError`. Cache hit / miss / eviction
+  stats logged at INFO at most every 60s.
+- `ParticipantCert` dataclass and `RecipientCertResolver`
+  Protocol promoted to real public surface.
+- New compile dependencies: `httpx>=0.27`, `cachetools>=5.3`.
+  New test deps: `respx>=0.21`, `pytest-asyncio>=0.23`.
+- 35 new test cases (17 keycloak + 18 registry), respx-mocked
+  on both sync and async surfaces, including no-disk-persistence
+  guards and 16-coroutine concurrent-fetch test.
+
 ### Added (Sprint P2 — crypto module)
 
 - `hfcx_sdk.crypto` is now real. `encrypt(payload, public_key)`,
