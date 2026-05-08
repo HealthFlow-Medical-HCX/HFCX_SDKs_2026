@@ -8,6 +8,27 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint D2 — .NET JWE + cross-SDK round-trip)
+
+- `HealthFlow.Hfcx.Sdk.Crypto.JweEncryption` lands real
+  `EncryptUtf8` / `DecryptUtf8` over `jose-jwt 5.0.0`. Algorithm pair
+  hard-pinned to `RSA-OAEP-256` + `A256GCM`; downgrade attempts
+  (RSA1_5, weaker GCM/CBC variants, `alg=none`, malformed tokens)
+  raise `JweAlgorithmRejectedException` (`ERR-P-002`) BEFORE any
+  cryptographic operation runs. Cross-SDK invariant: bytes produced
+  by .NET decrypt cleanly under Java + Python and vice-versa.
+- `tools/RegenerateCrossSdkJwe` console app produces
+  `dotnet-produced.jwe` against the shared cross-SDK fixture key
+  pair under `sdk-python/tests/fixtures/cross-sdk/`.
+- 26 new xUnit cases (16 `JweEncryptionTests` + 5
+  `CrossSdkRoundTripTests` + 5 utility), all green. Sister of the
+  Java SDK's `JweEncryptionTest` and the Python SDK's
+  `test_crypto.py` + `test_cross_sdk_round_trip.py`.
+- Cross-SDK parity rows 8-9 promoted to ✅ .NET; Python side gains
+  one `test_dotnet_produced_jwe_decrypts_to_expected_plaintext_when_present`
+  case so both halves of the round-trip are pinned (420 Python
+  tests pass; 181 .NET tests pass; Java reactor still green).
+
 ### Added (Sprint D1 — .NET SDK bootstrap)
 
 - `sdk-dotnet/` subtree with a Visual Studio solution

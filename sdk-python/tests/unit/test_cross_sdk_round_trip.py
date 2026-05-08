@@ -78,6 +78,23 @@ def test_java_produced_jwe_decrypts_to_expected_plaintext_when_present(
     assert json.loads(decrypted) == json.loads(expected_plaintext)
 
 
+def test_dotnet_produced_jwe_decrypts_to_expected_plaintext_when_present(
+    private_key: RSAPrivateKey,
+    expected_plaintext: str,
+) -> None:
+    jwe_path = FIXTURE_DIR / "dotnet-produced.jwe"
+    if not jwe_path.exists():
+        pytest.skip(
+            "dotnet-produced.jwe absent — run the .NET fixture generator "
+            "(dotnet run --project sdk-dotnet/tools/RegenerateCrossSdkJwe) "
+            "from the repo root to create it"
+        )
+    jwe_compact = jwe_path.read_text(encoding="utf-8").strip()
+
+    decrypted = decrypt_utf8(jwe_compact, private_key)
+    assert json.loads(decrypted) == json.loads(expected_plaintext)
+
+
 def test_jwe_segments_are_compact_form_5_parts() -> None:
     jwe_path = FIXTURE_DIR / "python-produced.jwe"
     if not jwe_path.exists():

@@ -21,6 +21,9 @@ packages/
 # IG tarball (synced via fhir-ig/sync.sh; never committed)
 fhir-ig/egyptian-ig.tgz
 
-# Real PEM keys must never be committed
+# Real PEM keys must never be committed.
+# Cross-SDK test fixture key pair lives under tests/.../fixtures/cross-sdk/
+# and is intentionally checked in — it's a throw-away RSA-2048 pair shared
+# with the Java and Python SDKs solely for the JWE round-trip fixtures.
 *.pem
-!**/tests/**/fixtures/*.pem
+!tests/HealthFlow.Hfcx.Sdk.Tests/fixtures/cross-sdk/*.pem

@@ -25,7 +25,7 @@ target shape.
 | Capability                                | Sprint | Status |
 |-------------------------------------------|--------|--------|
 | Project skeleton + version + error catalog | D1    | ✅      |
-| JWE encrypt / decrypt + cross-SDK round-trip | D2  | ⏳      |
+| JWE encrypt / decrypt + cross-SDK round-trip | D2  | ✅      |
 | Keycloak token client                     | D3     | ⏳      |
 | Registry lookup + cache                   | D3     | ⏳      |
 | `HfcxClient` sender flow                  | D4     | ⏳      |

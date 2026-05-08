@@ -13,7 +13,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 |------------|----------------|------------------|----------|
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
 | Python     | 🚧 Sprint P6   | 0.1.0a0          | gated on PyPI Trusted Publisher |
-| .NET       | 🚧 Sprint D1   | 0.1.0-alpha.0    | gated on nuget.org Trusted Publisher |
+| .NET       | 🚧 Sprint D2   | 0.1.0-alpha.0    | gated on nuget.org Trusted Publisher |
 | JavaScript | ⏳ Planned     | —                | —        |
 
 ## Allowed divergence
@@ -53,8 +53,8 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 8  | JWE encrypt (low-level)          | ✅ `JweEncryption.encryptUtf8`      | ✅ `crypto.encrypt_utf8`                | `JweEncryption.EncryptUtf8`           | `encryptJwe()`                      |
-| 9  | JWE decrypt (low-level)          | ✅ `JweEncryption.decryptUtf8`      | ✅ `crypto.decrypt_utf8`                | `JweEncryption.DecryptUtf8`           | `decryptJwe()`                      |
+| 8  | JWE encrypt (low-level)          | ✅ `JweEncryption.encryptUtf8`      | ✅ `crypto.encrypt_utf8`                | ✅ `JweEncryption.EncryptUtf8`        | `encryptJwe()`                      |
+| 9  | JWE decrypt (low-level)          | ✅ `JweEncryption.decryptUtf8`      | ✅ `crypto.decrypt_utf8`                | ✅ `JweEncryption.DecryptUtf8`        | `decryptJwe()`                      |
 | 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | ✅ `JweAlgorithms.Alg` / `Enc`        | `JWE_ALG` / `JWE_ENC`               |
 | 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | ✅ `OutboundEncryptor.encrypt` + `AsyncOutboundEncryptor.encrypt` | `OutboundEncryptor.Encrypt`           | `OutboundEncryptor.encrypt`         |
 | 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | ✅ `InboundDecryptor.decrypt`           | `InboundDecryptor.Decrypt`            | `InboundDecryptor.decrypt`          |

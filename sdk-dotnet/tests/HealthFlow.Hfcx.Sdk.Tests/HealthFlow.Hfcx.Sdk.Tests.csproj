@@ -23,4 +23,11 @@
     <ProjectReference Include="..\..\src\HealthFlow.Hfcx.Sdk\HealthFlow.Hfcx.Sdk.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="fixtures\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>false</Pack>
+    </None>
+  </ItemGroup>
+
 </Project>

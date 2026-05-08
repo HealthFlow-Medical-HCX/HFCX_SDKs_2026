@@ -1,0 +1,25 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "id": "cross-sdk-test-bundle",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "patient-1",
+        "identifier": [
+          {
+            "system": "http://hcx-egypt.gov.eg/identifiers/national-id",
+            "value": "29504150112355"
+          }
+        ],
+        "address": [
+          {
+            "country": "EG",
+            "city": "Cairo"
+          }
+        ]
+      }
+    }
+  ]
+}

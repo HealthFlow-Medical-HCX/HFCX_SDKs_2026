@@ -19,4 +19,12 @@
     <InternalsVisibleTo Include="HealthFlow.Hfcx.Sdk.Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Sprint D2: jose-jwt is the .NET equivalent of jwcrypto / Nimbus JOSE.
+         It supports RSA-OAEP-256 + A256GCM natively and lets us inspect the
+         protected header without decrypting first, which is required for
+         the downgrade-attack guard. -->
+    <PackageReference Include="jose-jwt" Version="5.0.0" />
+  </ItemGroup>
+
 </Project>
