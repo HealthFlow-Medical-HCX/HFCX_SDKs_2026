@@ -8,6 +8,35 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed (post-S7 — close the cross-SDK round-trip loop end-to-end)
+
+Every SDK now decrypts JWE compact tokens produced by every other SDK
+against the shared fixture key pair.
+
+- `sdk-java/.../crossfixtures/CrossSdkRoundTripTest` gains two
+  `@Test` cases: `dotnetProducedJweDecryptsToExpectedPlaintext` and
+  `javascriptProducedJweDecryptsToExpectedPlaintext`. Was 3 cases,
+  now 5.
+- `sdk-dotnet/tests/.../CrossSdkRoundTripTests` gains
+  `JavaScriptProducedJwe_HeaderAdvertisesPinnedAlgorithms` for
+  symmetry with the existing `JavaProducedJwe_*` and
+  `PythonProducedJwe_*` header checks. Was 7 cases, now 8.
+- `.NET` and `Python` already covered the
+  `Decrypts_JavaScriptProducedJwe_*` direction (added when the JS
+  fixture was generated in S2 / S3); nothing new there.
+
+The cross-SDK round-trip matrix is now fully connected:
+
+|                     | …decrypt java | …decrypt python | …decrypt dotnet | …decrypt javascript |
+|---------------------|---------------|-----------------|-----------------|----------------------|
+| Java SDK can…       | ✅ (round-trip)| ✅              | ✅ (new)        | ✅ (new)             |
+| Python SDK can…     | ✅            | ✅ (round-trip) | ✅              | ✅                   |
+| .NET SDK can…       | ✅            | ✅              | ✅ (round-trip) | ✅                   |
+| JavaScript SDK can…| ✅            | ✅              | ✅              | ✅ (round-trip)      |
+
+Quality gates: 5 Java cross-SDK + 556 .NET + 421 Python + 533 JS
+tests pass.
+
 ### Added (Sprint S7 — JavaScript 1.0.0 GA prep)
 
 - `sdk-javascript/RELEASING.md` — canonical procedure for cutting a

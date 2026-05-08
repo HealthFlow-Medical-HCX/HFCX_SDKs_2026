@@ -76,6 +76,45 @@ class CrossSdkRoundTripTest {
         assertEquals(JSON.readTree(expectedPlaintext), JSON.readTree(decrypted));
     }
 
+    @Test
+    void dotnetProducedJweDecryptsToExpectedPlaintext() throws Exception {
+        Path fixtureDir = locateFixtureDir();
+        Path dotnetJwe = fixtureDir.resolve("dotnet-produced.jwe");
+        Path plaintextFile = fixtureDir.resolve("plaintext.json");
+        Path privateKeyPem = fixtureDir.resolve("private-key.pem");
+
+        Assumptions.assumeTrue(Files.exists(dotnetJwe),
+                "dotnet-produced.jwe missing; regenerate via "
+                        + "dotnet run --project sdk-dotnet/tools/RegenerateCrossSdkJwe");
+
+        RSAPrivateKey privateKey = parsePrivateKey(Files.readString(privateKeyPem, StandardCharsets.UTF_8));
+        String expectedPlaintext = Files.readString(plaintextFile, StandardCharsets.UTF_8);
+        String jweCompact = Files.readString(dotnetJwe, StandardCharsets.UTF_8).strip();
+
+        String decrypted = JweEncryption.decryptUtf8(jweCompact, privateKey);
+        assertEquals(JSON.readTree(expectedPlaintext), JSON.readTree(decrypted));
+    }
+
+    @Test
+    void javascriptProducedJweDecryptsToExpectedPlaintext() throws Exception {
+        Path fixtureDir = locateFixtureDir();
+        Path jsJwe = fixtureDir.resolve("javascript-produced.jwe");
+        Path plaintextFile = fixtureDir.resolve("plaintext.json");
+        Path privateKeyPem = fixtureDir.resolve("private-key.pem");
+
+        Assumptions.assumeTrue(Files.exists(jsJwe),
+                "javascript-produced.jwe missing; regenerate via "
+                        + "npm --prefix sdk-javascript run regenerate-cross-sdk-jwe -- "
+                        + "../sdk-python/tests/fixtures/cross-sdk");
+
+        RSAPrivateKey privateKey = parsePrivateKey(Files.readString(privateKeyPem, StandardCharsets.UTF_8));
+        String expectedPlaintext = Files.readString(plaintextFile, StandardCharsets.UTF_8);
+        String jweCompact = Files.readString(jsJwe, StandardCharsets.UTF_8).strip();
+
+        String decrypted = JweEncryption.decryptUtf8(jweCompact, privateKey);
+        assertEquals(JSON.readTree(expectedPlaintext), JSON.readTree(decrypted));
+    }
+
     /** Smoke test that the SAME fixture public key encrypts → decrypts via the Java SDK. */
     @Test
     void javaRoundTripWithFixtureKeyPair() throws Exception {

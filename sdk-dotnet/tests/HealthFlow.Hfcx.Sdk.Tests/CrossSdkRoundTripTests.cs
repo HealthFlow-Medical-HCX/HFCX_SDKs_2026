@@ -74,6 +74,16 @@ public class CrossSdkRoundTripTests
     }
 
     [Fact]
+    public void JavaScriptProducedJwe_HeaderAdvertisesPinnedAlgorithms()
+    {
+        var jwe = CrossSdkFixtures.LoadJavaScriptProducedJwe();
+        var headers = Jose.JWT.Headers<System.Collections.Generic.IDictionary<string, object>>(jwe);
+
+        Assert.Equal("RSA-OAEP-256", headers["alg"].ToString());
+        Assert.Equal("A256GCM", headers["enc"].ToString());
+    }
+
+    [Fact]
     public void DotNetProducedJwe_RoundTripsThroughThisSdk()
     {
         using var pub = CrossSdkFixtures.LoadPublicKey();
