@@ -6,6 +6,43 @@ SemVer 2.0 conventions.
 
 ## [Unreleased]
 
+### Added (Sprint D6 — validator hardening + ASP.NET Core example)
+
+- 198 new xUnit cases that pin every recipient-validator branch
+  independently (now exercised both through `RecipientHandler` and
+  directly):
+  - `FhirValidatorTests` (24): every typed-error path
+    (`BadFhirJson`, `NotABundle`, `BundleMissingType`,
+    `PatientMissingNationalId`, `PatientNonEgyptian`); short-circuit
+    on first failure across multi-Patient bundles; `address[0]`
+    semantics; tolerance for entry-shape variance; pinned
+    `NationalIdSystem` constant.
+  - `EgyptianBundleValidatorTests` (23): Patient NID + phone slices;
+    Organization IBAN slice; `"iban"` substring matching on
+    system URI; fail-secure no-op on malformed JSON; multi-resource
+    walk order.
+  - `EgyptianValidatorsExtraTests` (151): every governorate code
+    parametric (27), leap-year boundaries at 1900 / 2000 / 2004 /
+    2012 / 2099, every gender digit (10), every rejected century
+    digit (8), every mobile prefix (4) and 9 bad-prefix
+    rejections, IBAN canonical / corrupted forms.
+- `docs/examples/recipient-aspnet/` — minimal-API ASP.NET Core 8 app
+  that wires `RecipientHandler` into the five HFCX `/v1/...`
+  endpoints. Sister to Python's `recipient-fastapi` /
+  `recipient-flask` and Java's `recipient-spring-boot-example`.
+  Ships `RecipientApp.BuildApp(handler)` for hosting + a `Program.cs`
+  entry point. Error handlers map `AuthenticationException` → 401,
+  `ProtocolException` → 400, `BusinessException` → 422, other
+  `HfcxException` → 500, with the platform's standard
+  `{"error": {"code", "message"}}` body.
+- `RecipientAspNetExample.Tests` — 5 integration tests that boot the
+  full app on a free localhost port and post real JWE-encrypted
+  claims through `OutboundEncryptor` + a stub bearer validator
+  (HTTP 202 happy path, 401 missing bearer, 422 non-Bundle, 400
+  recipient-mismatch, all-five-endpoints accept smoke).
+- 554 SDK tests pass (was 352); 5 ASP.NET integration tests pass.
+  Python (420) + Java reactor still green.
+
 ### Added (Sprint D5 — recipient pipeline + Egyptian validators)
 
 - `HealthFlow.Hfcx.Sdk.Validators` ships the four Egyptian field

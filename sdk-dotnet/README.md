@@ -31,6 +31,7 @@ target shape.
 | `HfcxClient` sender flow + correlation-ID propagation | D4     | ✅      |
 | `RecipientHandler` pipeline (4 layers)    | D5     | ✅      |
 | Egyptian validators                       | D5     | ✅      |
+| Validator hardening (554 tests) + ASP.NET example | D6 | ✅   |
 | 1.0.0 GA on NuGet                         | D7     | ⏳      |
 
 ## Quickstart — what works today (Sprint D1)

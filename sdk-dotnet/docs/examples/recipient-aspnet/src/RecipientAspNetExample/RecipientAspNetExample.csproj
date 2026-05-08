@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>HealthFlow.Hfcx.Sdk.Examples.RecipientAspNet</RootNamespace>
+    <AssemblyName>HealthFlow.Hfcx.Sdk.Examples.RecipientAspNet</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\src\HealthFlow.Hfcx.Sdk\HealthFlow.Hfcx.Sdk.csproj" />
+  </ItemGroup>
+
+</Project>

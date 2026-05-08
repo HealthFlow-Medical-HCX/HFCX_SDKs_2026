@@ -8,6 +8,23 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint D6 — .NET validator hardening + ASP.NET Core example)
+
+- 198 new xUnit cases tightening the recipient-pipeline validators:
+  `FhirValidatorTests` (24), `EgyptianBundleValidatorTests` (23),
+  `EgyptianValidatorsExtraTests` (151). Sister to Python's P6 suite
+  — every governorate code parametric, leap-year boundaries, every
+  gender digit, every mobile prefix, IBAN canonical / corrupted
+  forms.
+- `sdk-dotnet/docs/examples/recipient-aspnet/` — minimal-API
+  ASP.NET Core 8 app wiring `RecipientHandler` into the five HFCX
+  `/v1/...` endpoints, with 5 end-to-end integration tests that
+  boot on a free localhost port and post real JWE-encrypted claims.
+  Sister to Python's `recipient-fastapi` / `recipient-flask` and
+  Java's `recipient-spring-boot-example`.
+- 554 .NET SDK tests pass (was 352); 5 ASP.NET integration tests
+  pass. Python (420) + Java reactor still green.
+
 ### Added (Sprint D5 — .NET recipient pipeline + Egyptian validators)
 
 - The full inbound counterpart of `HfcxClient` lands on the .NET
