@@ -6,6 +6,72 @@ SemVer 2.0 conventions.
 
 ## [Unreleased]
 
+### Added (Sprint D5 — recipient pipeline + Egyptian validators)
+
+- `HealthFlow.Hfcx.Sdk.Validators` ships the four Egyptian field
+  validators with byte-identical accept/reject decisions to Java +
+  Python:
+  - `EgyptianGovernorate` (27 entries, `FromCode` lookup) — cross-SDK
+    invariant.
+  - `EgyptianNationalIdValidator.IsValid` / `Parse` returning
+    `NationalIdResult` with decoded `DateOfBirth`, `Governorate`,
+    `Gender` (odd serial digit = male).
+  - `EgyptianPhoneValidator.IsValid` / `Normalise` — accepts the
+    four canonical mobile forms and returns the `+201XXXXXXXXX`
+    canonical.
+  - `EgyptianIbanValidator.IsValid` — 29-char structural shape +
+    ISO 13616 mod-97 check.
+- Recipient pipeline under `HealthFlow.Hfcx.Sdk.Recipient`:
+  - `ILocalKeyProvider` interface (sister to Java's `LocalKeyProvider`
+    `@FunctionalInterface` and Python's `LocalKeyProvider` Protocol).
+  - `FileLocalKeyProvider` reads PKCS#8 PEM from disk on every
+    `GetPrivateKey()` call so rotations take effect immediately.
+  - `VaultLocalKeyProvider` against HashiCorp Vault KV v2 (token
+    auth, optional namespace, configurable secret field).
+  - `InboundDecryptor` composes `ILocalKeyProvider` with
+    `JweEncryption.DecryptUtf8` (parity row 12).
+  - `HeaderValidator` — five-header presence, recipient-code match,
+    UUID format on correlation/api-call IDs, ISO-8601 timestamp
+    within ±5 min (configurable, injectable clock).
+  - `FhirValidator` — hand-rolled Egyptian-IG profile validator
+    (top-level Bundle, `Bundle.type`, Patient National-ID slice,
+    `address[0].country == EG`). Public surface stable for the
+    future swap to a full IG-profile validator.
+  - `EgyptianBundleValidator` walks the Bundle and runs the field
+    validators on Patient identifiers / telecom and Organization
+    IBAN identifiers.
+  - `Layer` enum (`Bearer`, `Headers`, `Fhir`, `Egyptian`),
+    `RecipientResult` record, and `RecipientHandler` orchestrator
+    with constructor-time fail-fast: `Layer.Bearer` requires an
+    `IBearerTokenValidator`, `Layer.Headers` requires
+    `localParticipantCode`. Pushes the correlation ID into
+    `CorrelationId.Scope` for the duration of `Handle(...)`.
+- 92 new xUnit cases across:
+  - `EgyptianValidatorsTests` (27 cases) — parity with Java's
+    `EgyptianValidatorsTest` and Python's
+    `test_egyptian_validators.py`.
+  - `FileLocalKeyProviderTests` (6) — round-trip, rotation,
+    missing file, malformed PEM, empty-path guards.
+  - `VaultLocalKeyProviderTests` (10) — success, namespace header,
+    403/404, missing field, custom field, malformed PEM,
+    constructor validation.
+  - `RecipientHandlerTests` (24) — end-to-end round-trip,
+    per-layer toggles, every typed-error path (BEARER missing /
+    HEADERS recipient-mismatch / bad UUID / bad timestamp /
+    timestamp-out-of-range / missing-header, FHIR non-Bundle /
+    missing-NID / non-Egyptian, EGYPTIAN bad NID / bad phone),
+    envelope errors, all-layers-disabled-still-decrypts,
+    `BusinessException` catches typed subclass.
+- StubHttpMessageHandler now overrides `Send` (sync) too so
+  `VaultLocalKeyProvider.GetPrivateKey()` (sync to match Java +
+  Python contract) can use it under test.
+- 352 .NET tests pass (was 260). Python (420) + Java reactor still
+  green.
+- Cross-SDK parity rows 12 (decrypt-with-key), 15-17 (key providers),
+  23-28 (recipient handler + Layer + Header + FHIR + Egyptian +
+  Result), 29-35 (Egyptian field validators + governorate enum)
+  promoted to ✅ .NET.
+
 ### Added (Sprint D4 — `HfcxClient` outbound flow)
 
 - `HealthFlow.Hfcx.Sdk.Client.HfcxClient` — async-only sender client

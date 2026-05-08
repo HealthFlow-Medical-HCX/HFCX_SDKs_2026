@@ -28,7 +28,11 @@
     <!-- CA1848: LoggerMessage source-generators are an optimisation only;
          the SDK logs at low cardinality and the readability cost outweighs
          the perf gain at our call rates. -->
-    <NoWarn>$(NoWarn);CA1032;CA1716;CA1848;CS1591</NoWarn>
+    <!-- CA1822: cross-SDK parity requires instance methods on
+         FhirValidator and EgyptianBundleValidator (Java + Python expose
+         them as instance methods). The performance impact of an extra
+         null check on `this` is negligible. -->
+    <NoWarn>$(NoWarn);CA1032;CA1716;CA1822;CA1848;CS1591</NoWarn>
 
     <!-- Cross-SDK invariant: SDK 1.x targets platform 1.x. Bumped via the
          fhir-ig/sync.sh helper in lockstep with PLATFORM_VERSION. -->

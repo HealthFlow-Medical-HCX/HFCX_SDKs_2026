@@ -58,6 +58,15 @@ internal sealed class StubHttpMessageHandler : HttpMessageHandler
         return this;
     }
 
+    protected override HttpResponseMessage Send(
+        HttpRequestMessage request,
+        CancellationToken cancellationToken)
+    {
+        // Synchronous path used by HttpClient.Send. Block on the async
+        // responder; the test stubs are in-memory so this is fine.
+        return SendAsync(request, cancellationToken).GetAwaiter().GetResult();
+    }
+
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)

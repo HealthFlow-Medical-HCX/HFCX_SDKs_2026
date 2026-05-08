@@ -8,6 +8,31 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint D5 — .NET recipient pipeline + Egyptian validators)
+
+- The full inbound counterpart of `HfcxClient` lands on the .NET
+  SDK: `RecipientHandler` orchestrates four independently toggleable
+  validation layers (`Bearer → Headers → Fhir → Egyptian`);
+  `ILocalKeyProvider` + `FileLocalKeyProvider` (re-reads PEM on
+  every call so rotations take effect immediately) +
+  `VaultLocalKeyProvider` (KV v2, token auth, namespace, custom
+  field); `InboundDecryptor`; `HeaderValidator`; hand-rolled
+  `FhirValidator` and `EgyptianBundleValidator`; `Layer` enum;
+  `RecipientResult` record. Constructor fail-fast: `Layer.Bearer`
+  requires an `IBearerTokenValidator` (no trust-everything default
+  by design), `Layer.Headers` requires the local participant code.
+- The four Egyptian field validators land on .NET with byte-
+  identical accept/reject decisions to Java + Python:
+  `EgyptianGovernorate` (27 entries), `EgyptianNationalIdValidator`
+  (`IsValid` + `Parse`), `EgyptianPhoneValidator`
+  (`IsValid` + `Normalise`), `EgyptianIbanValidator` (mod-97).
+- 92 new xUnit cases (27 Egyptian validators + 6 File + 10 Vault +
+  24 RecipientHandler end-to-end + 25 utility), all green.
+- 352 .NET tests pass (was 260). 420 Python + Java reactor still
+  green.
+- Cross-SDK parity rows 12, 15-17, 23-35 promoted to ✅ .NET;
+  status bumped to "🚧 Sprint D5".
+
 ### Added (Sprint D4 — .NET `HfcxClient` outbound flow)
 
 - `HealthFlow.Hfcx.Sdk.Client.HfcxClient` async sender with the five
