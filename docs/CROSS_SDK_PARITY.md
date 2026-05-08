@@ -12,7 +12,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | SDK        | Status         | Version          | Released |
 |------------|----------------|------------------|----------|
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
-| Python     | ⏳ Planned     | —                | —        |
+| Python     | 🚧 Sprint P1   | 0.1.0a0          | gated on PyPI Trusted Publisher |
 | .NET       | ⏳ Planned     | —                | —        |
 | JavaScript | ⏳ Planned     | —                | —        |
 
@@ -114,15 +114,15 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 44 | Root exception                   | ✅ `HfcxException`                  | `HfcxError`                             | `HfcxException`                       | `HfcxError`                         |
-| 45 | Protocol-tier exception          | ✅ `ProtocolException` + 9 subtypes | `ProtocolError` + subtypes              | `ProtocolException` + subtypes        | `ProtocolError` + subtypes          |
-| 46 | Business-tier exception          | ✅ `BusinessException` + 12 subtypes| `BusinessError` + subtypes              | `BusinessException` + subtypes        | `BusinessError` + subtypes          |
-| 47 | Technical-tier exception         | ✅ `TechnicalException` + 6 subtypes| `TechnicalError` + subtypes             | `TechnicalException` + subtypes       | `TechnicalError` + subtypes         |
-| 48 | Authentication failure           | ✅ `AuthenticationException` (`ERR-T-002`) | `AuthenticationError`            | `AuthenticationException`             | `AuthenticationError`               |
-| 49 | Error-code catalog               | ✅ `ErrorCode` enum (27 entries)    | `ErrorCode` IntEnum                     | `ErrorCode` enum                      | `ErrorCode` literal type            |
-| 50 | Tier enum                        | ✅ `ErrorCode.Tier` (3 values)      | `ErrorCode.Tier` IntEnum                | `ErrorCode.Tier` enum                 | `ErrorCode.Tier` literal type       |
-| 51 | Wire-code → typed factory        | ✅ `HfcxException.fromWireCode`     | `HfcxError.from_wire_code`              | `HfcxException.FromWireCode`          | `errorFromWireCode`                 |
-| 52 | Catalog-entry → typed factory    | ✅ `HfcxException.of(ErrorCode,…)`  | `HfcxError.of(ErrorCode, …)`            | `HfcxException.Of(ErrorCode, …)`      | `errorOf(ErrorCode, …)`             |
+| 44 | Root exception                   | ✅ `HfcxException`                  | ✅ `HfcxError`                          | `HfcxException`                       | `HfcxError`                         |
+| 45 | Protocol-tier exception          | ✅ `ProtocolException` + 9 subtypes | ✅ `ProtocolError` + 9 subtypes         | `ProtocolException` + subtypes        | `ProtocolError` + subtypes          |
+| 46 | Business-tier exception          | ✅ `BusinessException` + 12 subtypes| ✅ `BusinessError` + 12 subtypes        | `BusinessException` + subtypes        | `BusinessError` + subtypes          |
+| 47 | Technical-tier exception         | ✅ `TechnicalException` + 6 subtypes| ✅ `TechnicalError` + 6 subtypes        | `TechnicalException` + subtypes       | `TechnicalError` + subtypes         |
+| 48 | Authentication failure           | ✅ `AuthenticationException` (`ERR-T-002`) | ✅ `AuthenticationError` (`ERR-T-002`) | `AuthenticationException`        | `AuthenticationError`               |
+| 49 | Error-code catalog               | ✅ `ErrorCode` enum (27 entries)    | ✅ `ErrorCode` Enum (27 entries)        | `ErrorCode` enum                      | `ErrorCode` literal type            |
+| 50 | Tier enum                        | ✅ `ErrorCode.Tier` (3 values)      | ✅ `Tier` Enum (3 values)               | `ErrorCode.Tier` enum                 | `ErrorCode.Tier` literal type       |
+| 51 | Wire-code → typed factory        | ✅ `HfcxException.fromWireCode`     | ✅ `HfcxError.from_wire_code`           | `HfcxException.FromWireCode`          | `errorFromWireCode`                 |
+| 52 | Catalog-entry → typed factory    | ✅ `HfcxException.of(ErrorCode,…)`  | ✅ `HfcxError.of(ErrorCode, …)`         | `HfcxException.Of(ErrorCode, …)`      | `errorOf(ErrorCode, …)`             |
 
 ## Total: **52** rows.
 

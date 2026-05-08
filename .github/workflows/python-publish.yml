@@ -1,0 +1,58 @@
+name: python-publish
+
+# Stubbed Sprint P1 publish workflow.
+#
+# Triggered by tags of the form `sdk-python/vX.Y.Z`. Builds the sdist
+# and wheel, then publishes via PyPI Trusted Publishing (no API token
+# secret needed once the project is configured on PyPI).
+#
+# Setup before the first publish:
+#   1. Register the project on PyPI (https://pypi.org/manage/account/publishing/)
+#   2. Add this GitHub repo + the `pypi` environment as a Trusted Publisher.
+#   3. (Sanity test) Repeat against TestPyPI for the `0.1.0aN` checks.
+#
+# Until the Trusted Publisher is registered the workflow only validates
+# that the build artefacts assemble cleanly when run manually.
+
+on:
+  push:
+    tags:
+      - "sdk-python/v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write  # Required for PyPI Trusted Publishing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    defaults:
+      run:
+        working-directory: sdk-python
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build
+        run: python -m pip install --upgrade pip build
+
+      - name: Build sdist + wheel
+        run: python -m build
+
+      - name: Publish to PyPI (Trusted Publishing)
+        if: ${{ vars.PYPI_TRUSTED_PUBLISHER_CONFIGURED == 'true' }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: sdk-python/dist
+
+      - name: Build-only smoke (Trusted Publisher not yet configured)
+        if: ${{ vars.PYPI_TRUSTED_PUBLISHER_CONFIGURED != 'true' }}
+        run: |
+          echo "::warning::PYPI_TRUSTED_PUBLISHER_CONFIGURED variable not 'true' — built artefacts but did not upload."
+          ls -la dist/

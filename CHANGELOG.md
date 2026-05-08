@@ -8,6 +8,45 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint P1 — Python SDK bootstrap)
+
+- `sdk-python/` subtree with PEP 621 `pyproject.toml` (hatchling
+  backend), Python 3.10+ requirement, dev extras (ruff, mypy,
+  pytest), and the canonical layout
+  (`src/hfcx_sdk/`, `tests/unit/`, `fhir-ig/`).
+- `hfcx_sdk` package skeleton exporting `__version__ = "0.1.0a0"`
+  plus the cross-SDK error-taxonomy public surface
+  (`ErrorCode`, `HfcxError`, `ProtocolError`, `BusinessError`,
+  `TechnicalError`, `AuthenticationError`).
+- Full port of the Java SDK's `ErrorCode` catalog — 27 entries (9
+  protocol, 12 business, 6 technical) — to Python in
+  `hfcx_sdk.exceptions`. Wire codes are identical to the Java
+  catalog; cross-SDK invariant. 26 typed exception subclasses
+  plus the factory methods (`HfcxError.of`,
+  `HfcxError.from_wire_code`) with the same semantics as the
+  Java equivalents.
+- Module skeletons for the rest of the public-API surface
+  (`client`, `crypto`, `keycloak`, `registry`, `recipient`,
+  `fhir`, `validators/*`) — declarations are stable; bodies
+  raise `NotImplementedError` pointing at the sprint that lands
+  the implementation (P2-P6).
+- 44 pytest cases: `test_version` (4) + `test_error_code_catalog`
+  (40 via parametrize). Ports the Java SDK's
+  `ErrorCodeCatalogTest` invariants: wire-code uniqueness,
+  canonical format, tier-prefix consistency, factory dispatch,
+  per-tier counts pinned at 9/12/6, full catalog↔subclass
+  coverage, unknown-code fallback.
+- `.github/workflows/python-test.yml` — CI matrix on Python
+  3.10 / 3.11 / 3.12 running `ruff check`, `ruff format --check`,
+  `mypy --strict`, `pytest --cov`, plus a sdist + wheel build.
+- `.github/workflows/python-publish.yml` — stubbed PyPI publish
+  workflow gated on `sdk-python/v*` tags using PyPI Trusted
+  Publishing. Falls through to a build-only smoke when the
+  `PYPI_TRUSTED_PUBLISHER_CONFIGURED` GitHub variable is unset.
+- `sdk-python/.pre-commit-config.yaml`, `sdk-python/CHANGELOG.md`,
+  `sdk-python/README.md`, and `sdk-python/fhir-ig/sync.sh`
+  (mirror of the Java SDK's IG-sync helper).
+
 ### Added (Sprint J7 — documentation + 1.0.0 release prep)
 
 - Three runnable example projects under `sdk-java/docs/examples/`:
