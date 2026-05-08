@@ -32,7 +32,11 @@ requires-python = ">=3.10"
 #   P3 adds: httpx, cachetools
 #   P5 adds: fhir.resources (FHIR validation), fastapi/flask (examples)
 #   logging: stdlib + structlog (test scope until P3+)
-dependencies = []
+dependencies = [
+    # Sprint P2 — JWE encrypt / decrypt with hard-pinned RSA-OAEP-256 + A256GCM.
+    "jwcrypto>=1.5.6",
+    "cryptography>=42.0",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -97,7 +101,13 @@ no_implicit_reexport = false  # __init__.py re-exports are deliberate
 files = ["src/hfcx_sdk", "tests"]
 
 [[tool.mypy.overrides]]
-module = ["jwcrypto.*", "cachetools.*", "pytest.*", "_pytest.*"]
+module = [
+    "cryptography.*",
+    "jwcrypto.*",
+    "cachetools.*",
+    "pytest.*",
+    "_pytest.*",
+]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

@@ -5,6 +5,46 @@ Versions follow [Semantic Versioning](https://semver.org/) and PEP 440.
 
 ## [Unreleased]
 
+### Added (Sprint P2 — crypto module)
+
+- `hfcx_sdk.crypto` is now real. `encrypt(payload, public_key)`,
+  `encrypt_utf8`, `decrypt(jwe_compact, private_key)`, and
+  `decrypt_utf8` are implemented over `jwcrypto`. Algorithm pair is
+  hard-pinned to `RSA-OAEP-256 + A256GCM`; the encrypt path bakes
+  it into the protected header, and the decrypt path inspects the
+  header BEFORE any cryptographic operation runs — a downgrade
+  attempt is rejected as
+  `JweAlgorithmRejectedError` (`ERR-P-002`) without touching the
+  recipient's private key.
+- New compile dependencies: `jwcrypto>=1.5.6` and
+  `cryptography>=42.0`.
+- 22 new test cases:
+  - 4 round-trip cases (bytes, UTF-8 with multi-byte chars,
+    distinct ciphertexts via fresh GCM nonce, 100KB FHIR Bundle
+    under the 500 ms budget).
+  - 9 downgrade-rejection cases (`RSA1_5`, `RSA-OAEP`,
+    `RSA-OAEP-384`, `RSA-OAEP-512`, `dir`, `A128GCM`, `A192GCM`,
+    `A256CBC-HS512`, plus the canonical `alg=none` attack).
+  - 4 malformed-input / null-guard / wrong-key cases.
+  - 1 pinned-constant assertion.
+- 4 cross-SDK round-trip cases under
+  `tests/unit/test_cross_sdk_round_trip.py` — Python decrypts both
+  Python-produced and Java-produced JWE fixtures pinned to a shared
+  key pair, asserts the decoded payload matches `plaintext.json`,
+  and asserts the protected header advertises the pinned
+  algorithm pair. The Java SDK has the symmetric test
+  (`CrossSdkRoundTripTest`); together they prove the wire format is
+  byte-compatible across the two SDKs.
+
+### Added — cross-SDK fixtures
+
+- `tests/fixtures/cross-sdk/` with the shared RSA-2048 test key pair
+  (PEM), a fixed plaintext, and pre-generated `python-produced.jwe`
+  + `java-produced.jwe`. The fixtures have a clear `README.md` and
+  a `regenerate.py` helper for the Python side; the Java side has
+  `RegenerateCrossSdkJwe` under
+  `sdk-java/hfcx-sdk-client/src/test/java/.../crossfixtures/`.
+
 ### Added (Sprint P1 — repository bootstrap)
 
 - `pyproject.toml` (PEP 621) with hatchling build backend, dev extras

@@ -12,7 +12,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | SDK        | Status         | Version          | Released |
 |------------|----------------|------------------|----------|
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
-| Python     | 🚧 Sprint P1   | 0.1.0a0          | gated on PyPI Trusted Publisher |
+| Python     | 🚧 Sprint P2   | 0.1.0a0          | gated on PyPI Trusted Publisher |
 | .NET       | ⏳ Planned     | —                | —        |
 | JavaScript | ⏳ Planned     | —                | —        |
 
@@ -53,9 +53,9 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 8  | JWE encrypt (low-level)          | ✅ `JweEncryption.encryptUtf8`      | `crypto.encrypt`                        | `JweEncryption.EncryptUtf8`           | `encryptJwe()`                      |
-| 9  | JWE decrypt (low-level)          | ✅ `JweEncryption.decryptUtf8`      | `crypto.decrypt`                        | `JweEncryption.DecryptUtf8`           | `decryptJwe()`                      |
-| 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | `JWE_ALG` / `JWE_ENC`                   | `JweAlgorithms.Alg` / `Enc`           | `JWE_ALG` / `JWE_ENC`               |
+| 8  | JWE encrypt (low-level)          | ✅ `JweEncryption.encryptUtf8`      | ✅ `crypto.encrypt_utf8`                | `JweEncryption.EncryptUtf8`           | `encryptJwe()`                      |
+| 9  | JWE decrypt (low-level)          | ✅ `JweEncryption.decryptUtf8`      | ✅ `crypto.decrypt_utf8`                | `JweEncryption.DecryptUtf8`           | `decryptJwe()`                      |
+| 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | `JweAlgorithms.Alg` / `Enc`           | `JWE_ALG` / `JWE_ENC`               |
 | 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | `OutboundEncryptor.encrypt`             | `OutboundEncryptor.Encrypt`           | `OutboundEncryptor.encrypt`         |
 | 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | `InboundDecryptor.decrypt`              | `InboundDecryptor.Decrypt`            | `InboundDecryptor.decrypt`          |
 | 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert`| `RegistryClient.get_recipient_cert`     | `RegistryClient.GetRecipientCertAsync`| `RegistryClient.getRecipientCert`   |

@@ -8,6 +8,35 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint P2 — Python crypto module)
+
+- `hfcx_sdk.crypto` lands real `encrypt`/`decrypt` over `jwcrypto`
+  with hard-pinned `RSA-OAEP-256 + A256GCM`. Decrypt inspects the
+  protected header BEFORE any cryptographic operation; downgrade
+  attempts (`RSA1_5`, `alg=none`, weaker GCM variants, CBC mode,
+  etc.) raise `JweAlgorithmRejectedError` (`ERR-P-002`) without
+  touching the recipient's private key.
+- 22 new Python test cases covering round-trip, 9 distinct
+  downgrade rejections, a 100 KB / 500 ms perf budget, malformed
+  input, and null guards.
+- Cross-SDK fixture infrastructure under
+  `sdk-python/tests/fixtures/cross-sdk/`: shared RSA-2048 key pair,
+  fixed FHIR-like plaintext, pre-generated `python-produced.jwe`
+  and `java-produced.jwe`, plus regeneration helpers
+  (`regenerate.py` for the Python side,
+  `crossfixtures.RegenerateCrossSdkJwe` main for the Java side).
+- Sister tests close the cross-SDK round-trip loop without needing
+  the platform's `tests/integration/harness/`:
+  - `sdk-python/tests/unit/test_cross_sdk_round_trip.py` — 4 cases.
+    Python decrypts the Java-produced JWE; asserts the protected
+    header advertises the pinned algorithm pair; asserts the
+    plaintext matches.
+  - `sdk-java/.../CrossSdkRoundTripTest` — 3 cases. Java decrypts
+    the Python-produced JWE; round-trips the fixture key pair;
+    sanity-checks against the Java-produced JWE.
+- `cryptography>=42.0` and `jwcrypto>=1.5.6` added as compile deps
+  on the Python SDK.
+
 ### Added (Sprint P1 — Python SDK bootstrap)
 
 - `sdk-python/` subtree with PEP 621 `pyproject.toml` (hatchling

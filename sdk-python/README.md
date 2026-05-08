@@ -24,7 +24,7 @@ the target shape.
 | Capability                       | Sprint | Status         |
 |----------------------------------|--------|----------------|
 | Package + version + error catalog | P1    | ✅              |
-| JWE encrypt / decrypt            | P2     | ⏳              |
+| JWE encrypt / decrypt + cross-SDK round-trip | P2 | ✅          |
 | Keycloak token client            | P3     | ⏳              |
 | Registry lookup + cache          | P3     | ⏳              |
 | HfcxClient sender flow           | P4     | ⏳              |
