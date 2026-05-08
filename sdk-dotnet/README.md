@@ -28,7 +28,7 @@ target shape.
 | JWE encrypt / decrypt + cross-SDK round-trip | D2  | ✅      |
 | Keycloak token client                     | D3     | ✅      |
 | Registry lookup + cache                   | D3     | ✅      |
-| `HfcxClient` sender flow                  | D4     | ⏳      |
+| `HfcxClient` sender flow + correlation-ID propagation | D4     | ✅      |
 | `RecipientHandler` pipeline (4 layers)    | D5     | ⏳      |
 | Egyptian validators                       | D5/D6  | ⏳      |
 | 1.0.0 GA on NuGet                         | D7     | ⏳      |

@@ -6,6 +6,52 @@ SemVer 2.0 conventions.
 
 ## [Unreleased]
 
+### Added (Sprint D4 — `HfcxClient` outbound flow)
+
+- `HealthFlow.Hfcx.Sdk.Client.HfcxClient` — async-only sender client
+  with five typed sender methods (`CheckEligibilityAsync`,
+  `SubmitPreauthAsync`, `SubmitClaimAsync`, `SendCommunicationAsync`,
+  `NotifyPaymentAsync`). Each runs the full outbound flow: registry
+  lookup → JWE encryption → bearer-token auth → POST to the gateway,
+  with 1s/2s/4s exponential backoff on 5xx (max 4 attempts) and
+  typed-exception mapping for 4xx via
+  `HfcxException.FromWireCode`. Behaviour byte-identical to the Java
+  and Python SDKs: HTTP 202 → `Status.Accepted`, HTTP 401 invalidates
+  the cached bearer and raises `AuthenticationException`,
+  unparseable 4xx body → `UnknownBusinessException` (`ERR-B-012`),
+  retry exhaustion → `Gateway5xxException` (`ERR-T-006`).
+- `HealthFlow.Hfcx.Sdk.Client.IHfcxRequest` sealed marker plus five
+  records (`SubmitClaimRequest`, `SubmitPreauthRequest`,
+  `CheckEligibilityRequest`, `SendCommunicationRequest`,
+  `NotifyPaymentRequest`). Each maps to its `Operation` enum value
+  and exposes `RecipientCode`, `PayloadBundle`, `CorrelationId`.
+- `HealthFlow.Hfcx.Sdk.Client.Operation` enum (5 values) +
+  `DefaultEndpoints.Map` mirroring Integration Guide §22 paths.
+- `HealthFlow.Hfcx.Sdk.Client.HfcxResponse` record + `Status` enum
+  (`Accepted`, `Rejected`, `Stubbed`).
+- `HealthFlow.Hfcx.Sdk.Client.OutboundEncryptor` — composes
+  `IRecipientCertResolver` with `JweEncryption` (parity row 11).
+- `HealthFlow.Hfcx.Sdk.Protocol.ProtocolHeaders.Build` — emits the
+  five HFCX protocol headers in deterministic order with ISO-8601
+  UTC timestamp formatting (`yyyy-MM-ddTHH:mm:ss.fffZ`),
+  byte-identical to Java's `ProtocolHeaders.build` and Python's
+  `protocol.build`.
+- `HealthFlow.Hfcx.Sdk.Logging.CorrelationId` — `AsyncLocal<string?>`-
+  backed correlation-ID propagation that survives `await`
+  boundaries; cross-SDK MDC key `correlation_id` matches Java + Python.
+- 47 new xUnit cases (8 Protocol + 6 Correlation + 5 OutboundEncryptor
+  + 23 HfcxClient theory/cases): every endpoint, every retry path,
+  401 → invalidate-then-throw, typed 4xx mapping (known + unknown
+  codes + unparseable bodies), envelope shape (5-segment JWE compact
+  inside `{"payload":...}`), every protocol header on the wire,
+  Authorization + User-Agent headers, AsyncLocal isolation across
+  16 concurrent tasks, construction guards.
+- 260 .NET tests pass (was 213). 420 Python + Java reactor still
+  green.
+- Cross-SDK parity rows 1–6 (sender methods + builder), 11 (encrypt-
+  for-recipient), 21 (header builder), 36–43 (request / response
+  types), and 54 (Operation enum) promoted to ✅ .NET.
+
 ### Added (Sprint D3 — Keycloak token client + Sunbird-RC registry)
 
 - `HealthFlow.Hfcx.Sdk.Auth.KeycloakTokenClient` — async-first

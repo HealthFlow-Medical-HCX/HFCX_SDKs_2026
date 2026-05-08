@@ -8,6 +8,26 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint D4 — .NET `HfcxClient` outbound flow)
+
+- `HealthFlow.Hfcx.Sdk.Client.HfcxClient` async sender with the five
+  typed sender methods (`CheckEligibilityAsync`,
+  `SubmitPreauthAsync`, `SubmitClaimAsync`, `SendCommunicationAsync`,
+  `NotifyPaymentAsync`). Full outbound flow: registry lookup → JWE
+  encryption → bearer-token auth → POST → typed-error mapping. 1s/2s/4s
+  retry on 5xx, 401 invalidates the cached bearer and raises
+  `AuthenticationException`, unparseable 4xx → `UnknownBusinessException`,
+  retry exhaustion → `Gateway5xxException`. Byte-identical behaviour
+  to Java + Python.
+- `IHfcxRequest` sealed marker + five records, `HfcxResponse` +
+  `Status` enum, `Operation` enum, `DefaultEndpoints.Map`,
+  `OutboundEncryptor`, `ProtocolHeaders.Build`, and `CorrelationId`
+  AsyncLocal scope (cross-SDK MDC key `correlation_id`).
+- 47 new xUnit cases. 260 .NET tests pass; Python (420) + Java
+  reactor still green.
+- Cross-SDK parity rows 1-6, 11, 21, 36-43, 54 promoted to ✅ .NET;
+  status bumped to "🚧 Sprint D4".
+
 ### Added (Sprint D3 — .NET Keycloak token client + Sunbird-RC registry)
 
 - `HealthFlow.Hfcx.Sdk.Auth.KeycloakTokenClient` (async) caches and
