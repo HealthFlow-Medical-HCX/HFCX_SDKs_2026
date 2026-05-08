@@ -8,6 +8,45 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint P5 — Python recipient pipeline + Egyptian validators)
+
+- `hfcx_sdk.validators` ships full Python ports of the Java
+  Egyptian-field validators: `egyptian_governorate.EgyptianGovernorate`
+  enum (27 entries, identical wire-format codes to the Java enum),
+  `egyptian_national_id.is_valid` / `parse` (14-digit structural
+  check + decoded date-of-birth, governorate, gender),
+  `egyptian_phone.is_valid` / `normalise` (four canonical forms,
+  `+201XXXXXXXXX` canonical), `egyptian_iban.is_valid` (29-char
+  ISO 13616 mod-97). Cross-SDK invariant: same input → same accept /
+  reject decision as the Java SDK.
+- `hfcx_sdk.recipient` ships the full inbound counterpart of
+  `HfcxClient`: `RecipientHandler` orchestrates four independently
+  toggleable validation layers (`BEARER → HEADERS → FHIR →
+  EGYPTIAN`); `LocalKeyProvider` Protocol with reference
+  implementations `FileLocalKeyProvider` (PKCS#8 PEM, re-reads on
+  every call so rotations take effect immediately) and
+  `VaultLocalKeyProvider` (HashiCorp Vault KV v2, token + namespace
+  + custom-field support); `InboundDecryptor` composes the key
+  provider with `crypto.decrypt_utf8`; `BearerTokenValidator`
+  Protocol (no default trust-everything implementation by design);
+  `HeaderValidator` enforces five-header presence, recipient-code
+  match, UUID format, ISO-8601 timestamp ±5 min; hand-rolled
+  `FhirValidator` and `EgyptianBundleValidator`. Pushes the
+  correlation ID through `correlation_id_scope` for the duration
+  of the call. Cross-SDK parity rows 12, 15-17, 20, 23-35.
+- 65 new Python test cases: 29 Egyptian validators (governorate,
+  National ID, phone, IBAN), 7 `FileLocalKeyProvider`, 8
+  `VaultLocalKeyProvider` (respx-mocked Vault), 21
+  `RecipientHandler` (end-to-end round-trip + per-layer toggles +
+  typed-error mapping). Total: **210 SDK tests pass**, plus 5
+  platform-integration placeholders skipped.
+- Two example apps under `sdk-python/docs/examples/`:
+  `recipient-fastapi/` (FastAPI) and `recipient-flask/` (Flask),
+  each with its own `pyproject.toml`, `build_app(handler)` wiring
+  helper, README, and a 5-case integration test that boots the app
+  on a random port and posts a real JWE-encrypted claim. Sister to
+  the Java SDK's `recipient-spring-boot-example`.
+
 ### Added (Sprint P4 — Python `HfcxClient` outbound flow)
 
 - `hfcx_sdk.client` ships sync (`HfcxClient`) and async
