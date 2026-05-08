@@ -5,6 +5,28 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J7 — documentation + 1.0.0 release prep)
+
+- `docs/examples/submit-claim-example/` — runnable Maven console app
+  that wires `HfcxClient` end-to-end and posts a claim Bundle.
+- `docs/examples/eligibility-check-example/` — equivalent for the
+  `CoverageEligibilityRequest` cycle.
+- `docs/examples/recipient-spring-boot-example/` — README pointing at
+  the existing `hfcx-sdk-examples/` Spring Boot module with a
+  production checklist for swapping the example's stub bearer
+  validator and file-based key provider.
+- `RELEASING.md` documenting the canonical GA cut procedure for
+  whoever runs the release with OSSRH credentials configured.
+- `docs/releases/v1.0.0.md` — release notes placeholder.
+- All 26 typed exception subclasses regenerated to include Javadoc
+  on the `CODE` constant and both constructors.
+- `HfcxException` factory methods (`of`, `fromWireCode`, `getCode`)
+  now have full `@param` / `@return` Javadoc.
+- Maven Javadoc plugin tuned to `-Xdoclint:all,-missing` so the
+  publish profile generates the javadoc jar cleanly without burying
+  the build in repetitive missing-comment warnings on builders /
+  generated subclass constructors.
+
 ### Added (Sprint J6 — error taxonomy + integration test pass)
 
 - `eg.gov.healthflow.hfcx.sdk.core.exception.ErrorCode` — single-source-

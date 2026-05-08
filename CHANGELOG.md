@@ -8,6 +8,31 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint J7 — documentation + 1.0.0 release prep)
+
+- Three runnable example projects under `sdk-java/docs/examples/`:
+  `submit-claim-example/` (console app), `eligibility-check-example/`
+  (console app), and `recipient-spring-boot-example/` (entry point
+  documentation pointing at the live Maven module). Both console
+  examples build and run against the installed SDK snapshot.
+- `sdk-java/RELEASING.md` — full GA cut procedure: prerequisites
+  (Sonatype Central + GPG), per-release version bump / changelog /
+  tag / push steps, staging smoke-test instructions, post-release
+  housekeeping, rollback policy.
+- `sdk-java/docs/releases/v1.0.0.md` — release notes placeholder
+  ready to be promoted on the day of the GA cut.
+- `docs/CROSS_SDK_PARITY.md` expanded from 22 rows to 52, covering
+  every public class and method on the Java column. Python, .NET,
+  and JavaScript SDKs now have the full target shape to build
+  against.
+- 26 typed exception subclasses regenerated with full Javadoc on
+  `CODE` constants and constructors.
+- `HfcxException.getCode`, `of(...)`, and `fromWireCode(...)`
+  Javadoc rewritten with `@param` / `@return`.
+- `maven-javadoc-plugin` configured with `-Xdoclint:all,-missing`
+  and `failOnWarnings=false` so the GA javadoc jar builds cleanly
+  while still catching real errors (broken `@link`, malformed HTML).
+
 ### Added (Sprint J6 — error taxonomy + integration test pass)
 
 - `eg.gov.healthflow.hfcx.sdk.core.exception.ErrorCode` — single-source-

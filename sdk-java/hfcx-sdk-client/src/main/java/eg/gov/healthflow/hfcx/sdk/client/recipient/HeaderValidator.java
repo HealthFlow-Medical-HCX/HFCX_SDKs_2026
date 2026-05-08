@@ -29,8 +29,9 @@ import java.util.regex.Pattern;
  *       {@link #DEFAULT_TIMESTAMP_TOLERANCE} of the current time.</li>
  * </ul>
  *
- * <p>Each violation surfaces as {@link ProtocolException} with a
- * documented {@code ERR-P-*} code.
+ * <p>Each violation surfaces as a typed
+ * {@link eg.gov.healthflow.hfcx.sdk.core.exception.ProtocolException}
+ * subclass with a documented {@code ERR-P-*} code.
  */
 public final class HeaderValidator {
 

@@ -40,8 +40,8 @@ public abstract class HfcxException extends RuntimeException {
     }
 
     /**
-     * Wire-format error code, e.g. {@code "ERR-B-006"}. Identical across
-     * the Java, Python, .NET, and JavaScript SDKs.
+     * @return the wire-format error code, e.g. {@code "ERR-B-006"}.
+     *     Identical across the Java, Python, .NET, and JavaScript SDKs.
      */
     public String getCode() {
         return code;
@@ -52,6 +52,10 @@ public abstract class HfcxException extends RuntimeException {
      * returned exception's runtime type is the dedicated typed subclass
      * (e.g. {@link MissingHeaderException}) rather than the bare tier
      * exception, so callers can {@code catch} by type.
+     *
+     * @param code    catalog entry to construct the exception for
+     * @param message free-form description of the specific failure
+     * @return a typed subclass of {@link HfcxException} matching {@code code}'s tier
      */
     public static HfcxException of(ErrorCode code, String message) {
         return switch (code) {
@@ -85,6 +89,14 @@ public abstract class HfcxException extends RuntimeException {
         };
     }
 
+    /**
+     * Same as {@link #of(ErrorCode, String)} but attaches a root cause.
+     *
+     * @param code    catalog entry to construct the exception for
+     * @param message free-form description of the specific failure
+     * @param cause   the underlying cause to attach via {@link Throwable#initCause}
+     * @return a typed subclass of {@link HfcxException} matching {@code code}'s tier
+     */
     public static HfcxException of(ErrorCode code, String message, Throwable cause) {
         // Build the typed instance, then re-throw via the cause-aware
         // constructor on each tier. To avoid duplicating the 27-arm
@@ -103,6 +115,11 @@ public abstract class HfcxException extends RuntimeException {
      * the result falls back to the bare tier exception based on the
      * {@code ERR-[PBT]-} prefix, preserving the platform's reported
      * code so callers can still log / triage by it.
+     *
+     * @param wireCode the on-the-wire error code as observed
+     * @param message  free-form description of the specific failure
+     * @return a typed subclass when the code is known; otherwise the
+     *     bare tier exception carrying the unknown code unchanged
      */
     public static HfcxException fromWireCode(String wireCode, String message) {
         Optional<ErrorCode> catalog = ErrorCode.fromWire(wireCode);

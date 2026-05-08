@@ -18,10 +18,17 @@ public final class AuthenticationException extends TechnicalException {
     /** Wire-format error code for an authentication failure. */
     public static final String CODE = ErrorCode.AUTHENTICATION.code();
 
+    /**
+     * @param message a free-form description of the specific failure
+     */
     public AuthenticationException(String message) {
         super(ErrorCode.AUTHENTICATION, message);
     }
 
+    /**
+     * @param message a free-form description of the specific failure
+     * @param cause   the underlying cause (typically the IdP transport failure)
+     */
     public AuthenticationException(String message, Throwable cause) {
         super(ErrorCode.AUTHENTICATION, message, cause);
     }

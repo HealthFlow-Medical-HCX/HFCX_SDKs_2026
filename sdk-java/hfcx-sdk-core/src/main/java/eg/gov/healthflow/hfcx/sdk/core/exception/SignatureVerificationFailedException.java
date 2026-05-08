@@ -9,12 +9,20 @@ public final class SignatureVerificationFailedException extends ProtocolExceptio
 
     private static final long serialVersionUID = 1L;
 
+    /** Wire-format code identical to {@link ErrorCode#SIGNATURE_VERIFICATION_FAILED}.{@link ErrorCode#code() code()}. */
     public static final String CODE = ErrorCode.SIGNATURE_VERIFICATION_FAILED.code();
 
+    /**
+     * @param message a free-form description of the specific failure
+     */
     public SignatureVerificationFailedException(String message) {
         super(ErrorCode.SIGNATURE_VERIFICATION_FAILED, message);
     }
 
+    /**
+     * @param message a free-form description of the specific failure
+     * @param cause   the underlying cause (typically a JOSE / IO / parser exception)
+     */
     public SignatureVerificationFailedException(String message, Throwable cause) {
         super(ErrorCode.SIGNATURE_VERIFICATION_FAILED, message, cause);
     }

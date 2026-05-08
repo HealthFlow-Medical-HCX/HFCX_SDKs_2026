@@ -97,7 +97,10 @@ gateway is encryption-transparent and never runs the SDK.
 | Spring Boot recipient example    | ✅ Sprint J5 |
 | Full error-code taxonomy         | ✅ Sprint J6 (`ErrorCode` catalog with 27 entries, 26 typed subclasses, factory dispatch) |
 | Platform mock-payer integration test | 🚧 Sprint J4 placeholder; live job follows |
-| 1.0.0 GA on Maven Central        | ⏳ Sprint J7 |
+| Three runnable examples under `docs/examples/` | ✅ Sprint J7 |
+| Cross-SDK parity table (52 rows) | ✅ Sprint J7 |
+| `RELEASING.md` cut procedure     | ✅ Sprint J7 |
+| 1.0.0 GA on Maven Central        | 🚧 Gated on OSSRH credentials being configured (see `RELEASING.md`) |
 
 ## Versioning
 
