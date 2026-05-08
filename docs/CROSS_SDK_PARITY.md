@@ -12,7 +12,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | SDK        | Status         | Version          | Released |
 |------------|----------------|------------------|----------|
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
-| Python     | 🚧 Sprint P5   | 0.1.0a0          | gated on PyPI Trusted Publisher |
+| Python     | 🚧 Sprint P6   | 0.1.0a0          | gated on PyPI Trusted Publisher |
 | .NET       | ⏳ Planned     | —                | —        |
 | JavaScript | ⏳ Planned     | —                | —        |
 
@@ -124,7 +124,13 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 51 | Wire-code → typed factory        | ✅ `HfcxException.fromWireCode`     | ✅ `HfcxError.from_wire_code`           | `HfcxException.FromWireCode`          | `errorFromWireCode`                 |
 | 52 | Catalog-entry → typed factory    | ✅ `HfcxException.of(ErrorCode,…)`  | ✅ `HfcxError.of(ErrorCode, …)`         | `HfcxException.Of(ErrorCode, …)`      | `errorOf(ErrorCode, …)`             |
 
-## Total: **52** rows.
+## Bundled-IG metadata
+
+| #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
+|----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
+| 53 | Bundled IG version               | ✅ `HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION` (build-time) | ✅ `bundled_ig_version()` (runtime, reads `fhir-ig/PLATFORM_VERSION`) | `HfcxSdk.BundledIgVersion`         | `bundledIgVersion()`                |
+
+## Total: **53** rows.
 
 ## Auditing this document
 

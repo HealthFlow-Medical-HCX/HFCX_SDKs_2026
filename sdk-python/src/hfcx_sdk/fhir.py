@@ -1,35 +1,46 @@
 """FHIR Bundle validation against the Egyptian Implementation Guide.
 
-Sprint P6 lands the real implementation. The Java SDK ships a hand-
-rolled validator (avoiding the heavyweight FHIR validator dep); the
-Python SDK will follow the same pattern unless ``fhir.resources``
-makes the full IG-profile route cheap enough to take.
+Sprint P5 landed the hand-rolled :class:`hfcx_sdk.recipient.FhirValidator`
+that enforces the rules that matter for HFCX's reject-on-receipt
+behaviour (top-level Bundle, ``Bundle.type``, Patient National-ID
+slice, Patient.address[0].country == ``EG``). Sprint P6 adds the
+``bundled_ig_version`` helper so callers can introspect which release
+of the platform's Egyptian IG package this build of the SDK ships
+against.
+
+The hand-rolled validator stays in :mod:`hfcx_sdk.recipient`; this
+module only holds module-level constants and metadata helpers.
 """
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Final
 
 #: System URI declared by the Egyptian IG for the National-ID identifier slice.
 NATIONAL_ID_SYSTEM: Final[str] = "http://hcx-egypt.gov.eg/identifiers/national-id"
 
+#: Sentinel returned by :func:`bundled_ig_version` when no IG package is bundled.
+UNBUNDLED: Final[str] = "unbundled"
 
-def validate(bundle_json: str) -> None:  # pragma: no cover - P6
-    """Validate a FHIR Bundle against the Egyptian IG profile.
+_PLATFORM_VERSION_FILE: Final[Path] = (
+    Path(__file__).resolve().parent.parent.parent / "fhir-ig" / "PLATFORM_VERSION"
+)
 
-    :raises hfcx_sdk.exceptions.NotABundleError: if the top-level
-        resource is not a Bundle.
-    :raises hfcx_sdk.exceptions.BundleMissingTypeError: if
-        ``Bundle.type`` is missing.
-    :raises hfcx_sdk.exceptions.PatientMissingNationalIdError: if a
-        ``Patient`` entry has no identifier with the National-ID
-        system URI.
-    :raises hfcx_sdk.exceptions.PatientNonEgyptianError: if a
-        ``Patient`` entry's first address is not in ``EG``.
-    :raises hfcx_sdk.exceptions.BadFhirJsonError: if the payload is
-        not valid JSON.
+
+def bundled_ig_version() -> str:
+    """Return the platform version recorded in ``fhir-ig/PLATFORM_VERSION``.
+
+    Returns :data:`UNBUNDLED` when no IG package has been synced yet
+    (the file is empty or missing). The value is the Git tag the IG
+    tarball was downloaded from — e.g. ``"v1.0.0"`` once the platform
+    cuts its first GA release.
     """
-    raise NotImplementedError("Sprint P6 lands the FHIR validator")
+    try:
+        text = _PLATFORM_VERSION_FILE.read_text(encoding="utf-8").strip()
+    except OSError:
+        return UNBUNDLED
+    return text or UNBUNDLED
 
 
-__all__ = ["NATIONAL_ID_SYSTEM", "validate"]
+__all__ = ["NATIONAL_ID_SYSTEM", "UNBUNDLED", "bundled_ig_version"]

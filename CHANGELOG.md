@@ -8,6 +8,39 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint P6 — Python validator hardening + IG-version metadata)
+
+- `hfcx_sdk.bundled_ig_version()` returns the platform version
+  recorded in `sdk-python/fhir-ig/PLATFORM_VERSION`, or the
+  ``"unbundled"`` sentinel when no IG package has been synced yet.
+  Sister to the Java SDK's `HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION`
+  build-time constant; the Python reads at runtime to avoid a build
+  step. Tests cover blank-file, missing-file, populated, and
+  whitespace-trim cases.
+- 209 new Python test cases tightening the recipient pipeline
+  validators:
+  - 27 `test_fhir_validator.py` — every typed-error path through
+    `FhirValidator` (BadFhirJson, NotABundle, BundleMissingType,
+    PatientMissingNationalId, PatientNonEgyptian); short-circuit on
+    first-failure across multi-Patient bundles; `address[0]` slice
+    semantics; tolerance for entry-shape variance.
+  - 23 `test_egyptian_bundle_validator.py` — Patient National-ID and
+    phone slices; Organization IBAN slice; `iban` substring matching;
+    fail-secure no-op for malformed JSON; multi-resource walk order.
+  - 152 `test_egyptian_validators_extra.py` — every governorate code
+    parametric (27), leap-year boundaries at 1900 / 2000 / 2004 /
+    2005 / 2012 / 2099, every gender digit (10 cases), every
+    rejected century digit (8 cases), every mobile prefix (4) and
+    bad mobile prefix (9), IBAN canonical / corrupted forms (12).
+  - 7 `test_fhir_module.py` — pinned constants and the new
+    `bundled_ig_version()` helper.
+- Total Python SDK test count: **419 passed, 5 skipped** in
+  ~23s. mypy --strict clean across 39 source files. Java reactor
+  still green.
+- Cross-SDK parity table promoted to ✅ Python on rows 26-27, 29-30,
+  33-35; Python status bumped to "🚧 Sprint P6"; new row 53 for
+  `bundled_ig_version`.
+
 ### Added (Sprint P5 — Python recipient pipeline + Egyptian validators)
 
 - `hfcx_sdk.validators` ships full Python ports of the Java

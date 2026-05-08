@@ -12,15 +12,15 @@ pip install hfcx-sdk
 
 ## Status
 
-🚧 **Sprint P5 — recipient pipeline.** The full inbound counterpart of
-`HfcxClient` is now in place: `RecipientHandler` orchestrates the
-four-layer validation pipeline (`BEARER → HEADERS → FHIR → EGYPTIAN`),
-the four Egyptian field validators are ported from the Java SDK, and
-two framework example apps (FastAPI + Flask) demonstrate the wiring.
-210 tests pass. Real protocol behaviour for the remaining sprint
-(P6 — FHIR-IG full validation against `fhir-ig/egyptian-ig.tgz`,
-P7 — 1.0.0 GA prep) is the only outstanding work. See
-[`docs/CROSS_SDK_PARITY.md`](../docs/CROSS_SDK_PARITY.md) for the
+🚧 **Sprint P6 — validator hardening + IG metadata.** The recipient
+pipeline gets dedicated unit-test coverage for every validator branch
+(209 new cases) and the SDK exposes
+`hfcx_sdk.bundled_ig_version()` so callers can introspect which
+release of the platform's Egyptian IG this build ships against. Full
+HAPI-equivalent IG-profile validation is deferred until a real
+`fhir-ig/egyptian-ig.tgz` is synced from a tagged platform release —
+same posture as the Java SDK. **419 tests pass** (210 P5 + 209 P6).
+See [`docs/CROSS_SDK_PARITY.md`](../docs/CROSS_SDK_PARITY.md) for the
 cross-SDK target shape.
 
 | Capability                       | Sprint | Status         |
@@ -34,7 +34,8 @@ cross-SDK target shape.
 | RecipientHandler pipeline (4 layers, toggleable) | P5 | ✅      |
 | Egyptian validators (governorate + NID + phone + IBAN) | P5 | ✅ |
 | FastAPI + Flask example recipient apps | P5 | ✅                 |
-| HAPI-equivalent full-IG FHIR validation | P6 | ⏳                |
+| Validator hardening (419 tests) + `bundled_ig_version` | P6 | ✅ |
+| HAPI-equivalent full-IG FHIR validation (gated on real IG tarball) | post-P7 | ⏳ |
 | 1.0.0 GA on PyPI                 | P7     | ⏳              |
 
 ## Quickstart — what works today (Sprint P1)

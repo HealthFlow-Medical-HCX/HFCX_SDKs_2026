@@ -8,8 +8,8 @@ Sprint progress:
 * P2 ✅ — JWE encrypt / decrypt with cross-SDK round trip
 * P3 ✅ — Keycloak token client + registry (sync + async)
 * P4 ✅ — :class:`HfcxClient` outbound flow (sync + async)
-* P5 ⏳ — :class:`hfcx_sdk.recipient.RecipientHandler`
-* P6 ⏳ — Egyptian validators + FHIR Bundle validation
+* P5 ✅ — :class:`hfcx_sdk.recipient.RecipientHandler` + four-layer pipeline
+* P6 ✅ — Egyptian validators + FHIR Bundle validation (hand-rolled, lockstep with Java)
 * P7 ⏳ — 1.0.0 release
 """
 
@@ -41,6 +41,7 @@ from hfcx_sdk.exceptions import (
     ProtocolError,
     TechnicalError,
 )
+from hfcx_sdk.fhir import bundled_ig_version
 from hfcx_sdk.keycloak import AsyncKeycloakTokenClient, KeycloakTokenClient
 from hfcx_sdk.recipient import (
     BearerTokenValidator,
@@ -102,5 +103,6 @@ __all__ = [
     "TechnicalError",
     "VaultLocalKeyProvider",
     "__version__",
+    "bundled_ig_version",
     "correlation_id_scope",
 ]

@@ -5,6 +5,44 @@ Versions follow [Semantic Versioning](https://semver.org/) and PEP 440.
 
 ## [Unreleased]
 
+### Added (Sprint P6 — validator hardening + IG-version metadata)
+
+- `hfcx_sdk.fhir.bundled_ig_version()` (re-exported as
+  `hfcx_sdk.bundled_ig_version`) reads
+  `sdk-python/fhir-ig/PLATFORM_VERSION` at runtime and returns the
+  recorded platform tag (e.g. `"v1.0.0"`) or the `"unbundled"`
+  sentinel when no IG package has been synced yet. Sister to the
+  Java SDK's `HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION` build-time
+  constant.
+- `hfcx_sdk.fhir` module now ships `NATIONAL_ID_SYSTEM`, `UNBUNDLED`,
+  and `bundled_ig_version` as the public surface; the
+  `NotImplementedError` stub for `validate(...)` (left in P1) has
+  been removed since `FhirValidator.validate` lives on
+  `hfcx_sdk.recipient` and is the canonical entry point.
+- 209 new test cases that pin every validator branch independently
+  (now exercised both through `RecipientHandler` and directly):
+  - `tests/unit/test_fhir_validator.py` (27 cases) — every typed-
+    exception path; short-circuit on first failure across multi-
+    Patient bundles; `address[0]` semantics; tolerance for
+    entry-shape variance.
+  - `tests/unit/test_egyptian_bundle_validator.py` (23 cases) —
+    Patient NID and phone slices; Organization IBAN slice; `"iban"`
+    substring matching on system URI; fail-secure no-op on
+    malformed JSON.
+  - `tests/unit/test_egyptian_validators_extra.py` (152 cases) —
+    every governorate code (27), leap-year boundaries at 1900 /
+    2000 / 2004 / 2012 / 2099, every gender digit, every rejected
+    century digit, every mobile prefix and 9 bad-prefix
+    rejections, IBAN canonical / corrupted forms.
+  - `tests/unit/test_fhir_module.py` (7 cases) — pinned constants
+    + bundled-IG-version helper.
+- Cross-SDK parity: rows 26-27 (FhirValidator + EgyptianBundleValidator),
+  29-30 (Egyptian National-ID isValid + parse), 33-35 (IBAN +
+  governorate enum + lookup) promoted to ✅ Python column; new row
+  53 for `bundled_ig_version`.
+- 419 SDK tests pass; 10 example-app tests pass; mypy --strict clean
+  across 39 source files; Java reactor unaffected.
+
 ### Added (Sprint P5 — recipient pipeline + Egyptian validators)
 
 - `hfcx_sdk.validators` ships the four Egyptian-field validators
