@@ -1,0 +1,73 @@
+name: dotnet-publish
+
+# Stubbed Sprint D1 publish workflow.
+#
+# Triggered by tags of the form `sdk-dotnet/vX.Y.Z`. Builds the NuGet
+# packages and (once configured) pushes them to nuget.org via the
+# trusted-publisher token convention.
+#
+# Setup before the first publish:
+#   1. Register `HealthFlow.Hfcx.Sdk` on nuget.org with publish rights for the
+#      HealthFlow-Medical-HCX organisation.
+#   2. Generate an API key scoped to the package and add it to the repository
+#      as the `NUGET_API_KEY` GitHub Secret.
+#   3. Set the `NUGET_TRUSTED_PUBLISHER_CONFIGURED` repo variable to `true`
+#      so the workflow does the real push instead of the build-only smoke.
+#
+# Until the variable is `true` the workflow only validates that the build
+# artefacts assemble cleanly when run manually.
+
+on:
+  push:
+    tags:
+      - "sdk-dotnet/v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: nuget
+    defaults:
+      run:
+        working-directory: sdk-dotnet
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build (Release, no restore)
+        run: dotnet build -c Release --no-restore
+
+      - name: Test (Release, no build)
+        run: dotnet test -c Release --no-build
+
+      - name: Pack
+        run: dotnet pack -c Release --no-build --output ./artifacts
+
+      - name: Verify package metadata
+        run: |
+          ls -la ./artifacts
+          test -f ./artifacts/HealthFlow.Hfcx.Sdk.*.nupkg
+
+      - name: Push to nuget.org
+        if: ${{ vars.NUGET_TRUSTED_PUBLISHER_CONFIGURED == 'true' }}
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg \
+            --api-key "${{ secrets.NUGET_API_KEY }}" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+      - name: Smoke (publish stub — NUGET_TRUSTED_PUBLISHER_CONFIGURED unset)
+        if: ${{ vars.NUGET_TRUSTED_PUBLISHER_CONFIGURED != 'true' }}
+        run: |
+          echo "Build-only smoke complete. Set vars.NUGET_TRUSTED_PUBLISHER_CONFIGURED=true to publish."
+          ls -la ./artifacts

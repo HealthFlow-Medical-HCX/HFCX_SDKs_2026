@@ -8,6 +8,35 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint D1 — .NET SDK bootstrap)
+
+- `sdk-dotnet/` subtree with a Visual Studio solution
+  (`HealthFlow.Hfcx.Sdk.sln`), `Directory.Build.props` for monorepo-
+  wide compiler settings, and the canonical layout
+  (`src/HealthFlow.Hfcx.Sdk/`, `tests/HealthFlow.Hfcx.Sdk.Tests/`,
+  `fhir-ig/`).
+- `HealthFlow.Hfcx.Sdk` library (target: `net8.0`) with
+  `HfcxSdk.Version` and `HfcxSdk.BundledIgVersion` runtime constants;
+  module skeletons for `Crypto`, `Auth`, `Client`, `Registry`,
+  `Recipient`, `Validators`, and `Protocol` (D2-D6 fill them in).
+- Full port of the Java SDK's `ErrorCode` catalog — 27 entries
+  (9 protocol, 12 business, 6 technical) — to .NET. Wire codes
+  byte-identical to the Java and Python catalogs; cross-SDK
+  invariant. 26 typed exception subclasses plus
+  `HfcxException.Of(ErrorCode, string)` and
+  `HfcxException.FromWireCode(string, string)` factory methods.
+- 155 xUnit tests: 5 `HfcxSdkTests` + 150
+  `ErrorCodeCatalogTests` (theory-driven), all green.
+- `.github/workflows/dotnet-test.yml` — CI on `.NET 8.x` running
+  `dotnet build/test/pack`.
+- `.github/workflows/dotnet-publish.yml` — stubbed nuget.org publish
+  workflow gated on `sdk-dotnet/v*` tags. Falls through to a
+  build-only smoke when `NUGET_TRUSTED_PUBLISHER_CONFIGURED`
+  GitHub variable is unset.
+- Cross-SDK parity table: rows 7, 10, 22, 44-53 promoted to ✅ .NET
+  (the surface D1 covers); .NET status bumped to "🚧 Sprint D1".
+- Top-level `README.md` updated to reflect .NET SDK in-progress.
+
 ### Added (Sprint P7 — Python 1.0.0 GA prep)
 
 - `sdk-python/RELEASING.md` — canonical procedure for cutting a GA

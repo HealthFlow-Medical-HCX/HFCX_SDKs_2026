@@ -1,0 +1,53 @@
+name: dotnet-test
+
+on:
+  pull_request:
+    paths:
+      - "sdk-dotnet/**"
+      - ".github/workflows/dotnet-test.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "sdk-dotnet/**"
+      - ".github/workflows/dotnet-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk-dotnet
+    strategy:
+      fail-fast: false
+      matrix:
+        dotnet-version: ["8.0.x"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build (Release, no restore)
+        run: dotnet build -c Release --no-restore
+
+      - name: Test (Release, no build)
+        run: dotnet test -c Release --no-build --logger "console;verbosity=normal"
+
+      - name: Pack (verify NuGet metadata is valid)
+        run: dotnet pack -c Release --no-build --output ./artifacts
+
+      - name: Upload NuGet artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkgs-${{ matrix.dotnet-version }}
+          path: sdk-dotnet/artifacts/*.nupkg
+          retention-days: 7

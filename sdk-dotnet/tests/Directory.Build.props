@@ -1,0 +1,14 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <!-- Test-project conventions intentionally diverge from library
+         conventions: xUnit method names use Pascal_With_Underscores,
+         theory-data parameters trust the data source not to be null,
+         and Assert.Contains / Equal use the value-first overload by
+         design. -->
+    <NoWarn>$(NoWarn);CA1062;CA1707;CA1307;xUnit2000;CA2007;CA1812;CA5394;CA1304</NoWarn>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

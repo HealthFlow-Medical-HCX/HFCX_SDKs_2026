@@ -1,0 +1,26 @@
+# .NET build outputs
+bin/
+obj/
+artifacts/
+
+# Test outputs
+TestResults/
+*.coverage
+*.coveragexml
+coverage.opencover.xml
+
+# IDE
+.vs/
+.vscode/
+*.user
+
+# Tool caches
+.nuget/
+packages/
+
+# IG tarball (synced via fhir-ig/sync.sh; never committed)
+fhir-ig/egyptian-ig.tgz
+
+# Real PEM keys must never be committed
+*.pem
+!**/tests/**/fixtures/*.pem

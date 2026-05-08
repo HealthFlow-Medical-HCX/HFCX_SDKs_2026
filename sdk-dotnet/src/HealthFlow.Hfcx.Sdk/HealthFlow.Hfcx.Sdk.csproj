@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>HealthFlow.Hfcx.Sdk</PackageId>
+    <Title>HFCX SDK for .NET</Title>
+    <Description>Official .NET SDK for the HealthFlow HFCX platform — Egypt's open protocol for decentralised health-claims data exchange.</Description>
+    <PackageTags>hfcx;healthflow;fhir;jwe;egypt;hcx</PackageTags>
+    <RootNamespace>HealthFlow.Hfcx.Sdk</RootNamespace>
+    <AssemblyName>HealthFlow.Hfcx.Sdk</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="HealthFlow.Hfcx.Sdk.Tests" />
+  </ItemGroup>
+
+</Project>
