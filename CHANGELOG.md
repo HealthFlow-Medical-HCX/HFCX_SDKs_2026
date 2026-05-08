@@ -8,6 +8,33 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint S5 — JavaScript recipient pipeline + Egyptian validators)
+
+- The full inbound counterpart of `HfcxClient` lands on the JS SDK:
+  `RecipientHandler` orchestrates four independently toggleable
+  validation layers (`BEARER → HEADERS → FHIR → EGYPTIAN`);
+  `LocalKeyProvider` interface + `FileLocalKeyProvider` (re-reads
+  PEM on every call so rotations take effect immediately) +
+  `VaultLocalKeyProvider` (KV v2, token auth, namespace, custom
+  field); `InboundDecryptor`; `HeaderValidator`; hand-rolled
+  `FhirValidator` and `EgyptianBundleValidator`; `Layer` const +
+  `RecipientResult` interface. Constructor fail-fast: `Layer.BEARER`
+  requires a `BearerTokenValidator` (no trust-everything default by
+  design), `Layer.HEADERS` requires the local participant code.
+- The four Egyptian field validators land on JS with byte-identical
+  accept/reject decisions to Java + Python + .NET:
+  `EgyptianGovernorate` (27 entries) + `egyptianGovernorateFromCode`,
+  `isValidEgyptianNationalId` + `parseEgyptianNationalId` returning
+  `NationalIdResult`, `isValidEgyptianPhone` +
+  `normaliseEgyptianPhone`, `isValidEgyptianIban` (mod-97).
+- 92 new vitest cases (30 validators + 5 File + 7 Vault + 50
+  RecipientHandler end-to-end). 326 JS tests pass (was 234); 421
+  Python + 555 .NET + Java reactor still green.
+- Cross-SDK parity rows 12, 15-17, 23-35 promoted to ✅
+  JavaScript. **All 54 rows of the JavaScript column are now ✅** —
+  parity audit (`scripts/audit_parity.py --sdk javascript`) passes
+  with no drift. Status bumped to "🚧 Sprint S5".
+
 ### Added (Sprint S4 — JavaScript `HfcxClient` outbound flow)
 
 - `HfcxClient` async sender with 5 typed methods, each running the

@@ -14,7 +14,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
 | Python     | 🚧 Sprint P6   | 0.1.0a0          | gated on PyPI Trusted Publisher |
 | .NET       | 🚀 Sprint D7   | 0.1.0-alpha.0    | gated on nuget.org Trusted Publisher |
-| JavaScript | 🚧 Sprint S4   | 0.1.0-alpha.0    | gated on npm Trusted Publisher |
+| JavaScript | 🚧 Sprint S5   | 0.1.0-alpha.0    | gated on npm Trusted Publisher |
 
 ## Allowed divergence
 
@@ -57,12 +57,12 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 9  | JWE decrypt (low-level)          | ✅ `JweEncryption.decryptUtf8`      | ✅ `crypto.decrypt_utf8`                | ✅ `JweEncryption.DecryptUtf8`        | ✅ `encryptUtf8` / `decryptUtf8`     |
 | 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | ✅ `JweAlgorithms.Alg` / `Enc`        | ✅ `JWE_ALG` / `JWE_ENC`              |
 | 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | ✅ `OutboundEncryptor.encrypt` + `AsyncOutboundEncryptor.encrypt` | ✅ `OutboundEncryptor.EncryptAsync`   | ✅ `OutboundEncryptor.encrypt`       |
-| 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | ✅ `InboundDecryptor.decrypt`           | ✅ `InboundDecryptor.Decrypt`         | `InboundDecryptor.decrypt`          |
+| 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | ✅ `InboundDecryptor.decrypt`           | ✅ `InboundDecryptor.Decrypt`         | ✅ `InboundDecryptor.decrypt`        |
 | 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert` + `ParticipantCert` record | ✅ `RegistryClient.get_recipient_cert` + `AsyncRegistryClient` + `ParticipantCert` dataclass | ✅ `RegistryClient.GetRecipientCertAsync` + `ParticipantCert` record | ✅ `RegistryClient.getRecipientCert` + `ParticipantCert`    |
 | 14 | Cert-resolver abstraction        | ✅ `RecipientCertResolver`          | ✅ `RecipientCertResolver` Protocol     | ✅ `IRecipientCertResolver`           | ✅ `RecipientCertResolver`           |
-| 15 | Local key provider abstraction   | ✅ `LocalKeyProvider`               | ✅ `LocalKeyProvider` Protocol          | ✅ `ILocalKeyProvider`                | `LocalKeyProvider` interface        |
-| 16 | File-backed key provider         | ✅ `FileLocalKeyProvider`           | ✅ `FileLocalKeyProvider`               | ✅ `FileLocalKeyProvider`             | `FileLocalKeyProvider`              |
-| 17 | Vault-backed key provider        | ✅ `VaultLocalKeyProvider`          | ✅ `VaultLocalKeyProvider`              | ✅ `VaultLocalKeyProvider`            | `VaultLocalKeyProvider`             |
+| 15 | Local key provider abstraction   | ✅ `LocalKeyProvider`               | ✅ `LocalKeyProvider` Protocol          | ✅ `ILocalKeyProvider`                | ✅ `LocalKeyProvider`                |
+| 16 | File-backed key provider         | ✅ `FileLocalKeyProvider`           | ✅ `FileLocalKeyProvider`               | ✅ `FileLocalKeyProvider`             | ✅ `FileLocalKeyProvider`            |
+| 17 | Vault-backed key provider        | ✅ `VaultLocalKeyProvider`          | ✅ `VaultLocalKeyProvider`              | ✅ `VaultLocalKeyProvider`            | ✅ `VaultLocalKeyProvider`           |
 
 ## Auth and protocol
 
@@ -78,24 +78,24 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 23 | Recipient handler / pipeline     | ✅ `RecipientHandler`               | ✅ `RecipientHandler`                   | ✅ `RecipientHandler`                 | `RecipientHandler`                  |
-| 24 | Layer toggles (4 layers)         | ✅ `Layer` enum + `Builder#enable`  | ✅ `Layer` Enum + `enabled_layers=`     | ✅ `Layer` enum + `enabledLayers:`    | `Layer` literal type                |
-| 25 | Header validator                 | ✅ `HeaderValidator`                | ✅ `HeaderValidator`                    | ✅ `HeaderValidator`                  | `HeaderValidator`                   |
-| 26 | FHIR Bundle validator            | ✅ `FhirValidator`                  | ✅ `FhirValidator`                      | ✅ `FhirValidator`                    | `FhirValidator`                     |
-| 27 | Egyptian-bundle walker           | ✅ `EgyptianBundleValidator`        | ✅ `EgyptianBundleValidator`            | ✅ `EgyptianBundleValidator`          | `EgyptianBundleValidator`           |
-| 28 | Recipient result                 | ✅ `RecipientResult` record         | ✅ `RecipientResult` dataclass          | ✅ `RecipientResult` record           | `RecipientResult` type              |
+| 23 | Recipient handler / pipeline     | ✅ `RecipientHandler`               | ✅ `RecipientHandler`                   | ✅ `RecipientHandler`                 | ✅ `RecipientHandler`                |
+| 24 | Layer toggles (4 layers)         | ✅ `Layer` enum + `Builder#enable`  | ✅ `Layer` Enum + `enabled_layers=`     | ✅ `Layer` enum + `enabledLayers:`    | ✅ `Layer` const (4 values)          |
+| 25 | Header validator                 | ✅ `HeaderValidator`                | ✅ `HeaderValidator`                    | ✅ `HeaderValidator`                  | ✅ `HeaderValidator`                 |
+| 26 | FHIR Bundle validator            | ✅ `FhirValidator`                  | ✅ `FhirValidator`                      | ✅ `FhirValidator`                    | ✅ `FhirValidator`                   |
+| 27 | Egyptian-bundle walker           | ✅ `EgyptianBundleValidator`        | ✅ `EgyptianBundleValidator`            | ✅ `EgyptianBundleValidator`          | ✅ `EgyptianBundleValidator`         |
+| 28 | Recipient result                 | ✅ `RecipientResult` record         | ✅ `RecipientResult` dataclass          | ✅ `RecipientResult` record           | ✅ `RecipientResult`                 |
 
 ## Egyptian field validators
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 29 | Validate Egyptian National-ID    | ✅ `EgyptianNationalIDValidator.isValid` | ✅ `egyptian_national_id.is_valid` | ✅ `EgyptianNationalIdValidator.IsValid` | `isValidEgyptianNationalId`         |
-| 30 | National-ID rich result          | ✅ `EgyptianNationalIDValidator.result` | ✅ `egyptian_national_id.parse`     | ✅ `EgyptianNationalIdValidator.Parse` | `parseEgyptianNationalId`           |
-| 31 | Validate Egyptian phone          | ✅ `EgyptianPhoneValidator.isValid` | ✅ `egyptian_phone.is_valid`            | ✅ `EgyptianPhoneValidator.IsValid`   | `isValidEgyptianPhone`              |
-| 32 | Normalise Egyptian phone         | ✅ `EgyptianPhoneValidator.normalise`| ✅ `egyptian_phone.normalise`          | ✅ `EgyptianPhoneValidator.Normalise` | `normaliseEgyptianPhone`            |
-| 33 | Validate Egyptian IBAN           | ✅ `EgyptianIBANValidator.isValid`  | ✅ `egyptian_iban.is_valid`             | ✅ `EgyptianIbanValidator.IsValid`    | `isValidEgyptianIban`               |
-| 34 | Egyptian governorate enum        | ✅ `EgyptianGovernorate` (27)       | ✅ `EgyptianGovernorate` Enum (27)      | ✅ `EgyptianGovernorate` enum         | `EgyptianGovernorate` literal type  |
-| 35 | Governorate-by-code lookup       | ✅ `EgyptianGovernorate.fromCode`   | ✅ `EgyptianGovernorate.from_code`      | ✅ `EgyptianGovernorate.FromCode`     | `egyptianGovernorateFromCode`       |
+| 29 | Validate Egyptian National-ID    | ✅ `EgyptianNationalIDValidator.isValid` | ✅ `egyptian_national_id.is_valid` | ✅ `EgyptianNationalIdValidator.IsValid` | ✅ `isValidEgyptianNationalId`       |
+| 30 | National-ID rich result          | ✅ `EgyptianNationalIDValidator.result` | ✅ `egyptian_national_id.parse`     | ✅ `EgyptianNationalIdValidator.Parse` | ✅ `parseEgyptianNationalId`         |
+| 31 | Validate Egyptian phone          | ✅ `EgyptianPhoneValidator.isValid` | ✅ `egyptian_phone.is_valid`            | ✅ `EgyptianPhoneValidator.IsValid`   | ✅ `isValidEgyptianPhone`            |
+| 32 | Normalise Egyptian phone         | ✅ `EgyptianPhoneValidator.normalise`| ✅ `egyptian_phone.normalise`          | ✅ `EgyptianPhoneValidator.Normalise` | ✅ `normaliseEgyptianPhone`          |
+| 33 | Validate Egyptian IBAN           | ✅ `EgyptianIBANValidator.isValid`  | ✅ `egyptian_iban.is_valid`             | ✅ `EgyptianIbanValidator.IsValid`    | ✅ `isValidEgyptianIban`             |
+| 34 | Egyptian governorate enum        | ✅ `EgyptianGovernorate` (27)       | ✅ `EgyptianGovernorate` Enum (27)      | ✅ `EgyptianGovernorate` enum         | ✅ `EgyptianGovernorate` (27)        |
+| 35 | Governorate-by-code lookup       | ✅ `EgyptianGovernorate.fromCode`   | ✅ `EgyptianGovernorate.from_code`      | ✅ `EgyptianGovernorate.FromCode`     | ✅ `egyptianGovernorateFromCode`     |
 
 ## Request / response types
 

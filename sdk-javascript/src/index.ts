@@ -103,3 +103,42 @@ export {
   type RegistryClientOptions,
 } from './registry/RegistryClient.js';
 export type { ParticipantCert, RecipientCertResolver } from './registry/ParticipantCert.js';
+
+// ── Sprint S5: recipient pipeline + Egyptian validators ────────────
+
+export type { LocalKeyProvider } from './recipient/LocalKeyProvider.js';
+export { FileLocalKeyProvider } from './recipient/FileLocalKeyProvider.js';
+export {
+  VaultLocalKeyProvider,
+  type VaultLocalKeyProviderOptions,
+} from './recipient/VaultLocalKeyProvider.js';
+export { InboundDecryptor } from './recipient/InboundDecryptor.js';
+export { Layer, ALL_LAYERS } from './recipient/Layer.js';
+export type { RecipientResult } from './recipient/RecipientResult.js';
+export {
+  HeaderValidator,
+  type HeaderValidatorOptions,
+} from './recipient/HeaderValidator.js';
+export { FhirValidator, NATIONAL_ID_SYSTEM } from './recipient/FhirValidator.js';
+export { EgyptianBundleValidator } from './recipient/EgyptianBundleValidator.js';
+export {
+  RecipientHandler,
+  type RecipientHandlerOptions,
+} from './recipient/RecipientHandler.js';
+
+export {
+  EgyptianGovernorate,
+  ALL_GOVERNORATES,
+  egyptianGovernorateFromCode,
+} from './validators/EgyptianGovernorate.js';
+export {
+  Gender,
+  isValidEgyptianNationalId,
+  parseEgyptianNationalId,
+  type NationalIdResult,
+} from './validators/egyptianNationalId.js';
+export {
+  isValidEgyptianPhone,
+  normaliseEgyptianPhone,
+} from './validators/egyptianPhone.js';
+export { isValidEgyptianIban } from './validators/egyptianIban.js';

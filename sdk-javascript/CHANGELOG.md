@@ -6,6 +6,62 @@ semver rules.
 
 ## [Unreleased]
 
+### Added (Sprint S5 — recipient pipeline + Egyptian validators)
+
+- `src/validators/` ships the four Egyptian field validators with
+  byte-identical accept/reject decisions to Java + Python + .NET:
+  - `EgyptianGovernorate` (27 entries) + `egyptianGovernorateFromCode`
+    lookup.
+  - `isValidEgyptianNationalId` / `parseEgyptianNationalId` returning
+    `NationalIdResult` with decoded `dateOfBirth`, `governorate`,
+    `gender` (odd serial digit = MALE).
+  - `isValidEgyptianPhone` / `normaliseEgyptianPhone` (4 canonical
+    forms, +201XXXXXXXXX canonical, mobile prefixes 010/011/012/015).
+  - `isValidEgyptianIban` (29-char structural shape + ISO 13616
+    mod-97).
+- `src/recipient/` ships the inbound counterpart of `HfcxClient`:
+  - `LocalKeyProvider` interface + `FileLocalKeyProvider` (re-reads
+    PEM on every call so rotations take effect immediately) +
+    `VaultLocalKeyProvider` (HashiCorp Vault KV v2: token auth,
+    optional namespace, configurable secret field).
+  - `InboundDecryptor` composes `LocalKeyProvider` with `decryptUtf8`
+    (parity row 12).
+  - `HeaderValidator` — five-header presence, recipient-code match,
+    UUID format, ISO-8601 timestamp ±5 min (configurable, injectable
+    clock).
+  - `FhirValidator` — hand-rolled Egyptian-IG profile validator
+    (top-level Bundle, Bundle.type, Patient National-ID slice,
+    `address[0].country == 'EG'`).
+  - `EgyptianBundleValidator` walks the Bundle and runs the field
+    validators on Patient identifier/telecom and Organization IBAN.
+  - `Layer` const + `RecipientResult` interface + `RecipientHandler`
+    orchestrator with constructor-time fail-fast: `Layer.BEARER`
+    requires a `BearerTokenValidator` (no trust-everything default
+    by design); `Layer.HEADERS` requires `localParticipantCode`.
+  - Correlation-ID flows through the pipeline via `runWithCorrelationId`.
+- 92 new vitest cases:
+  - `egyptianValidators.test.ts` (~30): governorate enum, NID happy
+    paths + decoded fields + every reject path, phone canonical forms +
+    normalisation, IBAN positive + negative.
+  - `fileLocalKeyProvider.test.ts` (5): JWE round-trip via PEM,
+    rotation-friendly re-read, missing file, malformed PEM, empty-path
+    guard.
+  - `vaultLocalKeyProvider.test.ts` (7): success, namespace header,
+    403/404, missing field, custom field, malformed PEM,
+    constructor validation.
+  - `recipientHandler.test.ts` (~50): end-to-end round-trip via
+    OutboundEncryptor; per-layer toggles; every typed-error path
+    (BEARER missing, HEADERS recipient-mismatch + bad UUID + bad/
+    out-of-range timestamp + missing-header, FHIR non-Bundle +
+    missing-NID + non-Egyptian, EGYPTIAN bad NID + bad phone);
+    envelope errors; all-layers-disabled-still-decrypts;
+    BusinessError catches typed subclass.
+- 326 vitest tests pass (was 234); biome + tsc --noEmit clean.
+- Cross-SDK parity rows 12, 15-17, 23-35 promoted to ✅
+  JavaScript. **All 54 rows of the JavaScript column are now ✅** —
+  parity audit (`scripts/audit_parity.py --sdk javascript`) passes
+  with no drift.
+
 ### Added (Sprint S4 — `HfcxClient` outbound flow)
 
 - `src/client/HfcxClient.ts` — async-only sender client with five

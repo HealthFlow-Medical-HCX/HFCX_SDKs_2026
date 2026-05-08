@@ -29,8 +29,8 @@ target shape.
 | Keycloak token client                     | S3     | ✅      |
 | Registry lookup + cache                   | S3     | ✅      |
 | `HfcxClient` sender flow + correlation-ID propagation | S4 | ✅  |
-| `RecipientHandler` pipeline (4 layers)    | S5     | ⏳      |
-| Egyptian validators                       | S5     | ⏳      |
+| `RecipientHandler` pipeline (4 layers)    | S5     | ✅      |
+| Egyptian validators                       | S5     | ✅      |
 | Validator hardening + Express/Fastify example | S6 | ⏳     |
 | 1.0.0 GA on npm                           | S7     | ⏳      |
 
