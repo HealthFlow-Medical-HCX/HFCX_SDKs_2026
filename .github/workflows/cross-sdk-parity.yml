@@ -1,0 +1,51 @@
+name: cross-sdk-parity
+
+# Runs the cross-SDK parity audit on every PR / push. Gates the
+# four-row JavaScript / Java / Python / .NET columns of
+# docs/CROSS_SDK_PARITY.md so a public-API addition in one SDK
+# can't slip through without a parity entry.
+#
+# Sister to the per-SDK test workflows, but cheap (no toolchain
+# install — pure stdlib Python).
+
+on:
+  pull_request:
+    paths:
+      - "scripts/audit_parity.py"
+      - "docs/CROSS_SDK_PARITY.md"
+      - "sdk-java/**/__init__.py"
+      - "sdk-python/src/hfcx_sdk/__init__.py"
+      - "sdk-dotnet/src/HealthFlow.Hfcx.Sdk/**"
+      - "sdk-javascript/src/index.ts"
+      - ".github/workflows/cross-sdk-parity.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/audit_parity.py"
+      - "docs/CROSS_SDK_PARITY.md"
+      - "sdk-python/src/hfcx_sdk/__init__.py"
+      - "sdk-dotnet/src/HealthFlow.Hfcx.Sdk/**"
+      - "sdk-javascript/src/index.ts"
+      - ".github/workflows/cross-sdk-parity.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  parity-audit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk: ["java", "python", "dotnet", "javascript"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python (audit script is pure stdlib)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Audit ${{ matrix.sdk }} column
+        run: python scripts/audit_parity.py --sdk ${{ matrix.sdk }}
