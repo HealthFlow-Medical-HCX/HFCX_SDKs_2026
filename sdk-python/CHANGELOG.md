@@ -5,6 +5,32 @@ Versions follow [Semantic Versioning](https://semver.org/) and PEP 440.
 
 ## [Unreleased]
 
+### Added (Sprint P7 — 1.0.0 GA prep)
+
+- `RELEASING.md` — full GA cut procedure: PyPI Trusted Publisher
+  prerequisites, version bump, changelog promote, tag, post-publish
+  smoke test, post-release housekeeping, rollback policy. Mirrors
+  the Java SDK's `sdk-java/RELEASING.md`.
+- `docs/releases/v1.0.0.md` — placeholder release notes ready to
+  be promoted on the day of the GA cut. Covers PyPI install,
+  compatibility matrix, what's-in-the-box, cross-SDK parity, and
+  known gaps.
+- `scripts/audit_parity.py` (lives at the monorepo root for both
+  SDKs) — verifies every row in `docs/CROSS_SDK_PARITY.md` marks
+  this SDK as ✅ and every public symbol in `hfcx_sdk.__all__` has
+  a parity row. Required pre-flight check in `RELEASING.md`.
+- README quickstart rewritten to show real sender + recipient code
+  paths (was the P1 placeholder pointing at the error catalog).
+  Status table promoted to "🚀 1.0.0 release-ready"; deferred
+  HAPI-equivalent IG validation moved to a "post-1.0" row.
+- 419 SDK tests pass; 10 example-app integration tests pass;
+  mypy --strict clean across 39 source files; ruff clean.
+- Cross-SDK parity: rows 36-43 (request / response / Status types)
+  promoted to ✅ Python; row 13 amended to name
+  `AsyncRegistryClient` and `ParticipantCert` explicitly; new row
+  54 for the `Operation` enum. **Total: 54 rows, all green for
+  both Java and Python.**
+
 ### Added (Sprint P6 — validator hardening + IG-version metadata)
 
 - `hfcx_sdk.fhir.bundled_ig_version()` (re-exported as

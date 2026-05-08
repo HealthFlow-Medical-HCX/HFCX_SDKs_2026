@@ -8,6 +8,30 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint P7 — Python 1.0.0 GA prep)
+
+- `sdk-python/RELEASING.md` — canonical procedure for cutting a GA
+  release of `hfcx-sdk` to PyPI via Trusted Publishing, mirroring
+  `sdk-java/RELEASING.md`. Covers prerequisites, version bump,
+  changelog promotion, tag, smoke test, and rollback policy.
+- `sdk-python/docs/releases/v1.0.0.md` — placeholder release notes
+  ready to be promoted on the day of the GA cut.
+- `scripts/audit_parity.py` — cross-SDK parity audit script. Reads
+  `docs/CROSS_SDK_PARITY.md` and verifies every row marks the
+  selected SDK as ✅ and every public symbol in
+  `hfcx_sdk.__all__` has a row. Run as
+  `python scripts/audit_parity.py --sdk python|java`.
+- `docs/CROSS_SDK_PARITY.md` rows 36-43 (request / response /
+  Status) promoted to ✅ Python; row 13 amended to call out
+  `AsyncRegistryClient` and `ParticipantCert` explicitly; new row
+  54 for the `Operation` enum. Total rows: **54**, all green for
+  Java and Python.
+- `sdk-python/README.md` and the top-level `README.md` updated to
+  reflect 1.0.0 release-ready status; quickstart rewritten to show
+  real sender + recipient code instead of the P1 placeholder.
+- 419 SDK tests pass, 10 example-app tests pass, mypy --strict clean
+  across 39 source files, ruff clean. Java reactor still green.
+
 ### Added (Sprint P6 — Python validator hardening + IG-version metadata)
 
 - `hfcx_sdk.bundled_ig_version()` returns the platform version

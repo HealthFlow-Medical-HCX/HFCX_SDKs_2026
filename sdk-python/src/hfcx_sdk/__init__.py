@@ -10,7 +10,7 @@ Sprint progress:
 * P4 ✅ — :class:`HfcxClient` outbound flow (sync + async)
 * P5 ✅ — :class:`hfcx_sdk.recipient.RecipientHandler` + four-layer pipeline
 * P6 ✅ — Egyptian validators + FHIR Bundle validation (hand-rolled, lockstep with Java)
-* P7 ⏳ — 1.0.0 release
+* P7 🚀 — 1.0.0 GA-ready (release notes + parity audit; maintainer cuts the tag)
 """
 
 from __future__ import annotations

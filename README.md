@@ -5,12 +5,12 @@ protocol for decentralised health-claims data exchange.
 
 This repository is a monorepo containing all language SDKs:
 
-| Language   | Path           | Status      | Package                                    |
-|------------|----------------|-------------|--------------------------------------------|
-| Java       | `sdk-java/`    | In progress | `eg.gov.healthflow:hfcx-sdk` (Maven Central) |
-| Python     | `sdk-python/`  | Planned     | `hfcx-sdk` (PyPI)                          |
-| .NET       | `sdk-dotnet/`  | Planned     | `HealthFlow.Hfcx.Sdk` (NuGet)              |
-| JavaScript | `sdk-javascript/` | Planned  | `@healthflow/hfcx-sdk` (npm)               |
+| Language   | Path              | Status                          | Package                                      |
+|------------|-------------------|---------------------------------|----------------------------------------------|
+| Java       | `sdk-java/`       | 🚀 1.0.0 release-ready          | `eg.gov.healthflow:hfcx-sdk` (Maven Central) |
+| Python     | `sdk-python/`     | 🚀 1.0.0 release-ready          | `hfcx-sdk` (PyPI)                            |
+| .NET       | `sdk-dotnet/`     | ⏳ Planned                      | `HealthFlow.Hfcx.Sdk` (NuGet)                |
+| JavaScript | `sdk-javascript/` | ⏳ Planned                      | `@healthflow/hfcx-sdk` (npm)                 |
 
 Each SDK wraps the HFCX protocol (JWE encryption, FHIR R4 + Egyptian IG
 validation, Keycloak auth, participant-registry lookup) so integrators can
@@ -44,7 +44,10 @@ same correlation-ID semantics, and the same FHIR IG package version. See
 ## Documentation
 
 - Per-SDK quickstarts: see each SDK's `README.md`.
-- Cross-SDK parity table: `docs/CROSS_SDK_PARITY.md`.
+- Cross-SDK parity table: `docs/CROSS_SDK_PARITY.md` (audit:
+  `python scripts/audit_parity.py --sdk <java|python>`).
+- Per-SDK release procedure: `sdk-java/RELEASING.md`,
+  `sdk-python/RELEASING.md`.
 - Delivery plan and sprint structure: `docs/agentic-delivery-prompt.md`.
 
 ## License

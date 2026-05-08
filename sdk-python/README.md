@@ -12,16 +12,15 @@ pip install hfcx-sdk
 
 ## Status
 
-🚧 **Sprint P6 — validator hardening + IG metadata.** The recipient
-pipeline gets dedicated unit-test coverage for every validator branch
-(209 new cases) and the SDK exposes
-`hfcx_sdk.bundled_ig_version()` so callers can introspect which
-release of the platform's Egyptian IG this build ships against. Full
-HAPI-equivalent IG-profile validation is deferred until a real
-`fhir-ig/egyptian-ig.tgz` is synced from a tagged platform release —
-same posture as the Java SDK. **419 tests pass** (210 P5 + 209 P6).
-See [`docs/CROSS_SDK_PARITY.md`](../docs/CROSS_SDK_PARITY.md) for the
-cross-SDK target shape.
+🚀 **Sprint P7 — 1.0.0 GA-ready.** All 54 rows of the Python column in
+[`docs/CROSS_SDK_PARITY.md`](../docs/CROSS_SDK_PARITY.md) are ✅; the
+parity audit script (`scripts/audit_parity.py --sdk python`) gates
+the release. Cutting the GA tag is a maintainer action — the procedure
+is in [`RELEASING.md`](RELEASING.md). Full HAPI-equivalent IG-profile
+validation is the only deferred item, gated on a real
+`fhir-ig/egyptian-ig.tgz` from a tagged platform release; the
+hand-rolled `FhirValidator` enforces the same Egyptian-IG profile
+rules in lockstep with the Java SDK. **419 tests pass.**
 
 | Capability                       | Sprint | Status         |
 |----------------------------------|--------|----------------|
@@ -35,23 +34,53 @@ cross-SDK target shape.
 | Egyptian validators (governorate + NID + phone + IBAN) | P5 | ✅ |
 | FastAPI + Flask example recipient apps | P5 | ✅                 |
 | Validator hardening (419 tests) + `bundled_ig_version` | P6 | ✅ |
-| HAPI-equivalent full-IG FHIR validation (gated on real IG tarball) | post-P7 | ⏳ |
-| 1.0.0 GA on PyPI                 | P7     | ⏳              |
+| RELEASING.md + parity audit + v1.0.0 release notes | P7 | ✅    |
+| 1.0.0 GA on PyPI (maintainer cuts tag) | P7 | 🚀 ready          |
+| HAPI-equivalent full-IG FHIR validation (gated on real IG tarball) | post-1.0 | ⏳ |
 
-## Quickstart — what works today (Sprint P1)
+## Quickstart — sender side
 
 ```python
-from hfcx_sdk import __version__, ErrorCode, NationalIdInvalidError
+from hfcx_sdk import (
+    HfcxClient, KeycloakTokenClient, RegistryClient, SubmitClaimRequest,
+    FileLocalKeyProvider,
+)
 
-print(__version__)                      # "0.1.0a0"
-print(ErrorCode.NATIONAL_ID_INVALID.code)  # "ERR-B-006"
-raise NationalIdInvalidError("Test error: this would fire from the recipient pipeline")
+client = HfcxClient(
+    gateway_url="https://gateway.hcx-egypt.gov.eg",
+    participant_code="myhospital@hcx-egypt",
+    keycloak=KeycloakTokenClient(
+        token_url="https://idp.hcx-egypt.gov.eg/realms/hcx/protocol/openid-connect/token",
+        client_id="myhospital",
+        client_secret="...",
+    ),
+    registry=RegistryClient(base_url="https://registry.hcx-egypt.gov.eg"),
+    private_key_provider=FileLocalKeyProvider("/etc/hfcx/private-key.pem"),
+)
+
+response = client.submit_claim(SubmitClaimRequest(
+    recipient_code="payerco@hcx-egypt",
+    fhir_bundle_json="...",   # Egyptian-IG-compliant Bundle as JSON
+))
+print(response.correlation_id, response.status)
 ```
 
-The 27-entry `ErrorCode` enum, the typed-exception subclasses, and the
-factory helpers (`HfcxError.of`, `HfcxError.from_wire_code`) are wire-
-format-identical to the Java SDK. Once P2 lands, the same imports
-will work against a real protocol implementation.
+`AsyncHfcxClient` mirrors the sync surface for `asyncio` callers.
+
+## Quickstart — recipient side
+
+```python
+from hfcx_sdk import RecipientHandler, FileLocalKeyProvider
+
+handler = RecipientHandler(
+    key_provider=FileLocalKeyProvider("/etc/hfcx/private-key.pem"),
+    local_participant_code="payerco@hcx-egypt",
+    bearer_token_validator=...,  # plug a Keycloak JWKS validator here
+)
+```
+
+Wire `handler` into FastAPI or Flask using the example apps under
+`docs/examples/recipient-fastapi/` and `docs/examples/recipient-flask/`.
 
 ## Architecture
 

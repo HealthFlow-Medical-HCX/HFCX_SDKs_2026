@@ -58,7 +58,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | `JweAlgorithms.Alg` / `Enc`           | `JWE_ALG` / `JWE_ENC`               |
 | 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | ✅ `OutboundEncryptor.encrypt` + `AsyncOutboundEncryptor.encrypt` | `OutboundEncryptor.Encrypt`           | `OutboundEncryptor.encrypt`         |
 | 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | ✅ `InboundDecryptor.decrypt`           | `InboundDecryptor.Decrypt`            | `InboundDecryptor.decrypt`          |
-| 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert`| ✅ `RegistryClient.get_recipient_cert` + async | `RegistryClient.GetRecipientCertAsync`| `RegistryClient.getRecipientCert`   |
+| 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert` + `ParticipantCert` record | ✅ `RegistryClient.get_recipient_cert` + `AsyncRegistryClient` + `ParticipantCert` dataclass | `RegistryClient.GetRecipientCertAsync` + `ParticipantCert` record | `RegistryClient.getRecipientCert` + `ParticipantCert` type |
 | 14 | Cert-resolver abstraction        | ✅ `RecipientCertResolver`          | ✅ `RecipientCertResolver` Protocol     | `IRecipientCertResolver`              | `RecipientCertResolver` interface   |
 | 15 | Local key provider abstraction   | ✅ `LocalKeyProvider`               | ✅ `LocalKeyProvider` Protocol          | `ILocalKeyProvider`                   | `LocalKeyProvider` interface        |
 | 16 | File-backed key provider         | ✅ `FileLocalKeyProvider`           | ✅ `FileLocalKeyProvider`               | `FileLocalKeyProvider`                | `FileLocalKeyProvider`              |
@@ -101,14 +101,14 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 36 | Sealed `HfcxRequest` interface   | ✅ `HfcxRequest` sealed             | `HfcxRequest` Protocol / Union          | `IHfcxRequest`                        | `HfcxRequest` union type            |
-| 37 | Submit-claim request type        | ✅ `SubmitClaimRequest` record      | `SubmitClaimRequest` dataclass          | `SubmitClaimRequest` record           | `SubmitClaimRequest` type           |
-| 38 | Submit-preauth request type      | ✅ `SubmitPreauthRequest`           | `SubmitPreauthRequest`                  | `SubmitPreauthRequest`                | `SubmitPreauthRequest`              |
-| 39 | Eligibility request type         | ✅ `CheckEligibilityRequest`        | `CheckEligibilityRequest`               | `CheckEligibilityRequest`             | `CheckEligibilityRequest`           |
-| 40 | Communication request type       | ✅ `SendCommunicationRequest`       | `SendCommunicationRequest`              | `SendCommunicationRequest`            | `SendCommunicationRequest`          |
-| 41 | Payment-notice request type      | ✅ `NotifyPaymentRequest`           | `NotifyPaymentRequest`                  | `NotifyPaymentRequest`                | `NotifyPaymentRequest`              |
-| 42 | Outbound response                | ✅ `HfcxResponse` record            | `HfcxResponse` dataclass                | `HfcxResponse` record                 | `HfcxResponse` type                 |
-| 43 | Status enum                      | ✅ `Status` (3 values)              | `Status` IntEnum                        | `Status` enum                         | `Status` literal type               |
+| 36 | Sealed `HfcxRequest` interface   | ✅ `HfcxRequest` sealed             | ✅ `HfcxRequest` Protocol / Union       | `IHfcxRequest`                        | `HfcxRequest` union type            |
+| 37 | Submit-claim request type        | ✅ `SubmitClaimRequest` record      | ✅ `SubmitClaimRequest` dataclass       | `SubmitClaimRequest` record           | `SubmitClaimRequest` type           |
+| 38 | Submit-preauth request type      | ✅ `SubmitPreauthRequest`           | ✅ `SubmitPreauthRequest`               | `SubmitPreauthRequest`                | `SubmitPreauthRequest`              |
+| 39 | Eligibility request type         | ✅ `CheckEligibilityRequest`        | ✅ `CheckEligibilityRequest`            | `CheckEligibilityRequest`             | `CheckEligibilityRequest`           |
+| 40 | Communication request type       | ✅ `SendCommunicationRequest`       | ✅ `SendCommunicationRequest`           | `SendCommunicationRequest`            | `SendCommunicationRequest`          |
+| 41 | Payment-notice request type      | ✅ `NotifyPaymentRequest`           | ✅ `NotifyPaymentRequest`               | `NotifyPaymentRequest`                | `NotifyPaymentRequest`              |
+| 42 | Outbound response                | ✅ `HfcxResponse` record            | ✅ `HfcxResponse` dataclass             | `HfcxResponse` record                 | `HfcxResponse` type                 |
+| 43 | Status enum                      | ✅ `Status` (3 values)              | ✅ `Status` Enum (3 values)             | `Status` enum                         | `Status` literal type               |
 
 ## Error taxonomy
 
@@ -129,8 +129,9 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
 | 53 | Bundled IG version               | ✅ `HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION` (build-time) | ✅ `bundled_ig_version()` (runtime, reads `fhir-ig/PLATFORM_VERSION`) | `HfcxSdk.BundledIgVersion`         | `bundledIgVersion()`                |
+| 54 | Operation enum (5 values)        | ✅ `Operation` (5 values)           | ✅ `Operation` Enum (5 values)          | `Operation` enum                      | `Operation` literal type            |
 
-## Total: **53** rows.
+## Total: **54** rows.
 
 ## Auditing this document
 
