@@ -1,0 +1,29 @@
+# Build output
+dist/
+coverage/
+*.tsbuildinfo
+
+# Node
+node_modules/
+npm-debug.log*
+.npm/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IG tarball (synced via fhir-ig/sync.sh; never committed)
+fhir-ig/egyptian-ig.tgz
+
+# Real PEM keys must never be committed.
+# Cross-SDK test fixture key pair lives under tests/.../fixtures/cross-sdk/
+# and is intentionally checked in — it's a throw-away RSA-2048 pair shared
+# with the Java, Python, and .NET SDKs solely for the JWE round-trip
+# fixtures.
+*.pem
+!tests/fixtures/cross-sdk/*.pem

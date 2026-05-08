@@ -1,0 +1,86 @@
+name: javascript-publish
+
+# Stubbed Sprint S1 publish workflow.
+#
+# Triggered by tags of the form `sdk-javascript/vX.Y.Z`. Builds the
+# package, runs the full test suite, then publishes to npm via npm's
+# Trusted Publisher (provenance) flow once the project is configured
+# on npmjs.org.
+#
+# Setup before the first publish:
+#   1. Register the @healthflow scope on npmjs.org and grant publish
+#      rights to the HealthFlow-Medical-HCX organisation.
+#   2. Add this GitHub repo + the `npm-publish` environment as a
+#      trusted publisher under
+#      https://www.npmjs.com/settings/healthflow/access.
+#   3. Set the `NPM_TRUSTED_PUBLISHER_CONFIGURED` GitHub variable to
+#      `true` so the workflow does the real publish instead of the
+#      build-only smoke.
+#
+# Until the variable is `true` the workflow only validates that the
+# build artefacts assemble cleanly when run manually.
+
+on:
+  push:
+    tags:
+      - "sdk-javascript/v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write  # Required for npm provenance / Trusted Publishing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    defaults:
+      run:
+        working-directory: sdk-javascript
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+          cache: npm
+          cache-dependency-path: sdk-javascript/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify version matches tag
+        run: |
+          tag="${GITHUB_REF##*/}"          # vX.Y.Z
+          tag="${tag#v}"                   # X.Y.Z
+          pkg=$(node -p "require('./package.json').version")
+          if [ "$tag" != "$pkg" ]; then
+            echo "tag $tag does not match package.json version $pkg" >&2
+            exit 1
+          fi
+
+      - name: Publish to npm
+        if: ${{ vars.NPM_TRUSTED_PUBLISHER_CONFIGURED == 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance --access public
+
+      - name: Smoke (publish stub — NPM_TRUSTED_PUBLISHER_CONFIGURED unset)
+        if: ${{ vars.NPM_TRUSTED_PUBLISHER_CONFIGURED != 'true' }}
+        run: |
+          echo "Build-only smoke complete. Set vars.NPM_TRUSTED_PUBLISHER_CONFIGURED=true to publish."
+          npm pack --dry-run

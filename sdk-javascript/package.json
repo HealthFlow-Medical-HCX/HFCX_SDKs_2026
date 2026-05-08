@@ -1,0 +1,50 @@
+{
+  "name": "@healthflow/hfcx-sdk",
+  "version": "0.1.0-alpha.0",
+  "description": "Official JavaScript / TypeScript SDK for the HealthFlow HFCX platform — Egypt's open protocol for decentralised health-claims data exchange.",
+  "license": "Apache-2.0",
+  "author": "HealthFlow Medical HCX <support@healthflow.gov.eg>",
+  "homepage": "https://github.com/HealthFlow-Medical-HCX/hfcx_sdks_2026",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HealthFlow-Medical-HCX/hfcx_sdks_2026.git",
+    "directory": "sdk-javascript"
+  },
+  "bugs": {
+    "url": "https://github.com/HealthFlow-Medical-HCX/hfcx_sdks_2026/issues"
+  },
+  "keywords": ["hfcx", "healthflow", "fhir", "jwe", "egypt", "hcx"],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE", "fhir-ig/PLATFORM_VERSION", "fhir-ig/README.md"],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist coverage",
+    "lint": "biome check src tests",
+    "lint:fix": "biome check --write src tests",
+    "format:check": "biome format src tests",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepack": "npm run clean && npm run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.7.5",
+    "@vitest/coverage-v8": "^2.1.4",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}

@@ -1,0 +1,72 @@
+// Copyright (c) HealthFlow Medical HCX. Licensed under Apache 2.0.
+
+/**
+ * Official JavaScript / TypeScript SDK for the HealthFlow HFCX
+ * platform — Egypt's open protocol for decentralised health-claims
+ * data exchange.
+ *
+ * Sprint progress:
+ *   * S1 ✅ — package skeleton + error catalog
+ *   * S2 ⏳ — JWE encrypt / decrypt with cross-SDK round trip
+ *   * S3 ⏳ — Keycloak token client + Sunbird-RC registry
+ *   * S4 ⏳ — `HfcxClient` outbound flow
+ *   * S5 ⏳ — `RecipientHandler` pipeline + Egyptian validators
+ *   * S6 ⏳ — Validator hardening + reference recipient app
+ *   * S7 ⏳ — 1.0.0 release
+ */
+
+export { SDK_VERSION, UNBUNDLED, bundledIgVersion } from './version.js';
+
+export { Tier } from './exceptions/Tier.js';
+export {
+  ALL_ERROR_CODES,
+  ErrorCode,
+  errorCodeFromWire,
+  type ErrorCodeEntry,
+  type ErrorCodeName,
+} from './exceptions/ErrorCode.js';
+export {
+  HfcxError,
+  ProtocolError,
+  BusinessError,
+  TechnicalError,
+  // Protocol (ERR-P-*)
+  MissingHeaderError,
+  JweAlgorithmRejectedError,
+  RecipientCodeMismatchError,
+  BadUuidError,
+  BadTimestampError,
+  TimestampOutOfRangeError,
+  SenderUnknownError,
+  BadEnvelopeError,
+  SignatureVerificationFailedError,
+  // Business (ERR-B-*)
+  ParticipantNotFoundError,
+  NotABundleError,
+  BundleMissingTypeError,
+  PatientMissingNationalIdError,
+  PatientNonEgyptianError,
+  NationalIdInvalidError,
+  PhoneInvalidError,
+  IbanInvalidError,
+  BadFhirJsonError,
+  EnvelopeMissingPayloadError,
+  EnvelopeMalformedJsonError,
+  UnknownBusinessError,
+  // Technical (ERR-T-*)
+  TransportError,
+  AuthenticationError,
+  RegistryUnavailableError,
+  KeyUnavailableError,
+  CryptographicFailureError,
+  Gateway5xxError,
+} from './exceptions/HfcxError.js';
+
+export { JWE_ALG, JWE_ENC } from './crypto/JweAlgorithms.js';
+export {
+  PROTOCOL_HEADER_SENDER_CODE,
+  PROTOCOL_HEADER_RECIPIENT_CODE,
+  PROTOCOL_HEADER_CORRELATION_ID,
+  PROTOCOL_HEADER_TIMESTAMP,
+  PROTOCOL_HEADER_API_CALL_ID,
+} from './protocol/ProtocolHeaders.js';

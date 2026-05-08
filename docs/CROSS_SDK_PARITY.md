@@ -14,7 +14,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
 | Python     | 🚧 Sprint P6   | 0.1.0a0          | gated on PyPI Trusted Publisher |
 | .NET       | 🚀 Sprint D7   | 0.1.0-alpha.0    | gated on nuget.org Trusted Publisher |
-| JavaScript | ⏳ Planned     | —                | —        |
+| JavaScript | 🚧 Sprint S1   | 0.1.0-alpha.0    | gated on npm Trusted Publisher |
 
 ## Allowed divergence
 
@@ -47,7 +47,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 4 | Send communication               | ✅ `HfcxClient.sendCommunication`   | ✅ `HfcxClient.send_communication` + async | ✅ `HfcxClient.SendCommunicationAsync` | `HfcxClient.sendCommunication`      |
 | 5 | Notify payment                   | ✅ `HfcxClient.notifyPayment`       | ✅ `HfcxClient.notify_payment` + async  | ✅ `HfcxClient.NotifyPaymentAsync`    | `HfcxClient.notifyPayment`          |
 | 6 | Sender client builder            | ✅ `HfcxClient.builder()`           | ✅ `HfcxClient(...)` / `AsyncHfcxClient(...)` kwargs | ✅ `HfcxClient` ctor (named args)     | `new HfcxClient({...})`         |
-| 7 | SDK version constant             | ✅ `HfcxClient.sdkVersion()`        | ✅ `hfcx_sdk.__version__`               | ✅ `HfcxSdk.Version`                  | `HfcxClient.SDK_VERSION`            |
+| 7 | SDK version constant             | ✅ `HfcxClient.sdkVersion()`        | ✅ `hfcx_sdk.__version__`               | ✅ `HfcxSdk.Version`                  | ✅ `SDK_VERSION`                      |
 
 ## Crypto and registry
 
@@ -55,7 +55,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
 | 8  | JWE encrypt (low-level)          | ✅ `JweEncryption.encryptUtf8`      | ✅ `crypto.encrypt_utf8`                | ✅ `JweEncryption.EncryptUtf8`        | `encryptJwe()`                      |
 | 9  | JWE decrypt (low-level)          | ✅ `JweEncryption.decryptUtf8`      | ✅ `crypto.decrypt_utf8`                | ✅ `JweEncryption.DecryptUtf8`        | `decryptJwe()`                      |
-| 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | ✅ `JweAlgorithms.Alg` / `Enc`        | `JWE_ALG` / `JWE_ENC`               |
+| 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | ✅ `JweAlgorithms.Alg` / `Enc`        | ✅ `JWE_ALG` / `JWE_ENC`              |
 | 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | ✅ `OutboundEncryptor.encrypt` + `AsyncOutboundEncryptor.encrypt` | ✅ `OutboundEncryptor.EncryptAsync`   | `OutboundEncryptor.encrypt`         |
 | 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | ✅ `InboundDecryptor.decrypt`           | ✅ `InboundDecryptor.Decrypt`         | `InboundDecryptor.decrypt`          |
 | 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert` + `ParticipantCert` record | ✅ `RegistryClient.get_recipient_cert` + `AsyncRegistryClient` + `ParticipantCert` dataclass | ✅ `RegistryClient.GetRecipientCertAsync` + `ParticipantCert` record | `RegistryClient.getRecipientCert` + `ParticipantCert` type |
@@ -72,7 +72,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 19 | Invalidate cached token          | ✅ `KeycloakTokenClient.invalidate` | ✅ `KeycloakTokenClient.invalidate` + async | ✅ `KeycloakTokenClient.Invalidate`   | `KeycloakTokenClient.invalidate`    |
 | 20 | Bearer-validator interface       | ✅ `BearerTokenValidator`           | ✅ `BearerTokenValidator` Protocol      | ✅ `IBearerTokenValidator`            | `BearerTokenValidator` interface    |
 | 21 | Protocol-header builder          | ✅ `ProtocolHeaders.build`          | ✅ `protocol.build`                     | ✅ `ProtocolHeaders.Build`           | `buildProtocolHeaders`              |
-| 22 | Header-name constants            | ✅ `ProtocolHeaders.{SENDER_CODE,…}`| ✅ `protocol.{SENDER_CODE,…}`           | ✅ `ProtocolHeaders.{SenderCode,…}`   | `PROTOCOL_HEADER_*`                 |
+| 22 | Header-name constants            | ✅ `ProtocolHeaders.{SENDER_CODE,…}`| ✅ `protocol.{SENDER_CODE,…}`           | ✅ `ProtocolHeaders.{SenderCode,…}`   | ✅ `PROTOCOL_HEADER_*`                |
 
 ## Recipient pipeline
 
@@ -114,21 +114,21 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 44 | Root exception                   | ✅ `HfcxException`                  | ✅ `HfcxError`                          | ✅ `HfcxException`                    | `HfcxError`                         |
-| 45 | Protocol-tier exception          | ✅ `ProtocolException` + 9 subtypes | ✅ `ProtocolError` + 9 subtypes         | ✅ `ProtocolException` + 9 subtypes   | `ProtocolError` + subtypes          |
-| 46 | Business-tier exception          | ✅ `BusinessException` + 12 subtypes| ✅ `BusinessError` + 12 subtypes        | ✅ `BusinessException` + 12 subtypes  | `BusinessError` + subtypes          |
-| 47 | Technical-tier exception         | ✅ `TechnicalException` + 6 subtypes| ✅ `TechnicalError` + 6 subtypes        | ✅ `TechnicalException` + 6 subtypes  | `TechnicalError` + subtypes         |
-| 48 | Authentication failure           | ✅ `AuthenticationException` (`ERR-T-002`) | ✅ `AuthenticationError` (`ERR-T-002`) | ✅ `AuthenticationException` (`ERR-T-002`) | `AuthenticationError`           |
-| 49 | Error-code catalog               | ✅ `ErrorCode` enum (27 entries)    | ✅ `ErrorCode` Enum (27 entries)        | ✅ `ErrorCode` (27 entries)           | `ErrorCode` literal type            |
-| 50 | Tier enum                        | ✅ `ErrorCode.Tier` (3 values)      | ✅ `Tier` Enum (3 values)               | ✅ `Tier` enum (3 values)             | `ErrorCode.Tier` literal type       |
-| 51 | Wire-code → typed factory        | ✅ `HfcxException.fromWireCode`     | ✅ `HfcxError.from_wire_code`           | ✅ `HfcxException.FromWireCode`       | `errorFromWireCode`                 |
-| 52 | Catalog-entry → typed factory    | ✅ `HfcxException.of(ErrorCode,…)`  | ✅ `HfcxError.of(ErrorCode, …)`         | ✅ `HfcxException.Of(ErrorCode, …)`   | `errorOf(ErrorCode, …)`             |
+| 44 | Root exception                   | ✅ `HfcxException`                  | ✅ `HfcxError`                          | ✅ `HfcxException`                    | ✅ `HfcxError`                       |
+| 45 | Protocol-tier exception          | ✅ `ProtocolException` + 9 subtypes | ✅ `ProtocolError` + 9 subtypes         | ✅ `ProtocolException` + 9 subtypes   | ✅ `ProtocolError` + 9 subtypes      |
+| 46 | Business-tier exception          | ✅ `BusinessException` + 12 subtypes| ✅ `BusinessError` + 12 subtypes        | ✅ `BusinessException` + 12 subtypes  | ✅ `BusinessError` + 12 subtypes     |
+| 47 | Technical-tier exception         | ✅ `TechnicalException` + 6 subtypes| ✅ `TechnicalError` + 6 subtypes        | ✅ `TechnicalException` + 6 subtypes  | ✅ `TechnicalError` + 6 subtypes     |
+| 48 | Authentication failure           | ✅ `AuthenticationException` (`ERR-T-002`) | ✅ `AuthenticationError` (`ERR-T-002`) | ✅ `AuthenticationException` (`ERR-T-002`) | ✅ `AuthenticationError` (`ERR-T-002`) |
+| 49 | Error-code catalog               | ✅ `ErrorCode` enum (27 entries)    | ✅ `ErrorCode` Enum (27 entries)        | ✅ `ErrorCode` (27 entries)           | ✅ `ErrorCode` const (27 entries)    |
+| 50 | Tier enum                        | ✅ `ErrorCode.Tier` (3 values)      | ✅ `Tier` Enum (3 values)               | ✅ `Tier` enum (3 values)             | ✅ `Tier` const (3 values)           |
+| 51 | Wire-code → typed factory        | ✅ `HfcxException.fromWireCode`     | ✅ `HfcxError.from_wire_code`           | ✅ `HfcxException.FromWireCode`       | ✅ `HfcxError.fromWireCode`          |
+| 52 | Catalog-entry → typed factory    | ✅ `HfcxException.of(ErrorCode,…)`  | ✅ `HfcxError.of(ErrorCode, …)`         | ✅ `HfcxException.Of(ErrorCode, …)`   | ✅ `HfcxError.of(entry, msg)`        |
 
 ## Bundled-IG metadata
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 53 | Bundled IG version               | ✅ `HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION` (build-time) | ✅ `bundled_ig_version()` (runtime, reads `fhir-ig/PLATFORM_VERSION`) | ✅ `HfcxSdk.BundledIgVersion`         | `bundledIgVersion()`                |
+| 53 | Bundled IG version               | ✅ `HfcxSdkVersion.COMPATIBLE_PLATFORM_VERSION` (build-time) | ✅ `bundled_ig_version()` (runtime, reads `fhir-ig/PLATFORM_VERSION`) | ✅ `HfcxSdk.BundledIgVersion`         | ✅ `bundledIgVersion()`              |
 | 54 | Operation enum (5 values)        | ✅ `Operation` (5 values)           | ✅ `Operation` Enum (5 values)          | ✅ `Operation` enum (5 values)        | `Operation` literal type            |
 
 ## Total: **54** rows.

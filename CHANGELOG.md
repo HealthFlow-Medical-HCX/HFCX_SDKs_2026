@@ -8,6 +8,34 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint S1 — JavaScript / TypeScript SDK bootstrap)
+
+- New `sdk-javascript/` subtree: TypeScript-first npm package layout
+  shipping `@healthflow/hfcx-sdk`. ESM-only, Node 20+, strict
+  `tsconfig.json`, biome for lint+format, vitest for tests.
+- 27-entry `ErrorCode` catalog with byte-identical wire codes to the
+  Java + Python + .NET SDKs; 26 typed error subclasses extending
+  `HfcxError`; `HfcxError.of(entry, message)` and
+  `HfcxError.fromWireCode(code, message)` factories with the same
+  fall-back semantics as the other SDKs.
+- `SDK_VERSION` constant + `bundledIgVersion()` helper (returns
+  `UNBUNDLED` until `fhir-ig/PLATFORM_VERSION` is populated).
+- Pinned cross-SDK constants: `JWE_ALG`, `JWE_ENC`,
+  `PROTOCOL_HEADER_*`.
+- 131 vitest cases (4 version + 127 catalog parametrics). All tests
+  pass; biome + tsc --noEmit clean.
+- `.github/workflows/javascript-test.yml` (matrix on Node 20 / 22,
+  runs biome + tsc + vitest with coverage + tsc build + npm pack
+  smoke) and `.github/workflows/javascript-publish.yml` (stubbed npm
+  publish via Trusted Publishing with provenance, gated on
+  `vars.NPM_TRUSTED_PUBLISHER_CONFIGURED`).
+- `sdk-javascript/{README.md,CHANGELOG.md,fhir-ig/sync.sh}` mirroring
+  the Python and .NET SDK layouts.
+- Cross-SDK parity rows 7 (SDK version), 10 (algo constants), 22
+  (header constants), 44–53 (error taxonomy + `bundledIgVersion`)
+  promoted to ✅ JavaScript. Top-level README JavaScript row →
+  "🚧 Sprint S1 (bootstrap)".
+
 ### Added (Sprint D7 — .NET 1.0.0 GA prep)
 
 - `sdk-dotnet/RELEASING.md` — canonical procedure for cutting a GA
