@@ -8,6 +8,29 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint S3 — JavaScript Keycloak token client + Sunbird-RC registry)
+
+- `KeycloakTokenClient` (async) caches and refreshes Keycloak bearer
+  tokens with byte-identical semantics to the Java + Python + .NET
+  equivalents: 60 s refresh lead, 1s/2s/4s retry on 5xx (max 4
+  attempts), 401 → `AuthenticationError` (no retry), tokens never on
+  disk, concurrent waiters collapse via a Promise-coalesced lock.
+  Permanent failures (non-401 4xx, malformed JSON, missing
+  access_token) bypass the retry loop.
+- `RegistryClient` (async) over Sunbird-RC with `lru-cache`-backed LRU
+  + per-entry TTL = cert `notAfter - preExpiryBuffer` (default 1 h,
+  max 10k entries). 404 → `ParticipantNotFoundError`, 5xx →
+  `RegistryUnavailableError`, malformed cert / JSON →
+  `TransportError`.
+- `RecipientCertResolver` + `BearerTokenValidator` interfaces;
+  `ParticipantCert` interface. Cross-SDK contracts match the other
+  three SDKs.
+- New runtime dep: `lru-cache ^11.3.6`.
+- 32 new vitest cases pass (16 Keycloak + 16 Registry); 194 JS total
+  (was 162). Python (421) + .NET (555) + Java reactor still green.
+- Cross-SDK parity rows 13, 14, 18, 19, 20 promoted to ✅
+  JavaScript; status bumped to "🚧 Sprint S3".
+
 ### Added (Sprint S2 — JavaScript JWE + cross-SDK round-trip)
 
 - `@healthflow/hfcx-sdk` ships real `encryptUtf8` / `decryptUtf8`

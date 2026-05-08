@@ -71,3 +71,16 @@ export {
   PROTOCOL_HEADER_TIMESTAMP,
   PROTOCOL_HEADER_API_CALL_ID,
 } from './protocol/ProtocolHeaders.js';
+
+export {
+  KeycloakTokenClient,
+  type KeycloakTokenClientOptions,
+  type FetchFn,
+} from './auth/KeycloakTokenClient.js';
+export type { BearerTokenValidator } from './auth/BearerTokenValidator.js';
+
+export {
+  RegistryClient,
+  type RegistryClientOptions,
+} from './registry/RegistryClient.js';
+export type { ParticipantCert, RecipientCertResolver } from './registry/ParticipantCert.js';

@@ -6,6 +6,54 @@ semver rules.
 
 ## [Unreleased]
 
+### Added (Sprint S3 — Keycloak token client + Sunbird-RC registry)
+
+- `src/auth/KeycloakTokenClient.ts` — async bearer-token client with
+  cross-SDK invariants identical to the Java + Python + .NET
+  equivalents: 60 s default refresh lead-time, 1s/2s/4s exponential
+  backoff on 5xx + network errors (max 4 attempts) →
+  `TransportError` on exhaustion, 401 → `AuthenticationError` (no
+  retry), malformed JSON / missing `access_token` / non-401 4xx → no
+  retry (permanent transport error), concurrent waiters collapse to
+  a single HTTP fetch via a Promise-coalesced `inflight` lock,
+  tokens never persisted to disk (structurally enforced by a
+  reflective test that scans method bodies for `fs.` references).
+- `src/auth/BearerTokenValidator.ts` — recipient-side bearer
+  validator interface. The SDK does NOT ship a default
+  trust-everything implementation by design; S5 lands the
+  `RecipientHandler` that consumes this.
+- `src/registry/RegistryClient.ts` — async Sunbird-RC participant
+  registry client over `globalThis.fetch`. Per-entry TTL = cert
+  `notAfter - preExpiryBuffer` (default 1 h), bounded by an LRU
+  cache (default 10 000 entries, via `lru-cache`). 404 →
+  `ParticipantNotFoundError`, 5xx / network failures →
+  `RegistryUnavailableError`, malformed JSON / PEM / non-RSA cert →
+  `TransportError`. `invalidate(code)` + `invalidateAll()` helpers.
+  Cert PEM parsed via `node:crypto`'s `X509Certificate`; the public
+  key is materialised as a `KeyLike` ready to feed into
+  `encryptUtf8`.
+- `src/registry/ParticipantCert.ts` — `ParticipantCert` interface
+  (`participantCode`, `publicKey`, `notAfter`) plus
+  `RecipientCertResolver` interface, mirroring the Java + Python +
+  .NET shapes.
+- New runtime dependency: `lru-cache ^11.3.6`.
+- `tests/unit/fetchStub.ts` — hermetic queueable `fetch` test
+  double, sister to Python's `respx`, .NET's
+  `StubHttpMessageHandler`, and Java's WireMock setup.
+- 32 new vitest cases (16 `keycloakTokenClient` + 16
+  `registryClient`): happy path, cache hit + miss across
+  participants, 401 immediate, 503 retry-then-success, 503
+  exhaustion, network-error retry, invalidate, malformed JSON,
+  missing access_token, 16-task concurrent collapse, builder
+  fail-fast, no-disk-persistence reflection, registry 404 + empty
+  array + missing cert + malformed PEM + 503 + network error +
+  invalidate + invalidateAll + expiring-cert-not-cached + null
+  guards + POST shape.
+- 194 vitest tests pass (was 162); biome + tsc --noEmit clean.
+- Cross-SDK parity rows 13 (registry lookup), 14 (cert resolver),
+  18 (get token), 19 (invalidate), 20 (bearer validator) promoted
+  to ✅ JavaScript.
+
 ### Added (Sprint S2 — JWE encrypt / decrypt with cross-SDK round-trip)
 
 - `src/crypto/JweEncryption.ts` ships real `encryptUtf8` and
