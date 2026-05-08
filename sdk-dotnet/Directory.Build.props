@@ -25,7 +25,10 @@
     <!-- CA1819: arrays as properties — unused in D1; safe to enable later. -->
     <!-- CS1591: missing XML doc comments — overlaid with explicit docs on
          the public surface; suppressed for internals. -->
-    <NoWarn>$(NoWarn);CA1032;CA1716;CS1591</NoWarn>
+    <!-- CA1848: LoggerMessage source-generators are an optimisation only;
+         the SDK logs at low cardinality and the readability cost outweighs
+         the perf gain at our call rates. -->
+    <NoWarn>$(NoWarn);CA1032;CA1716;CA1848;CS1591</NoWarn>
 
     <!-- Cross-SDK invariant: SDK 1.x targets platform 1.x. Bumped via the
          fhir-ig/sync.sh helper in lockstep with PLATFORM_VERSION. -->

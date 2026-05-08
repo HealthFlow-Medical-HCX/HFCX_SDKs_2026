@@ -13,7 +13,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 |------------|----------------|------------------|----------|
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
 | Python     | 🚧 Sprint P6   | 0.1.0a0          | gated on PyPI Trusted Publisher |
-| .NET       | 🚧 Sprint D2   | 0.1.0-alpha.0    | gated on nuget.org Trusted Publisher |
+| .NET       | 🚧 Sprint D3   | 0.1.0-alpha.0    | gated on nuget.org Trusted Publisher |
 | JavaScript | ⏳ Planned     | —                | —        |
 
 ## Allowed divergence
@@ -58,8 +58,8 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | 10 | Pinned algorithm constants       | ✅ `JweAlgorithms.ALG` / `ENC`      | ✅ `JWE_ALG` / `JWE_ENC`                | ✅ `JweAlgorithms.Alg` / `Enc`        | `JWE_ALG` / `JWE_ENC`               |
 | 11 | High-level encrypt-for-recipient | ✅ `OutboundEncryptor.encrypt`      | ✅ `OutboundEncryptor.encrypt` + `AsyncOutboundEncryptor.encrypt` | `OutboundEncryptor.Encrypt`           | `OutboundEncryptor.encrypt`         |
 | 12 | High-level decrypt-with-key      | ✅ `InboundDecryptor.decrypt`       | ✅ `InboundDecryptor.decrypt`           | `InboundDecryptor.Decrypt`            | `InboundDecryptor.decrypt`          |
-| 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert` + `ParticipantCert` record | ✅ `RegistryClient.get_recipient_cert` + `AsyncRegistryClient` + `ParticipantCert` dataclass | `RegistryClient.GetRecipientCertAsync` + `ParticipantCert` record | `RegistryClient.getRecipientCert` + `ParticipantCert` type |
-| 14 | Cert-resolver abstraction        | ✅ `RecipientCertResolver`          | ✅ `RecipientCertResolver` Protocol     | `IRecipientCertResolver`              | `RecipientCertResolver` interface   |
+| 13 | Fetch recipient cert             | ✅ `RegistryClient.getRecipientCert` + `ParticipantCert` record | ✅ `RegistryClient.get_recipient_cert` + `AsyncRegistryClient` + `ParticipantCert` dataclass | ✅ `RegistryClient.GetRecipientCertAsync` + `ParticipantCert` record | `RegistryClient.getRecipientCert` + `ParticipantCert` type |
+| 14 | Cert-resolver abstraction        | ✅ `RecipientCertResolver`          | ✅ `RecipientCertResolver` Protocol     | ✅ `IRecipientCertResolver`           | `RecipientCertResolver` interface   |
 | 15 | Local key provider abstraction   | ✅ `LocalKeyProvider`               | ✅ `LocalKeyProvider` Protocol          | `ILocalKeyProvider`                   | `LocalKeyProvider` interface        |
 | 16 | File-backed key provider         | ✅ `FileLocalKeyProvider`           | ✅ `FileLocalKeyProvider`               | `FileLocalKeyProvider`                | `FileLocalKeyProvider`              |
 | 17 | Vault-backed key provider        | ✅ `VaultLocalKeyProvider`          | ✅ `VaultLocalKeyProvider`              | `VaultLocalKeyProvider`               | `VaultLocalKeyProvider`             |
@@ -68,9 +68,9 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 
 | #  | Capability                       | Java                                | Python                                  | .NET                                  | JavaScript                          |
 |----|----------------------------------|-------------------------------------|-----------------------------------------|---------------------------------------|-------------------------------------|
-| 18 | Get bearer token                 | ✅ `KeycloakTokenClient.getToken`   | ✅ `KeycloakTokenClient.get_token` (sync) + `AsyncKeycloakTokenClient.get_token` | `KeycloakTokenClient.GetTokenAsync`   | `KeycloakTokenClient.getToken`      |
-| 19 | Invalidate cached token          | ✅ `KeycloakTokenClient.invalidate` | ✅ `KeycloakTokenClient.invalidate` + async | `KeycloakTokenClient.Invalidate`      | `KeycloakTokenClient.invalidate`    |
-| 20 | Bearer-validator interface       | ✅ `BearerTokenValidator`           | ✅ `BearerTokenValidator` Protocol      | `IBearerTokenValidator`               | `BearerTokenValidator` interface    |
+| 18 | Get bearer token                 | ✅ `KeycloakTokenClient.getToken`   | ✅ `KeycloakTokenClient.get_token` (sync) + `AsyncKeycloakTokenClient.get_token` | ✅ `KeycloakTokenClient.GetTokenAsync` | `KeycloakTokenClient.getToken`     |
+| 19 | Invalidate cached token          | ✅ `KeycloakTokenClient.invalidate` | ✅ `KeycloakTokenClient.invalidate` + async | ✅ `KeycloakTokenClient.Invalidate`   | `KeycloakTokenClient.invalidate`    |
+| 20 | Bearer-validator interface       | ✅ `BearerTokenValidator`           | ✅ `BearerTokenValidator` Protocol      | ✅ `IBearerTokenValidator`            | `BearerTokenValidator` interface    |
 | 21 | Protocol-header builder          | ✅ `ProtocolHeaders.build`          | ✅ `protocol.build`                     | `ProtocolHeaders.Build`               | `buildProtocolHeaders`              |
 | 22 | Header-name constants            | ✅ `ProtocolHeaders.{SENDER_CODE,…}`| ✅ `protocol.{SENDER_CODE,…}`           | ✅ `ProtocolHeaders.{SenderCode,…}`   | `PROTOCOL_HEADER_*`                 |
 

@@ -26,8 +26,8 @@ target shape.
 |-------------------------------------------|--------|--------|
 | Project skeleton + version + error catalog | D1    | ✅      |
 | JWE encrypt / decrypt + cross-SDK round-trip | D2  | ✅      |
-| Keycloak token client                     | D3     | ⏳      |
-| Registry lookup + cache                   | D3     | ⏳      |
+| Keycloak token client                     | D3     | ✅      |
+| Registry lookup + cache                   | D3     | ✅      |
 | `HfcxClient` sender flow                  | D4     | ⏳      |
 | `RecipientHandler` pipeline (4 layers)    | D5     | ⏳      |
 | Egyptian validators                       | D5/D6  | ⏳      |

@@ -25,6 +25,12 @@
          protected header without decrypting first, which is required for
          the downgrade-attack guard. -->
     <PackageReference Include="jose-jwt" Version="5.0.0" />
+
+    <!-- Sprint D3: in-memory LRU cache for the registry, plus a logger
+         abstraction so callers can inject ILoggerFactory without dragging
+         a concrete logger implementation into the SDK. -->
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,46 @@ SemVer 2.0 conventions.
 
 ## [Unreleased]
 
+### Added (Sprint D3 — Keycloak token client + Sunbird-RC registry)
+
+- `HealthFlow.Hfcx.Sdk.Auth.KeycloakTokenClient` — async-first
+  bearer-token client. Cross-SDK invariants identical to the Java
+  and Python equivalents: 60s default refresh lead-time, 401 →
+  `AuthenticationException` (no retry), 5xx → 1s/2s/4s exponential
+  backoff (max 4 attempts) → `TransportException` on exhaustion,
+  concurrent waiters collapse to a single HTTP fetch via
+  `SemaphoreSlim` double-checked locking, tokens never persisted to
+  disk (structurally enforced by a reflective test).
+- `HealthFlow.Hfcx.Sdk.Auth.IBearerTokenValidator` — recipient-side
+  bearer validator interface. The SDK does NOT ship a default trust-
+  everything implementation by design; D5 lands the
+  `RecipientHandler` that consumes this.
+- `HealthFlow.Hfcx.Sdk.Registry.RegistryClient` — async-first
+  Sunbird-RC participant-registry client over `HttpClient`. Per-
+  entry TTL = cert <c>NotAfter - PreExpiryBuffer</c> (default 1h),
+  bounded by an LRU cache (default 10 000 entries, via
+  `Microsoft.Extensions.Caching.Memory`). 404 →
+  `ParticipantNotFoundException`, 5xx / network failures →
+  `RegistryUnavailableException`, malformed JSON / PEM / non-RSA
+  cert → `TransportException`. Hit / miss / eviction stats logged
+  at INFO at most every 60s.
+- `HealthFlow.Hfcx.Sdk.Registry.ParticipantCert` record + 
+  `IRecipientCertResolver` interface promoted to real public surface.
+- New compile dependencies: `Microsoft.Extensions.Caching.Memory 8.0.1`
+  and `Microsoft.Extensions.Logging.Abstractions 8.0.2`.
+- 32 new xUnit cases (16 `KeycloakTokenClientTests` + 16
+  `RegistryClientTests`), all green. Sister to Java's
+  `KeycloakTokenClientTest` + `RegistryClientTest` and Python's
+  `test_keycloak.py` + `test_registry.py`. Includes a 16-coroutine-
+  concurrent-fetch test that verifies the lock collapses to one
+  HTTP call.
+- `tests/StubHttpMessageHandler` provides hermetic, queueable HTTP
+  responses with body capture — sister to `respx` on the Python side
+  and WireMock on the Java side.
+- Cross-SDK parity rows 13 (registry lookup), 14 (cert resolver),
+  18 (get token), 19 (invalidate), 20 (bearer validator) promoted
+  to ✅ .NET.
+
 ### Added (Sprint D2 — JWE encrypt / decrypt with cross-SDK round-trip)
 
 - `HealthFlow.Hfcx.Sdk.Crypto.JweEncryption` ships real `EncryptUtf8`

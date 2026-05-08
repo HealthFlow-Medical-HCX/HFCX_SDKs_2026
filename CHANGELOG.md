@@ -8,6 +8,29 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint D3 — .NET Keycloak token client + Sunbird-RC registry)
+
+- `HealthFlow.Hfcx.Sdk.Auth.KeycloakTokenClient` (async) caches and
+  refreshes Keycloak bearer tokens with byte-identical semantics to
+  the Java + Python equivalents: 60s refresh lead, 1s/2s/4s retry
+  on 5xx (max 4 attempts), 401 → `AuthenticationException` (no
+  retry), tokens never on disk, concurrent waiters collapse via
+  `SemaphoreSlim`.
+- `HealthFlow.Hfcx.Sdk.Registry.RegistryClient` (async) over
+  Sunbird-RC with `MemoryCache`-backed LRU + per-entry TTL = cert
+  `NotAfter - PreExpiryBuffer` (default 1h, max 10k entries). 404
+  → `ParticipantNotFoundException`, 5xx → `RegistryUnavailableException`,
+  malformed cert / JSON → `TransportException`.
+- `IRecipientCertResolver` + `IBearerTokenValidator` interfaces;
+  `ParticipantCert` record. Cross-SDK contracts match the Java and
+  Python definitions.
+- Compile deps: `Microsoft.Extensions.Caching.Memory 8.0.1`,
+  `Microsoft.Extensions.Logging.Abstractions 8.0.2`.
+- 32 new xUnit cases pass (16 Keycloak + 16 Registry), 213 .NET
+  total. Python (420) + Java reactor still green.
+- Cross-SDK parity rows 13, 14, 18, 19, 20 promoted to ✅ .NET;
+  status bumped to "🚧 Sprint D3".
+
 ### Added (Sprint D2 — .NET JWE + cross-SDK round-trip)
 
 - `HealthFlow.Hfcx.Sdk.Crypto.JweEncryption` lands real
