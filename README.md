@@ -10,7 +10,7 @@ This repository is a monorepo containing all language SDKs:
 | Java       | `sdk-java/`       | 🚀 1.0.0 release-ready          | `eg.gov.healthflow:hfcx-sdk` (Maven Central) |
 | Python     | `sdk-python/`     | 🚀 1.0.0 release-ready          | `hfcx-sdk` (PyPI)                            |
 | .NET       | `sdk-dotnet/`     | 🚀 1.0.0 release-ready          | `HealthFlow.Hfcx.Sdk` (NuGet)                |
-| JavaScript | `sdk-javascript/` | 🚧 Sprint S1 (bootstrap)        | `@healthflow/hfcx-sdk` (npm)                 |
+| JavaScript | `sdk-javascript/` | 🚀 1.0.0 release-ready          | `@healthflow/hfcx-sdk` (npm)                 |
 
 Each SDK wraps the HFCX protocol (JWE encryption, FHIR R4 + Egyptian IG
 validation, Keycloak auth, participant-registry lookup) so integrators can

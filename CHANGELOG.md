@@ -8,6 +8,35 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint S7 — JavaScript 1.0.0 GA prep)
+
+- `sdk-javascript/RELEASING.md` — canonical procedure for cutting a
+  GA release of `@healthflow/hfcx-sdk` to npm via Trusted Publishing
+  with provenance. Mirrors the Java + Python + .NET release docs.
+- `sdk-javascript/docs/releases/v1.0.0.md` — placeholder release
+  notes ready to be promoted on the day of the GA cut.
+- `sdk-javascript/README.md` and the top-level `README.md` updated
+  to reflect 1.0.0 release-ready status; quickstart rewritten to
+  show real sender + recipient code instead of the S1 placeholder.
+- Cross-SDK parity tracker JavaScript column: all 54 rows ✅;
+  status bumped to "🚀 Sprint S7". `audit_parity.py --sdk
+  java | python | dotnet | javascript` all pass with 54 / 54 ✅
+  rows and no drift.
+
+### 🎯 Cross-SDK delivery plan: complete
+
+With Sprint S7 lands, **all four published HFCX SDKs (Java +
+Python + .NET + JavaScript) are 1.0.0 release-ready**. The
+maintainer-action GA tag pushes (Maven Central + PyPI + nuget.org +
+npm) are the only remaining open items.
+
+| SDK        | Status                | Tests              | Parity rows |
+|------------|-----------------------|--------------------|-------------|
+| Java       | 🚀 Sprint J7 GA-ready | 97 + 9 disabled    | 54 / 54 ✅   |
+| Python     | 🚀 Sprint P7 GA-ready | 421 + 5 skipped    | 54 / 54 ✅   |
+| .NET       | 🚀 Sprint D7 GA-ready | 555 + 5 ASP.NET    | 54 / 54 ✅   |
+| JavaScript | 🚀 Sprint S7 GA-ready | 533 + 9 Fastify    | 54 / 54 ✅   |
+
 ### Added (Sprint S6 — JavaScript validator hardening + Fastify example)
 
 - 207 new vitest cases tightening the recipient-pipeline validators

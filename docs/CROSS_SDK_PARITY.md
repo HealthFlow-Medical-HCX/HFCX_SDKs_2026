@@ -14,7 +14,7 @@ Status legend: ✅ implemented · 🚧 in progress · ⏳ planned · — not app
 | Java       | ✅ Sprint J7   | 1.0.0-SNAPSHOT   | gated on OSSRH config |
 | Python     | 🚧 Sprint P6   | 0.1.0a0          | gated on PyPI Trusted Publisher |
 | .NET       | 🚀 Sprint D7   | 0.1.0-alpha.0    | gated on nuget.org Trusted Publisher |
-| JavaScript | 🚧 Sprint S5   | 0.1.0-alpha.0    | gated on npm Trusted Publisher |
+| JavaScript | 🚀 Sprint S7   | 0.1.0-alpha.0    | gated on npm Trusted Publisher |
 
 ## Allowed divergence
 

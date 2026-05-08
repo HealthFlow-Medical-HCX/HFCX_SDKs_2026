@@ -6,6 +6,32 @@ semver rules.
 
 ## [Unreleased]
 
+### Added (Sprint S7 — 1.0.0 GA prep)
+
+- `RELEASING.md` — full GA cut procedure: npm Trusted Publisher
+  prerequisites, version bump, changelog promote, tag,
+  `--provenance --access public` publish, post-publish smoke test
+  (against a probe `package.json`), post-release housekeeping,
+  rollback policy via `npm deprecate`. Mirrors `sdk-java/`,
+  `sdk-python/`, and `sdk-dotnet/` `RELEASING.md`.
+- `docs/releases/v1.0.0.md` — placeholder release notes ready to
+  be promoted on the day of the GA cut. Covers npm install,
+  compatibility matrix, what's-in-the-box, cross-SDK parity, and
+  known gaps. Closes the cross-SDK delivery plan: with this release
+  **all four published HFCX SDKs (Java + Python + .NET + JavaScript)
+  are 1.0.0 release-ready**.
+- README quickstart rewritten to show real sender + recipient code
+  paths (was the S1 placeholder pointing at the error catalog).
+  Status table promoted to "🚀 1.0.0 release-ready"; deferred
+  HAPI-equivalent IG validation moved to a "post-1.0" row.
+- Cross-SDK parity status bumped to "🚀 Sprint S7"; all 54 rows of
+  the JavaScript column are ✅ (audit:
+  `python scripts/audit_parity.py --sdk javascript`). All four
+  SDKs now show 54 / 54 ✅ rows.
+- 533 vitest tests pass; 9 Fastify integration tests pass; biome +
+  tsc --noEmit clean. Python (421) + .NET (555) + Java reactor
+  still green.
+
 ### Added (Sprint S6 — validator hardening + Fastify example)
 
 - 207 new vitest cases tightening the recipient-pipeline validators:

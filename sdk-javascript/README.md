@@ -12,15 +12,17 @@ npm install @healthflow/hfcx-sdk
 
 ## Status
 
-🚧 **Sprint S1 — bootstrap.** This release ships the package skeleton
-and the cross-SDK error-code catalog. Real protocol behaviour
-(JWE encrypt/decrypt, Keycloak token client, registry lookup,
-HfcxClient sender flow, RecipientHandler pipeline, FHIR + Egyptian
-validators) lands across Sprints S2–S6. The Java, Python, and .NET
-SDKs under `sdk-java/`, `sdk-python/`, and `sdk-dotnet/` are the
-highest-fidelity reference implementations today — see
-[`docs/CROSS_SDK_PARITY.md`](../docs/CROSS_SDK_PARITY.md) for the
-target shape.
+🚀 **Sprint S7 — 1.0.0 GA-ready.** All 54 rows of the JavaScript
+column in [`docs/CROSS_SDK_PARITY.md`](../docs/CROSS_SDK_PARITY.md)
+are ✅; the parity audit script
+(`python scripts/audit_parity.py --sdk javascript`) gates the
+release. Cutting the GA tag is a maintainer action — the procedure
+is in [`RELEASING.md`](RELEASING.md). Full HAPI-equivalent
+IG-profile validation is the only deferred item, gated on a real
+`fhir-ig/egyptian-ig.tgz` from a tagged platform release; the
+hand-rolled `FhirValidator` enforces the same Egyptian-IG profile
+rules in lockstep with the Java + Python + .NET SDKs. **533 SDK
+tests + 9 Fastify integration tests pass.**
 
 | Capability                                | Sprint | Status |
 |-------------------------------------------|--------|--------|
@@ -32,30 +34,58 @@ target shape.
 | `RecipientHandler` pipeline (4 layers)    | S5     | ✅      |
 | Egyptian validators                       | S5     | ✅      |
 | Validator hardening (533 tests) + Fastify example | S6 | ✅   |
-| 1.0.0 GA on npm                           | S7     | ⏳      |
+| RELEASING.md + parity audit + v1.0.0 release notes | S7 | ✅  |
+| 1.0.0 GA on npm (maintainer cuts tag)     | S7     | 🚀 ready |
+| HAPI-equivalent full-IG FHIR validation (gated on real IG tarball) | post-1.0 | ⏳ |
 
-## Quickstart — what works today (Sprint S1)
+## Quickstart — sender side
 
 ```ts
 import {
-  ErrorCode,
-  HfcxError,
-  NationalIdInvalidError,
-  SDK_VERSION,
+  HfcxClient,
+  KeycloakTokenClient,
+  OutboundEncryptor,
+  RegistryClient,
 } from '@healthflow/hfcx-sdk';
 
-console.log(SDK_VERSION);                           // "0.1.0-alpha.0"
-console.log(ErrorCode.NATIONAL_ID_INVALID.code);    // "ERR-B-006"
+const keycloak = new KeycloakTokenClient({
+  tokenUrl: 'https://idp.hcx-egypt.gov.eg/realms/hcx/protocol/openid-connect/token',
+  clientId: 'myhospital',
+  clientSecret: '...',
+});
 
-throw new NationalIdInvalidError(
-  'Test error: this would fire from the recipient pipeline',
-);
+const registry = new RegistryClient({
+  baseUrl: 'https://registry.hcx-egypt.gov.eg',
+});
+
+const client = new HfcxClient({
+  gatewayUrl: 'https://gateway.hcx-egypt.gov.eg',
+  participantCode: 'myhospital@hcx-egypt',
+  keycloak,
+  encryptor: new OutboundEncryptor(registry),
+});
+
+const response = await client.submitClaim({
+  recipientCode: 'payerco@hcx-egypt',
+  claimBundle: '...',  // Egyptian-IG-compliant Bundle as JSON
+});
+console.log(response.correlationId, response.status);
 ```
 
-The 27-entry `ErrorCode` catalog, the typed error subclasses, and the
-factory helpers (`HfcxError.of`, `HfcxError.fromWireCode`) are wire-
-format-identical to the Java, Python, and .NET SDKs. Once S2 lands,
-the same imports will work against a real protocol implementation.
+## Quickstart — recipient side
+
+```ts
+import { FileLocalKeyProvider, RecipientHandler } from '@healthflow/hfcx-sdk';
+
+const handler = new RecipientHandler({
+  keyProvider: new FileLocalKeyProvider('/etc/hfcx/private-key.pem'),
+  localParticipantCode: 'payerco@hcx-egypt',
+  bearerTokenValidator: /* JWKS-backed BearerTokenValidator */,
+});
+```
+
+Wire `handler` into Fastify (or any other Node web framework) using
+the example app under `docs/examples/recipient-fastify/`.
 
 ## Architecture
 
