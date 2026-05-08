@@ -1,0 +1,23 @@
+{
+  "name": "@healthflow/hfcx-recipient-fastify-example",
+  "version": "0.1.0",
+  "description": "Fastify example showing how a participant wires the HFCX JS SDK's RecipientHandler into the five inbound endpoints.",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "start": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@healthflow/hfcx-sdk": "file:../../..",
+    "fastify": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}

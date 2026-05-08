@@ -31,7 +31,7 @@ target shape.
 | `HfcxClient` sender flow + correlation-ID propagation | S4 | ✅  |
 | `RecipientHandler` pipeline (4 layers)    | S5     | ✅      |
 | Egyptian validators                       | S5     | ✅      |
-| Validator hardening + Express/Fastify example | S6 | ⏳     |
+| Validator hardening (533 tests) + Fastify example | S6 | ✅   |
 | 1.0.0 GA on npm                           | S7     | ⏳      |
 
 ## Quickstart — what works today (Sprint S1)

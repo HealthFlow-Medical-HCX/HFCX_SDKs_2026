@@ -6,6 +6,22 @@ semver rules.
 
 ## [Unreleased]
 
+### Added (Sprint S6 — validator hardening + Fastify example)
+
+- 207 new vitest cases tightening the recipient-pipeline validators:
+  `fhirValidator.test.ts` (28), `egyptianBundleValidator.test.ts`
+  (27), `egyptianValidatorsExtra.test.ts` (152). Sister to the
+  Python P6 + .NET D6 hardening sprints — every governorate code
+  parametric, leap-year boundaries, every gender digit, every mobile
+  prefix, IBAN canonical / corrupted forms.
+- `docs/examples/recipient-fastify/` — minimal Fastify 5 app wiring
+  `RecipientHandler` into the five HFCX `/v1/...` endpoints, with 9
+  end-to-end integration tests that drive `app.inject()` and post
+  real JWE-encrypted claims. Sister to the other SDKs' reference
+  recipient apps.
+- 533 vitest tests pass (was 326); biome + tsc --noEmit clean.
+  Python (421) + .NET (555) + Java reactor still green.
+
 ### Added (Sprint S5 — recipient pipeline + Egyptian validators)
 
 - `src/validators/` ships the four Egyptian field validators with

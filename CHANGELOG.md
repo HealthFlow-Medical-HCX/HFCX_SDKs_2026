@@ -8,6 +8,21 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint S6 — JavaScript validator hardening + Fastify example)
+
+- 207 new vitest cases tightening the recipient-pipeline validators
+  (`fhirValidator.test.ts` (28), `egyptianBundleValidator.test.ts`
+  (27), `egyptianValidatorsExtra.test.ts` (152)). Sister to Python
+  P6 + .NET D6 hardening sprints.
+- `sdk-javascript/docs/examples/recipient-fastify/` — minimal
+  Fastify 5 app wiring `RecipientHandler` into the five HFCX
+  `/v1/...` endpoints, with 9 end-to-end integration tests using
+  `app.inject()` to post real JWE-encrypted claims. Sister to
+  Java's Spring Boot + Python's FastAPI/Flask + .NET's ASP.NET Core
+  example apps.
+- 533 JS SDK tests pass (was 326); 9 Fastify integration tests
+  pass; Python (421) + .NET (555) + Java reactor still green.
+
 ### Added (Sprint S5 — JavaScript recipient pipeline + Egyptian validators)
 
 - The full inbound counterpart of `HfcxClient` lands on the JS SDK:
