@@ -8,6 +8,23 @@ and the project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added (Sprint D7 — .NET 1.0.0 GA prep)
+
+- `sdk-dotnet/RELEASING.md` — canonical procedure for cutting a GA
+  release of `HealthFlow.Hfcx.Sdk` to nuget.org. Mirrors the Java
+  and Python release docs.
+- `sdk-dotnet/docs/releases/v1.0.0.md` — placeholder release notes
+  ready to be promoted on the day of the GA cut.
+- `sdk-dotnet/README.md` + top-level `README.md` updated to reflect
+  1.0.0 release-ready status; .NET quickstart rewritten to show real
+  sender + recipient code instead of the D1 placeholder.
+- Cross-SDK parity tracker `.NET` column: all 54 rows ✅; status
+  bumped to "🚀 Sprint D7". `audit_parity.py --sdk java | python |
+  dotnet` all pass with no drift.
+- All three published SDKs (Java + Python + .NET) are now 1.0.0
+  release-ready. Remaining open items: the maintainer-action GA
+  tag pushes and the JavaScript SDK (S1-S7).
+
 ### Added (Sprint D6 — .NET validator hardening + ASP.NET Core example)
 
 - 198 new xUnit cases tightening the recipient-pipeline validators:

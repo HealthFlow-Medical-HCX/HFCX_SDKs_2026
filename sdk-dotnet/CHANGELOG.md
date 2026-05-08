@@ -6,6 +6,28 @@ SemVer 2.0 conventions.
 
 ## [Unreleased]
 
+### Added (Sprint D7 — 1.0.0 GA prep)
+
+- `RELEASING.md` — full GA cut procedure: nuget.org Trusted Publisher
+  prerequisites, version bump, changelog promote, tag, post-publish
+  smoke test, post-release housekeeping, rollback policy via
+  `dotnet nuget delete --unlist`. Mirrors `sdk-java/RELEASING.md` and
+  `sdk-python/RELEASING.md`.
+- `docs/releases/v1.0.0.md` — placeholder release notes ready to be
+  promoted on the day of the GA cut. Covers NuGet install,
+  compatibility matrix, what's-in-the-box, cross-SDK parity, and
+  known gaps.
+- README quickstart rewritten to show real sender + recipient code
+  paths (was the D1 placeholder pointing at the error catalog).
+  Status table promoted to "🚀 1.0.0 release-ready"; deferred
+  HAPI-equivalent IG validation and `net10.0` multi-target moved to
+  "post-1.0" rows.
+- Cross-SDK parity status bumped to "🚀 Sprint D7"; all 54 rows of
+  the .NET column are ✅ (audit:
+  `python scripts/audit_parity.py --sdk dotnet`).
+- 554 .NET SDK tests pass; 5 ASP.NET Core integration tests pass;
+  Python (420) + Java reactor still green.
+
 ### Added (Sprint D6 — validator hardening + ASP.NET Core example)
 
 - 198 new xUnit cases that pin every recipient-validator branch

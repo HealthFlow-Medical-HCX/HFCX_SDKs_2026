@@ -12,15 +12,16 @@ dotnet add package HealthFlow.Hfcx.Sdk
 
 ## Status
 
-🚧 **Sprint D1 — bootstrap.** This release ships the project skeleton
-and the cross-SDK error-code catalog. Real protocol behaviour
-(JWE encrypt/decrypt, Keycloak token client, registry lookup,
-HfcxClient sender flow, RecipientHandler pipeline, FHIR + Egyptian
-validators) lands across Sprints D2–D6. The Java and Python SDKs
-under `sdk-java/` and `sdk-python/` are the highest-fidelity
-reference implementations today — see
-[`docs/CROSS_SDK_PARITY.md`](../docs/CROSS_SDK_PARITY.md) for the
-target shape.
+🚀 **Sprint D7 — 1.0.0 GA-ready.** All 54 rows of the .NET column in
+[`docs/CROSS_SDK_PARITY.md`](../docs/CROSS_SDK_PARITY.md) are ✅; the
+parity audit script (`python scripts/audit_parity.py --sdk dotnet`)
+gates the release. Cutting the GA tag is a maintainer action — the
+procedure is in [`RELEASING.md`](RELEASING.md). Full HAPI-equivalent
+IG-profile validation is the only deferred item, gated on a real
+`fhir-ig/egyptian-ig.tgz` from a tagged platform release; the
+hand-rolled `FhirValidator` enforces the same Egyptian-IG profile
+rules in lockstep with the Java and Python SDKs. **554 SDK tests +
+5 ASP.NET integration tests pass.**
 
 | Capability                                | Sprint | Status |
 |-------------------------------------------|--------|--------|
@@ -28,29 +29,59 @@ target shape.
 | JWE encrypt / decrypt + cross-SDK round-trip | D2  | ✅      |
 | Keycloak token client                     | D3     | ✅      |
 | Registry lookup + cache                   | D3     | ✅      |
-| `HfcxClient` sender flow + correlation-ID propagation | D4     | ✅      |
+| `HfcxClient` sender flow + correlation-ID propagation | D4 | ✅ |
 | `RecipientHandler` pipeline (4 layers)    | D5     | ✅      |
 | Egyptian validators                       | D5     | ✅      |
 | Validator hardening (554 tests) + ASP.NET example | D6 | ✅   |
-| 1.0.0 GA on NuGet                         | D7     | ⏳      |
+| RELEASING.md + parity audit + v1.0.0 release notes | D7 | ✅  |
+| 1.0.0 GA on NuGet (maintainer cuts tag)   | D7     | 🚀 ready |
+| HAPI-equivalent full-IG FHIR validation (gated on real IG tarball) | post-1.0 | ⏳ |
+| `net10.0` multi-target                    | post-1.0 | ⏳     |
 
-## Quickstart — what works today (Sprint D1)
+## Quickstart — sender side
 
 ```csharp
-using HealthFlow.Hfcx.Sdk;
-using HealthFlow.Hfcx.Sdk.Exceptions;
+using HealthFlow.Hfcx.Sdk.Auth;
+using HealthFlow.Hfcx.Sdk.Client;
+using HealthFlow.Hfcx.Sdk.Registry;
 
-Console.WriteLine(HfcxSdk.Version);                        // "0.1.0-alpha.0"
-Console.WriteLine(ErrorCode.NationalIdInvalid.Code);       // "ERR-B-006"
+using var keycloak = new KeycloakTokenClient(
+    tokenUrl: new Uri("https://idp.hcx-egypt.gov.eg/realms/hcx/protocol/openid-connect/token"),
+    clientId: "myhospital",
+    clientSecret: "...");
 
-throw new NationalIdInvalidException(
-    "Test error: this would fire from the recipient pipeline");
+using var registry = new RegistryClient(
+    baseUrl: new Uri("https://registry.hcx-egypt.gov.eg"));
+
+var encryptor = new OutboundEncryptor(registry);
+
+using var client = new HfcxClient(
+    gatewayUrl: new Uri("https://gateway.hcx-egypt.gov.eg"),
+    participantCode: "myhospital@hcx-egypt",
+    keycloak: keycloak,
+    encryptor: encryptor);
+
+var response = await client.SubmitClaimAsync(new SubmitClaimRequest(
+    RecipientCode: "payerco@hcx-egypt",
+    ClaimBundle: "..."));   // Egyptian-IG-compliant Bundle as JSON
+
+Console.WriteLine($"{response.CorrelationId} {response.Status}");
 ```
 
-The 27-entry `ErrorCode` catalog, the typed-exception subclasses, and
-the factory helpers (`HfcxException.Of`, `HfcxException.FromWireCode`)
-are wire-format-identical to the Java and Python SDKs. Once D2 lands,
-the same imports will work against a real protocol implementation.
+## Quickstart — recipient side
+
+```csharp
+using HealthFlow.Hfcx.Sdk.Auth;
+using HealthFlow.Hfcx.Sdk.Recipient;
+
+var handler = new RecipientHandler(
+    keyProvider: new FileLocalKeyProvider("/etc/hfcx/private-key.pem"),
+    localParticipantCode: "payerco@hcx-egypt",
+    bearerTokenValidator: /* a JWKS-backed IBearerTokenValidator */);
+```
+
+Wire `handler` into ASP.NET Core minimal APIs using the example app
+under `docs/examples/recipient-aspnet/`.
 
 ## Architecture
 
